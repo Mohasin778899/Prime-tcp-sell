@@ -1,172 +1,87 @@
-# ════════════════════════════════════════
-# 💀 DECODED BY FUHOX OMEGA 💀
-# ════════════════════════════════════════
-# File: main.py
-# Power: 20000000000000X
-# ════════════════════════════════════════
-
-# ═══════════════════════════════════════════════════════════════
-#   ██████╗  █████╗ ███████╗██╗███╗   ██╗    ████████╗██╗  ██╗████████╗
-#   ██╔══██╗██╔══██╗██╔════╝██║████╗  ██║    ╚══██╔══╝╚██╗██╔╝╚══██╔══╝
-#   ██████╔╝███████║█████╗  ██║██╔██╗ ██║       ██║    ╚███╔╝    ██║
-#   ██╔══██╗██╔══██║██╔══╝  ██║██║╚██╗██║       ██║    ██╔██╗    ██║
-#   ██║  ██║██║  ██║██║     ██║██║ ╚████║       ██║   ██╔╝ ██╗   ██║
-#   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═══╝       ╚═╝   ╚═╝  ╚═╝   ╚═╝
-#
-#        ★ MOHASIN TxT — প্রিমিয়াম অল-ইন-ওয়ান TCP বট ★
-#        ▌ লগইন ইঞ্জিন + বট কোর + মূল এন্ট্রি ▌
-#        ▌ শুধু এই একটি ফাইল রান করুন ▌
-#        ▌ .S1 - .S11 সম্পূর্ণ ফিচার যুক্ত ▌
-# ═══════════════════════════════════════════════════════════════
-
-import asyncio
-import random
-import json
-import os
-import time
-import sys
-import uuid
-from datetime import datetime
-
+import asyncio, random, json, os, time, math, pickle
 import aiohttp
-import httpx
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
-from google_play_scraper import app as play_scraper
-from protobuf_decoder.protobuf_decoder import Parser
 
-try:
-    from cfonts import render
-    _HAS_CFONTS = True
-except Exception:
-    _HAS_CFONTS = False
-    def render(text, colors=None, align=None):
-        return text
-
-# ─── গেম-নির্দিষ্ট মডিউল ───
-from xC4 import *
-from xP import JoinSq, OpenCh, MsqSq, ExitSq
-from byte import Encrypt_ID, encrypt_api
-from Pb2 import (
-    DEcwHisPErMsG_pb2,
-    sQ_pb2,
-    MajoRLoGinrEs_pb2,
-    PorTs_pb2,
-    MajoRLoGinrEq_pb2,
-)
-
-# ─── কনফিগ ফাইল (UID / PW / REGION / ADMIN) ───
-from MOHASIN import UID, PW, REGION_PREF, ADMIN_UID, PLAYER_UID
+from Pb2 import DEcwHisPErMsG_pb2, sQ_pb2
 
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-# ═══════════════════════════════════════════════════════════════
-#                    ★ প্রিমিয়াম কনসোল ডিজাইন ★
-# ═══════════════════════════════════════════════════════════════
-
-C = {
-    "reset": "\033[0m",
-    "bold": "\033[1m",
-    "dim": "\033[2m",
-    "cyan": "\033[1;36m",
-    "green": "\033[1;32m",
-    "yellow": "\033[1;33m",
-    "red": "\033[1;31m",
-    "magenta": "\033[1;35m",
-    "white": "\033[1;37m",
-    "gray": "\033[1;90m",
-    "blue": "\033[1;34m",
-    "pink": "\033[1;95m",
-    "orange": "\033[38;5;208m",
-    "purple": "\033[38;5;129m",
-    "gold": "\033[38;5;220m",
-    "mint": "\033[38;5;121m",
-}
+def get_random_color():
+    return random.choice([
+        "FF0000", "00FF00", "0000FF", "FFFF00",
+        "FF00FF", "00FFFF", "FF66CC", "FFD700", "FFFFFF"
+    ])
 
 
-def c(text, color):
-    return f"{C.get(color, '')}{text}{C['reset']}"
+h1_color = get_random_color()
+h2_color = get_random_color()
+h3_color = get_random_color()
+h4_color = get_random_color()
 
 
-def log(level, msg):
-    icons = {
-        "তথ্য":  ("cyan",    "ℹ"),
-        "সফল":  ("green",   "✔"),
-        "অপেক্ষা":("yellow", "◌"),
-        "সতর্ক": ("orange",  "⚠"),
-        "ত্রুটি": ("red",     "✘"),
-        "বট":    ("magenta", "★"),
-        "নেট":   ("blue",    "⇄"),
-        "অথেন":  ("gold",    "🔑"),
-        "চ্যাট": ("pink",    "💬"),
-        "কমান্ড":("mint",    "⚡"),
-    }
-    color, icon = icons.get(level, ("white", "•"))
-    ts = time.strftime("%H:%M:%S")
-    tag = f"{c(f'[{ts}]', 'gray')} {c(f'{icon} {level}', color)}"
-    print(f" {tag} {c('│', 'gray')} {msg}")
+                                                                 
+         
+                                                                 
 
-
-def print_banner():
-    banner = render('MOHASIN TxT', colors=['red', 'yellow'], align='center')
-    sub    = render('PREMIUM TCP BOT', colors=['cyan', 'magenta'], align='center')
-    print()
-    print(c("╔" + "═" * 62 + "╗", "magenta"))
-    print(c("║", "magenta") + c(" " * 62, "magenta") + c("║", "magenta"))
-    print(c("║", "magenta") + banner.center(70) + c("║", "magenta"))
-    print(c("║", "magenta") + sub.center(68) + c("║", "magenta"))
-    print(c("║", "magenta") + c(" " * 62, "magenta") + c("║", "magenta"))
-    print(c("║", "magenta") + c("▌ তৈরি ও পরিচালনায় — MOHASIN TxT ▌".center(62), "gold") + c("║", "magenta"))
-    print(c("╚" + "═" * 62 + "╝", "magenta"))
-    print()
-
-
-def print_line(title, value, icon="➤"):
-    print(f"  {c(icon, 'cyan')}  {c(f'{title:<12}', 'white')} {c('›', 'gray')} {c(str(value), 'gold')}")
-
-
-def print_box(title, lines, color="magenta"):
-    if isinstance(lines, dict):
-        lines = [f"{c(k, 'white')} {c('›', 'gray')} {c(v, 'green')}" for k, v in lines.items()]
-    elif isinstance(lines, list) and lines and isinstance(lines[0], tuple):
-        lines = [f"{c(k, 'white')} {c('›', 'gray')} {c(v, 'green')}" for k, v in lines]
-    width = 56
-    print()
-    print(c(f"┌{'─' * width}┐", color))
-    print(c("│", color) + c(f"  {title.center(width - 4)}  ", "gold") + c("│", color))
-    print(c(f"├{'─' * width}┤", color))
-    for line in lines:
-        print(c("│", color) + f"  {line:<{width - 2}} " + c("│", color))
-    print(c(f"└{'─' * width}┘", color))
-    print()
-
-
-def print_divider(char="─", color="gray", width=62):
-    print(c(char * width, color))
-
-
-def print_tag(text, color="cyan"):
-    print(f"  {c('▸', color)} {c(text, color)}")
-
-
-# ═══════════════════════════════════════════════════════════════
-#                    ★ গ্লোবাল ভেরিয়েবল ★
-# ═══════════════════════════════════════════════════════════════
-
+SPAM_TARGETS_FILE = "spam_targets.json"
 online_writer = None
 whisper_writer = None
+spam_running = False
+SPAM_INTERVAL = 0.5
 bot_uid = None
 ToKen = None
 region = None
-bot_nickname = "MOHASIN TxT"
-bot_clan_id = 0
-admin_uid = ADMIN_UID   # ✅ config থেকে আসছে
+admin_uid = "8797238043"                                   
 
+pending_ghost_future = None
+ghost_team_id = None
+ghost_squad_code = None
+
+spm_tasks = {}
+ban_task = None
+ban_running = False
+ban_targets = set()
 evo_cycle_running = False
 evo_cycle_task = None
+freeze_running = False
+freeze_task = None
+fast_spam_running = False
+fast_spam_task = None
+custom_spam_running = False
+custom_spam_task = None
+msg_spam_running = False
+msg_spam_task = None
+mg_spam_task = None
+reject_spam_running = False
+reject_spam_task = None
+emote_hijack = False
 bot_enabled = True
+
+BOT_UID_FOR_HI = None
+BOT_PW_FOR_HI  = None
+
+BLOCK_EMOTE_UID = admin_uid
+CACHE_FILE      = "status_cache.pkl"
+CACHE_TIMEOUT   = 30
+
+_clan_msg_key = None
+_clan_msg_iv = None
+_clan_msg_bot_uid = None
+_clan_msg_clan_id = None
+_clan_message_task = None
+
+BADGE_VALUES = {
+    "s1": 1048576,
+    "s2": 32768,
+    "s3": 2048,
+    "s4": 64,
+    "s5": 262144
+}
+BADGE_REQUESTS = 5
+PACKET_DELAY_ULTRA_FAST = 0.1
 
 EVO_IDS = [
     909000063, 909000075, 909040010, 909000081, 909039011,
@@ -176,59 +91,57 @@ EVO_IDS = [
     909000068
 ]
 
-AES_KEY = b'Yg&tc%DEuh6%Zc^8'
-AES_IV  = b'6oyZDr22E3ychjM%'
 
-BADGE_VALUES = {
-    "s1": 1048576,
-    "s2": 32768,
-    "s3": 2048,
-    "s4": 64,
-    "s5": 262144,
-}
+                                                                 
+               
+                                                                 
 
-REGION_LANG = {
-    "BD": "bn", "IND": "hi", "PK": "ur", "SG": "en", "ID": "id",
-    "ME": "ar", "VN": "vi", "TW": "zh", "CIS": "ru", "TH": "th",
-    "EU": "en", "US": "en", "SAC": "es", "LK": "en", "BR": "pt",
-}
-
-DEFAULT_HEADERS = {
-    'User-Agent': 'UnityPlayer/2018.4.12f1 (UnityWebRequest/1.0, libcurl/8.5.0-DEV)',
-    'Connection': 'Keep-Alive',
-    'Accept-Encoding': 'gzip',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Expect': '100-continue',
-    'X-Unity-Version': '2018.4.12f1',
-    'X-GA-SV': '1789535859',
-    'X-GA': 'v1 1',
-    'ReleaseVersion': 'OB55',
-}
-
-
-# ═══════════════════════════════════════════════════════════════
-#              ★ ইমোট লোডিং ★
-# ═══════════════════════════════════════════════════════════════
+GENERAL_EMOTES_MAP = {}
+EMOTE_MAP          = {}
+NAME_TO_EMOTE_ID   = {}
+EMOTE_MENU         = {}
 
 try:
+    try:
     with open("emotes.json", "r", encoding="utf-8") as _f:
-        _emote_list = json.load(_f)
+        _raw = json.load(_f)
 
-    GENERAL_EMOTES_MAP = {}
-    EMOTE_MAP = {}
-    for item in _emote_list:
-        num_str = str(item["Number"]).strip()
-        emote_id = int(item["Id"])
-        GENERAL_EMOTES_MAP[num_str] = emote_id
-        GENERAL_EMOTES_MAP[num_str.lower()] = emote_id
-        if num_str.isdigit():
-            EMOTE_MAP[int(num_str)] = emote_id
+    if isinstance(_raw, list):
+        for _item in _raw:
+            _num = str(_item.get("Number", "")).strip()
+            _id = _item.get("Id", 0)
+            if not _num or not _id:
+                continue
+            try:
+                _id = int(_id)
+            except Exception:
+                continue
+            _name = str(_item.get("name", f"emote_{_num}"))
+            GENERAL_EMOTES_MAP[_num] = _id
+            if _num.isdigit():
+                EMOTE_MAP[int(_num)] = _id
+            EMOTE_MENU[_num] = _name
+            _n = _name.lower().strip()
+            if _n and not _n.startswith("emote_") and _n not in NAME_TO_EMOTE_ID:
+                NAME_TO_EMOTE_ID[_n] = _id
+    elif isinstance(_raw, dict):
+        for _num, _info in _raw.items():
+            _id = int(_info.get("id", _info.get("Id", 0)))
+            _name = str(_info.get("name", f"emote_{_num}"))
+            GENERAL_EMOTES_MAP[str(_num)] = _id
+            if str(_num).isdigit():
+                EMOTE_MAP[int(_num)] = _id
+            EMOTE_MENU[str(_num)] = _name
+            _n = _name.lower().strip()
+            if _n and not _n.startswith("emote_") and _n not in NAME_TO_EMOTE_ID:
+                NAME_TO_EMOTE_ID[_n] = _id
 
-    print_tag(f"ইমোট লোড হয়েছে: {len(GENERAL_EMOTES_MAP)} টি (নাম্বার: {len(EMOTE_MAP)})", "green")
+    print(f"✅ Loaded {len(GENERAL_EMOTES_MAP)} emotes from emotes.json")
+    print(f"✅ Built {len(NAME_TO_EMOTE_ID)} name→emote mappings")
 except Exception as _e:
-    GENERAL_EMOTES_MAP = {}
-    EMOTE_MAP = {}
-    print_tag(f"ইমোট লোড ব্যর্থ হয়েছে: {_e}", "red")
+    print(f"❌ emotes.json load error: {_e}")
+
+EMOTE_MENU = {str(k): str(v) for k, v in EMOTE_MENU.items()}
 
 NAME_EMOTES = {
     "ak": 909000063, "scar": 909000068, "mp40": 909000075,
@@ -243,79 +156,111 @@ NAME_EMOTES = {
     "chicken": 909000006, "dab": 909000005, "selfie": 909000040,
     "shower": 909051004, "flower": 909051002, "petals": 909051013,
 }
+NUMBER_EMOTES = GENERAL_EMOTES_MAP
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ প্রোটোবাফ হেল্পার ★
-# ═══════════════════════════════════════════════════════════════
+def get_menu_page(page=1, per_page=5):
+    try:
+        items = sorted(EMOTE_MENU.items(), key=lambda x: int(x[0]))
+    except Exception:
+        items = list(EMOTE_MENU.items())
 
-def _pb_varint(n):
-    if n < 0:
-        n = (1 << 64) + n
-    out = bytearray()
-    while True:
-        b = n & 0x7F
-        n >>= 7
-        if n:
-            b |= 0x80
-        out.append(b)
-        if not n:
-            break
-    return bytes(out)
+    total_items = len(items)
+    if total_items == 0:
+        return "[B][C][FF0000]❌ Emote menu is empty."
 
+    total_pages = max(1, math.ceil(total_items / per_page))
+    try:
+        page = int(page)
+    except Exception:
+        page = 1
+    page = max(1, min(page, total_pages))
 
-def _pb_tag(f, w):
-    return _pb_varint((f << 3) | w)
+    start = (page - 1) * per_page
+    end   = start + per_page
 
+    text  = f"[B][C][FF0000]🎭 MENU {page}/{total_pages}\n"
+    text += f"[C][FFFFFF]────────────────\n"
 
-def _pb_field(f, v):
-    if isinstance(v, bool):
-        v = int(v)
-    if isinstance(v, int):
-        return _pb_tag(f, 0) + _pb_varint(v)
-    if isinstance(v, str):
-        d = v.encode('utf-8')
-        return _pb_tag(f, 2) + _pb_varint(len(d)) + d
-    if isinstance(v, (bytes, bytearray)):
-        d = bytes(v)
-        return _pb_tag(f, 2) + _pb_varint(len(d)) + d
-    return b""
+    for num, name in items[start:end]:
+        text += f"[C][FFFFFF]{num} ➤ [FFFF00]{name}\n"
 
+    text += f"[C][FFFFFF]────────────────\n"
+    nav = []
+    if page > 1:
+        nav.append(f"[00FF00]/menu {page-1} ◀")
+    if page < total_pages:
+        nav.append(f"[00FF00]/menu {page+1} ▶")
+    if nav:
+        text += f"[C]{'  '.join(nav)}\n"
 
-def get_proto_field(d, key, default=None):
-    if not d or not isinstance(d, dict):
-        return default
-    if key in d:
-        return d[key].get('data', default)
-    if str(key) in d:
-        return d[str(key)].get('data', default)
-    return default
+    return text
 
 
-async def parse_results(parsed_results):
-    result_dict = {}
-    for result in parsed_results:
-        field_data = {"wire_type": result.wire_type}
-        if result.wire_type in ("varint", "string", "bytes"):
-            field_data["data"] = result.data
-        elif result.wire_type == "length_delimited":
-            if hasattr(result.data, "results"):
-                field_data["data"] = await parse_results(result.data.results)
-            elif isinstance(result.data, list):
-                field_data["data"] = await parse_results(result.data)
-            else:
-                field_data["data"] = str(result.data)
-        result_dict[str(result.field)] = field_data
-    return result_dict
+                                                                 
+         
+                                                                 
+
+def load_spam_targets():
+    if os.path.exists(SPAM_TARGETS_FILE):
+        with open(SPAM_TARGETS_FILE, "r") as f:
+            return set(json.load(f))
+    return set()
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ AES হেল্পার ★
-# ═══════════════════════════════════════════════════════════════
+def save_spam_targets():
+    with open(SPAM_TARGETS_FILE, "w") as f:
+        json.dump(list(spam_targets), f)
 
-async def aes_encrypt(payload, key, iv):
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return cipher.encrypt(pad(payload, AES.block_size))
+
+spam_targets = load_spam_targets()
+
+
+def get_random_avatar():
+    avatar_list = [
+        902050001, 902050002, 902050003, 902039016, 902050004,
+        902047011, 902047010, 902049015, 902050006, 902049020
+    ]
+    return random.choice(avatar_list)
+
+
+def get_random_sticker():
+    sticker_packs = [
+        ("1200000001", 1, 24),
+        ("1200000004", 1, 15),
+        ("1200000002", 1, 13),
+    ]
+    pack_id, start, end = random.choice(sticker_packs)
+    sticker_no = random.randint(start, end)
+    return f"[1={pack_id}-{sticker_no}]"
+
+
+def xMsGFixinG(n):
+    return '🗿'.join(str(n)[i:i + 3] for i in range(0, len(str(n)), 3))
+
+
+def fix_num(number):
+    fixed = ""
+    count = 0
+    num_str = str(number)
+    for char in num_str:
+        if char.isdigit():
+            count += 1
+        fixed += char
+        if count == 3:
+            fixed += "[c]"
+            count = 0
+    return fixed
+
+
+def fixnum(num):
+    num_str = str(num)
+    return "[C]" + "[C]".join(num_str) + "[C]"
+
+
+def dec_to_hex(decimal):
+    hex_str = hex(decimal)[2:]
+    return hex_str.upper() if len(hex_str) % 2 == 0 else '0' + hex_str.upper()
 
 
 async def encrypt_packet(packet_hex, key, iv):
@@ -325,318 +270,13 @@ async def encrypt_packet(packet_hex, key, iv):
     return cipher.encrypt(padded_packet).hex()
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ লগইন ইঞ্জিন ★
-# ═══════════════════════════════════════════════════════════════
-
-async def get_playstore_version():
-    loop = asyncio.get_event_loop()
-    try:
-        res = await loop.run_in_executor(
-            None,
-            lambda: play_scraper('com.dts.freefireth', lang='hi', country='id'),
-        )
-        return res.get("version", "1.132.8")
-    except Exception:
-        return "1.132.8"
+async def nmnmmmmn(packet_hex, key, iv):
+    return await encrypt_packet(packet_hex, key, iv)
 
 
-async def version_config(client_http, region="IND"):
-    app_version = await get_playstore_version()
-    lang = REGION_LANG.get(region, "hi")
-    api_url = (
-        f"https://version.ggwhitehawk.com/live/ver.php?version={app_version}"
-        f"&lang={lang}&device=android&channel=android&appstore=googleplay"
-        f"&region={region}&whitelist_version=1.3.0&whitelist_sp_version=1.0.0"
-    )
-    try:
-        res = await client_http.get(api_url)
-        data = res.json()
-        return (
-            data.get("latest_release_version"),
-            data.get("remote_version"),
-            data.get("server_url"),
-        )
-    except Exception:
-        return None
-
-
-async def get_access_token(client_http, uid, password):
-    url = "https://100067.connect.garena.com/oauth/guest/token/grant"
-    hdrs = {
-        "Host": "100067.connect.garena.com",
-        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 12; SM-G998B Build/SP1A.210812.016)",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "close",
-    }
-    data = {
-        "uid": str(uid),
-        "password": str(password),
-        "response_type": "token",
-        "client_type": "2",
-        "client_secret": "2ee44819e9b4598845141067b281621874d0d5d7af9d8f7e00c1e54715b7d1e3",
-        "client_id": "100067",
-    }
-    for attempt in range(3):
-        try:
-            r = await client_http.post(url, headers=hdrs, data=data)
-            if r.status_code == 200:
-                rd = r.json()
-                return rd.get("open_id"), rd.get("access_token"), rd.get("platform", 4)
-        except Exception:
-            pass
-        await asyncio.sleep(0.5)
-    return None
-
-
-async def build_majorlogin_payload(open_id, access_token, platform, client_version):
-    try:
-        proto = MajoRLoGinrEq_pb2.MajorLogin()
-        proto.event_time = str(datetime.now())[:-7]
-        proto.game_name = "free fire"
-        proto.platform_id = 1
-        proto.client_version = str(client_version)
-        proto.client_version_code = "2019121229"
-        proto.system_software = "Android OS 15 / API-35 (AP3A.240905.015.A2/185014)"
-        proto.system_hardware = "Handheld"
-        proto.device_type = "Handheld"
-        proto.screen_width = 1600
-        proto.screen_height = 719
-        proto.screen_dpi = "234"
-        proto.processor_details = "ARM64 FP ASIMD AES | 1820 | 8"
-        proto.memory = 2798
-        proto.gpu_renderer = "Mali-G57"
-        proto.gpu_version = "OpenGL ES 3.2 v1.r49p1-04eac0.2848c17a2fd4e9340e06555168eaa3c9"
-        proto.unique_device_id = f"Google|{str(uuid.uuid4())}"
-        proto.client_ip = f"{random.randint(103,223)}.{random.randint(10,250)}.{random.randint(10,250)}.{random.randint(10,250)}"
-        proto.language = "hi"
-        proto.open_id = str(open_id)
-        proto.open_id_type = "4"
-        proto.login_open_id_type = 4
-        proto.access_token = str(access_token)
-        proto.login_by = 2
-        proto.platform_sdk_id = 1
-        proto.origin_platform_type = "4"
-        proto.primary_platform_type = "4"
-        proto.reg_avatar = 1
-        proto.channel_type = 3
-        proto.telecom_operator = "JIO"
-        proto.network_operator_a = "JIO"
-        proto.network_type = "WIFI"
-        proto.network_type_a = "WIFI"
-        proto.cpu_type = 2
-        proto.cpu_architecture = "64"
-        proto.graphics_api = "OpenGLES2"
-        proto.supported_astc_bitset = 8191
-        proto.client_using_version = "7428b253defc164018c604a1ebbfebdf"
-        proto.loading_time = 15078
-        proto.release_channel = "android"
-        proto.extra_info = "KqsHTx3+QOmBRR1WKvaWewlcpqJBfjki+PPHQoQG8+0yV+Uos7gUFFjHMQ/e7u6han6Fl77r7c3vMN3p8UbKgN+nfycQCgwBmWgBzomx2gj84c+p"
-        proto.android_engine_init_flag = 111207
-        proto.if_push = 1
-        proto.is_vpn = 0
-        proto.memory_available.version = 55
-        proto.memory_available.hidden_value = 81
-        proto.external_storage_total = 49973
-        proto.external_storage_available = 11338
-        proto.internal_storage_total = 854
-        proto.internal_storage_available = 11466
-        proto.game_disk_storage_total = 49973
-        proto.game_disk_storage_available = 11466
-        proto.external_sdcard_total_storage = 49973
-        proto.external_sdcard_avail_storage = 11466
-        proto.library_path = "/data/app/~~lHFxTCCbupG2QVJmsURtZw==/com.dts.freefireth-N3aCHpHNXpdxjD80uIIbww==/lib/arm64"
-        proto.library_token = "b8e0cd5e295eee42f5860d3c86e483dd|/data/app/~~lHFxTCCbupG2QVJmsURtZw==/com.dts.freefireth-N3aCHpHNXpdxjD80uIIbww==/base.apk"
-
-        base_payload = proto.SerializeToString()
-
-        extra = b""
-        extra += _pb_field(96, '{"cur_rate":[90,60,120],"support_etc2":false}')
-        extra += _pb_field(97, 1)
-        extra += _pb_field(99, "4")
-        extra += _pb_field(100, "4")
-        extra += _pb_field(102, b"\x17]ENWU\x0eR5")
-        extra += _pb_field(104, 52882)
-        extra += _pb_field(105, 1)
-        extra += _pb_field(106, "https://dl.ak.freefiremobile.com/live/ABHotUpdates/|https://core-ak.freefiremobile.com/live/ABHotUpdates/|6b2078db9d22dd98f8e9386a39af8462")
-        extra += _pb_field(107, "c8e41b7a93f02d56e1a94c7b8203f5d1")
-
-        return await aes_encrypt(base_payload + extra, AES_KEY, AES_IV)
-    except Exception as e:
-        log("ত্রুটি", f"পেলোড তৈরিতে সমস্যা: {e}")
-        return None
-
-
-async def send_majorlogin(client_http, data, release_version, server_url):
-    try:
-        url = f"{server_url}MajorLogin" if server_url.endswith('/') else f"{server_url}/MajorLogin"
-        req_headers = DEFAULT_HEADERS.copy()
-        req_headers["ReleaseVersion"] = str(release_version)
-
-        response = await client_http.post(url, headers=req_headers, data=data)
-        if response.status_code != 200 or len(response.content) < 40:
-            return None
-
-        res_proto = MajoRLoGinrEs_pb2.MajorLoginRes()
-        try:
-            res_proto.ParseFromString(response.content)
-        except Exception:
-            pass
-
-        if not (res_proto.account_uid and res_proto.token):
-            for offset in range(min(128, len(response.content))):
-                try:
-                    cc = MajoRLoGinrEs_pb2.MajorLoginRes()
-                    cc.ParseFromString(response.content[offset:])
-                    if cc.account_uid and cc.token:
-                        res_proto = cc
-                        break
-                except Exception:
-                    pass
-
-        parsed = Parser().parse(response.content.hex())
-        dict_res = await parse_results(parsed)
-
-        key_val = get_proto_field(dict_res, 22) or res_proto.key or AES_KEY
-        iv_val  = get_proto_field(dict_res, 23) or res_proto.iv  or AES_IV
-
-        if isinstance(key_val, str):
-            try: key_val = bytes.fromhex(key_val)
-            except Exception: pass
-        if isinstance(iv_val, str):
-            try: iv_val = bytes.fromhex(iv_val)
-            except Exception: pass
-
-        res_proto.key = key_val
-        res_proto.iv  = iv_val
-        if not res_proto.url:
-            res_proto.url = server_url
-        return res_proto
-    except Exception as e:
-        log("ত্রুটি", f"MajorLogin সমস্যা: {e}")
-        return None
-
-
-async def send_getlogin(client_http, data, base_url, token, release_version):
-    try:
-        url = f"{base_url.rstrip('/')}/GetLoginData"
-        req_headers = DEFAULT_HEADERS.copy()
-        req_headers["ReleaseVersion"] = str(release_version)
-        req_headers['Authorization'] = f"Bearer {token}"
-
-        response = await client_http.post(url, headers=req_headers, data=data)
-        if response.status_code != 200:
-            return None
-
-        res_proto = PorTs_pb2.GetLoginData()
-        try:
-            res_proto.ParseFromString(response.content)
-        except Exception:
-            pass
-
-        parsed = Parser().parse(response.content.hex())
-        dict_res = await parse_results(parsed)
-        return res_proto, dict_res
-    except Exception as e:
-        log("ত্রুটি", f"GetLoginData সমস্যা: {e}")
-        return None
-
-
-async def do_login(uid, password, region_pref="IND"):
-    async with httpx.AsyncClient(verify=False, timeout=15.0) as client_http:
-        log("নেট", "ভার্সন কনফিগারেশন আনা হচ্ছে ...")
-        vc = await version_config(client_http, region_pref)
-        if not vc:
-            log("ত্রুটি", "ভার্সন কনফিগ ব্যর্থ হয়েছে।")
-            return None
-        release_version, client_version, server_url = vc
-        log("সফল", f"ভার্সন: {client_version} │ রিলিজ: {release_version}")
-
-        log("নেট", "অ্যাক্সেস টোকেন আনা হচ্ছে ...")
-        tg = await get_access_token(client_http, uid, password)
-        if not tg:
-            log("ত্রুটি", "UID বা পাসওয়ার্ড ভুল — অ্যাক্সেস টোকেন পাওয়া যায়নি।")
-            return None
-        open_id, access_token, platform = tg
-        log("সফল", "অ্যাক্সেস টোকেন সফলভাবে পাওয়া গেছে।")
-
-        log("তথ্য", "MajorLogin পেলোড তৈরি হচ্ছে ...")
-        payload = await build_majorlogin_payload(open_id, access_token, platform, client_version)
-        if not payload:
-            log("ত্রুটি", "পেলোড তৈরি ব্যর্থ হয়েছে।")
-            return None
-
-        log("নেট", "MajorLogin রিকোয়েস্ট পাঠানো হচ্ছে ...")
-        major_res = await send_majorlogin(client_http, payload, release_version, server_url)
-        if not major_res or not major_res.account_uid:
-            log("ত্রুটি", "MajorLogin সার্ভার দ্বারা প্রত্যাখ্যাত হয়েছে।")
-            return None
-        log("সফল", f"অ্যাকাউন্ট UID গৃহীত: {major_res.account_uid}")
-
-        log("নেট", "GetLoginData রিকোয়েস্ট পাঠানো হচ্ছে ...")
-        gl = await send_getlogin(client_http, payload, major_res.url, major_res.token, release_version)
-        if not gl:
-            log("ত্রুটি", "GetLoginData ব্যর্থ হয়েছে।")
-            return None
-        res_proto, dict_res = gl
-        log("সফল", "লগইন তথ্য সফলভাবে গৃহীত হয়েছে।")
-
-        online_addr = res_proto.Online_IP_Port or get_proto_field(dict_res, 14, "0.0.0.0:0")
-        if ':' in online_addr:
-            online_ip, online_port = online_addr.split(":")
-        else:
-            online_ip, online_port = "0.0.0.0", "0"
-
-        chat_addr = res_proto.AccountIP_Port or get_proto_field(dict_res, 32, online_addr)
-        if ':' in chat_addr:
-            chat_ip, chat_port = chat_addr.split(":")
-        else:
-            chat_ip, chat_port = online_ip, online_port
-
-        print_box("MOHASIN TxT — লগইন সফল", [
-            ("বট UID",      major_res.account_uid),
-            ("অ্যাকাউন্ট নাম", res_proto.AccountName or "অজানা"),
-            ("অঞ্চল",        major_res.region or region_pref),
-            ("গিল্ড ID",     res_proto.Clan_ID or 0),
-            ("অনলাইন",       f"{online_ip}:{online_port}"),
-            ("চ্যাট",        f"{chat_ip}:{chat_port}"),
-            ("সার্ভার",      major_res.url),
-        ])
-
-        return {
-            "bot_uid":      str(major_res.account_uid),
-            "token":        major_res.token,
-            "region":       major_res.region or region_pref,
-            "key":          major_res.key or AES_KEY,
-            "iv":           major_res.iv or AES_IV,
-            "timestamp":    major_res.timestamp or int(time.time()),
-            "online_ip":    online_ip,
-            "online_port":  online_port,
-            "chat_ip":      chat_ip,
-            "chat_port":    chat_port,
-            "account_name": res_proto.AccountName or "অজানা",
-            "clan_id":      res_proto.Clan_ID or 0,
-            "clan_data":    res_proto.Clan_Compiled_Data or "",
-            "server_url":   major_res.url,
-        }
-
-
-# ═══════════════════════════════════════════════════════════════
-#              ★ সহায়ক ফাংশন ★
-# ═══════════════════════════════════════════════════════════════
-
-def get_random_color():
-    colors = [
-        "[FF0000]", "[00FF00]", "[0000FF]", "[FFFF00]", "[FF00FF]", "[00FFFF]", "[FFFFFF]", "[FFA500]",
-        "[A52A2A]", "[800080]", "[000000]", "[808080]", "[C0C0C0]", "[FFC0CB]", "[FFD700]", "[ADD8E6]",
-        "[90EE90]", "[D2691E]", "[DC143C]", "[00CED1]", "[9400D3]", "[F08080]", "[20B2AA]", "[FF1493]",
-        "[7CFC00]", "[B22222]", "[FF4500]", "[DAA520]", "[00BFFF]", "[00FF7F]", "[4682B4]", "[6495ED]",
-        "[5F9EA0]", "[DDA0DD]", "[E6E6FA]", "[B0C4DE]", "[556B2F]", "[8FBC8F]", "[2E8B57]", "[3CB371]",
-        "[6B8E23]", "[808000]", "[B8860B]", "[CD5C5C]", "[8B0000]", "[FF6347]", "[FF8C00]", "[BDB76B]"
-    ]
-    return random.choice(colors)
-
+                                                                 
+                     
+                                                                 
 
 def build_ob55_online_auth(account_uid, token, kts, key, iv):
     token_bytes = token.encode("utf-8")
@@ -661,15 +301,17 @@ def create_auth_token_chat(account_id, jwt_token, timestamp, key, iv):
         header = bytes.fromhex('6d19') + uid_b + ts_b + len_b
         return (header + ct).hex()
     except Exception as e:
-        print_tag(f"অথেনটিকেশন টোকেন সমস্যা: {e}", "red")
+        print(f"[AUTH TOKEN ERROR] {e}")
         return None
 
 
 async def cHTypE(H):
-    if not H: return 'Squid'
-    elif H == 1 or H == 3: return 'CLan'
-    elif H == 2: return 'PrivaTe'
-    return 'Squid'
+    if not H:
+        return 'Squid'
+    elif H == 1:
+        return 'CLan'
+    elif H == 2:
+        return 'PrivaTe'
 
 
 async def DecodeWhisperMessage(hex_packet):
@@ -687,241 +329,534 @@ async def GeTSQDaTa(D):
 
 
 async def get_colorful_message(message_text, message_number):
-    color_palette = ["FF0000", "FFFF00", "0000FF", "FF00FF", "00FFFF", "FFA500",
-                     "FF1493", "00FF7F", "7B68EE", "FF66CC", "00CED1", "FF69B4",
-                     "32CD32", "9370DB", "FF4500", "1E90FF", "ADFF2F", "FF6347"]
-    color_index = (message_number - 1) % len(color_palette)
-    return f"[C][B][{color_palette[color_index]}]{message_text}"
+    color = "FF0000" if message_number % 2 else "FFFFFF"
+    return f"[C][B][{color}]{message_text}"
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ প্যাকেট বিল্ডার ★
-# ═══════════════════════════════════════════════════════════════
+                                                                 
+                 
+                                                                 
+
+async def NewClanChatPacket(message_text, key, iv, clan_id=3102281341):
+    fields = {
+        1: 16801068917, 2: 18, 4: 1,
+        5: {
+            1: 16801068917, 2: clan_id, 3: 1, 4: 'TOM TCP',
+            5: 1785944381, 7: 6,
+            9: {
+                1: message_text, 4: 301, 8: '♧TOM TCP♧', 13: '',
+                14: {1: 16801068917},
+                18: {1: 16801068917, 3: 1, 4: ''}
+            },
+            10: 'ar', 13: {2: 1, 3: 1}, 14: '',
+            16: int(time.time() * 1000)
+        }
+    }
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '0515', key, iv)
+
+
+async def AuthClan(clan_id, clan_compiled_data, key, iv):
+    if isinstance(clan_compiled_data, str):
+        try:
+            clan_compiled_data = clan_compiled_data.encode(
+                'latin-1', errors='surrogateescape'
+            )
+        except Exception:
+            clan_compiled_data = clan_compiled_data.encode(
+                'utf-8', errors='surrogateescape'
+            )
+    fields = {1: 3, 2: {1: int(clan_id), 2: 1, 4: clan_compiled_data}}
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '1201', key, iv)
+
 
 async def SEndMsG(H, message, Uid, chat_id, key, iv):
     TypE = await cHTypE(H)
-    if TypE == 'Squid': msg_packet = await xSEndMsgsQ(message, chat_id, key, iv, region or "BD")
-    elif TypE == 'CLan': msg_packet = await xSEndMsg(message, 1, chat_id, chat_id, key, iv)
-    elif TypE == 'PrivaTe': msg_packet = await xSEndMsg(message, 2, Uid, Uid, key, iv)
-    return msg_packet
+    if TypE == 'Squid':
+        return await xSEndMsgsQ(message, chat_id, key, iv, region or "BD")
+    elif TypE == 'CLan':
+        try:
+            return await xSEndMsg(message, 1, chat_id, chat_id, key, iv)
+        except Exception as e:
+            print(f"Guild old packet error, fallback: {e}")
+            return await NewClanChatPacket(message, key, iv, chat_id)
+    elif TypE == 'PrivaTe':
+        return await xSEndMsg(message, 2, Uid, Uid, key, iv)
 
 
 async def SEndPacKeT(OnLinE, ChaT, TypE, PacKeT):
-    if TypE == 'ChaT' and ChaT: whisper_writer.write(PacKeT); await whisper_writer.drain()
-    elif TypE == 'OnLine': online_writer.write(PacKeT); await online_writer.drain()
-    else: return 'সমর্থিত নয়'
+    if TypE == 'ChaT' and ChaT:
+        whisper_writer.write(PacKeT); await whisper_writer.drain()
+    elif TypE == 'OnLine':
+        online_writer.write(PacKeT); await online_writer.drain()
 
 
-async def safe_send_message(chat_type, message, target_uid, chat_id, key, iv, max_retries=3):
+async def safe_send_message(chat_type, message, uid, chat_id, key, iv, max_retries=3):
     for attempt in range(max_retries):
         try:
-            P = await SEndMsG(chat_type, message, target_uid, chat_id, key, iv)
-            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
-            return True
-        except Exception:
+            packet = await SEndMsG(chat_type, message, uid, chat_id, key, iv)
+            if packet:
+                await SEndPacKeT(whisper_writer, online_writer, 'ChaT', packet)
+                return True
+        except Exception as e:
+            print(f"❌ Send fail (attempt {attempt+1}): {e}")
             if attempt < max_retries - 1:
                 await asyncio.sleep(0.5)
     return False
 
 
-# ═══════════════════════════════════════════════════════════════
-#      ★ DOT S1-S11 — ৯টি হ্যান্ডলার (main.py ডিসপ্যাচার) ★
-# ═══════════════════════════════════════════════════════════════
+                                                                 
+         
+                                                                 
 
-async def handle_dot_s1(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S1` — ব্যাটল রয়্যাল গ্রুপ ইনভাইট"""
+HELP_DELAY = 0.1
+WELCOME_DELAY = 1
+WELCOME_COOLDOWN = 1800
+
+WELCOME_TEXT = (
+    "[B][C][00FF00]╔══════════════════╗\n"
+    "║      TOM TCP BOT          ║\n"
+    "║        WELCOME USER          ║\n"
+    "╚══════════════════════╝\n"
+    "\n"
+    "  Hello, Welcome to TOM TCP BOT!\n"
+    "\n"
+    "╭─ ✦ FEATURES ✦─╮\n"
+    "➤  AI System\n"
+    "➤  TOM TxT BOT\n"
+    "➤  Tools System\n"
+    "➤  Download System\n"
+    "➤  Fast Response\n"
+    "╰────────────╯\n"
+    "\n"
+    "  Type /help to see all commands\n"
+    "  Type menu to open menu\n"
+    "\n"
+    "━━━━━━━━━━━━━━\n"
+    " TOM TCP PREMIUM  \n"
+    " Fast • Secure • Smart\n"
+    "━━━━━━━━━━━━━━━━━"
+)
+WELCOMED = {}
+
+
+async def send_welcome(chat_code, key, iv, delay=None):
+    now = time.time()
+    last = WELCOMED.get(chat_code)
+    if last and now - last < WELCOME_COOLDOWN:
+        return
+    WELCOMED[chat_code] = now
+    await asyncio.sleep(WELCOME_DELAY if delay is None else delay)
+    await safe_send_message(0, WELCOME_TEXT, None, chat_code, key, iv)
+
+
+                                                                 
+                       
+                                                                 
+
+async def clan_message_loop():
+    global _clan_msg_key, _clan_msg_iv, _clan_msg_bot_uid, _clan_msg_clan_id
     try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S1_GroupInvitePacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S1 — ব্যাটল রয়্যাল ইনভাইট পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S1 — ব্যাটল রয়্যাল ইনভাইট পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
+        await asyncio.sleep(5)
+        if _clan_msg_clan_id and _clan_msg_clan_id > 0 and _clan_msg_key and _clan_msg_iv:
+            clan_msg = "DEV: @\x53\x48\u0041\u0050\120\u004e\117_04XX"
+            await safe_send_message(1, clan_msg, _clan_msg_bot_uid, _clan_msg_clan_id, _clan_msg_key, _clan_msg_iv)
+            print(f"[CLAN] Startup message sent to clan {_clan_msg_clan_id}")
+
+        while True:
+            await asyncio.sleep(18000)           
+            if _clan_msg_clan_id and _clan_msg_clan_id > 0 and _clan_msg_key and _clan_msg_iv:
+                clan_msg = "DEV: @\x53\u0048\x41\u0050\x50\x4e\x4f_04XX"
+                await safe_send_message(1, clan_msg, _clan_msg_bot_uid, _clan_msg_clan_id, _clan_msg_key, _clan_msg_iv)
+                print(f"[CLAN] 5-hour message sent to clan {_clan_msg_clan_id}")
+    except asyncio.CancelledError:
+        print("[CLAN] Message loop cancelled")
     except Exception as e:
-        print_tag(f"❌ .S1 ত্রুটি: {e}", "red")
-        return False
+        print(f"[CLAN] Message loop error: {e}")
 
 
-async def handle_dot_s2(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S2` — BR র‍্যাংক ইনভাইট"""
-    try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S2_BrRankInvitePacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S2 — BR র‍্যাংক ইনভাইট পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S2 — BR র‍্যাংক ইনভাইট পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
-    except Exception as e:
-        print_tag(f"❌ .S2 ত্রুটি: {e}", "red")
-        return False
+                                                                 
+                  
+                                                                 
+
+async def base_to_hex(number):
+    hex_str = hex(number)[2:]
+    if len(hex_str) % 2 != 0:
+        hex_str = '0' + hex_str
+    return hex_str.upper()
 
 
-async def handle_dot_s3(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S3` — রুম রিক্রুট"""
-    try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S3_RoomRecruitPacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S3 — রুম রিক্রুট পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S3 — রুম রিক্রুট পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
-    except Exception as e:
-        print_tag(f"❌ .S3 ত্রুটি: {e}", "red")
-        return False
-
-
-async def handle_dot_s4(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S4` — ইনভিজিবল রয়্যাল"""
-    try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S4_InvisibleRoyalPacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S4 — ইনভিজিবল রয়্যাল পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S4 — ইনভিজিবল রয়্যাল পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
-    except Exception as e:
-        print_tag(f"❌ .S4 ত্রুটি: {e}", "red")
-        return False
-
-
-async def handle_dot_s5(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S5` — গিল্ড ইনভাইট"""
-    try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S5_GuildInvitePacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S5 — গিল্ড ইনভাইট পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S5 — গিল্ড ইনভাইট পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
-    except Exception as e:
-        print_tag(f"❌ .S5 ত্রুটি: {e}", "red")
-        return False
-
-
-async def handle_dot_s6(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S6` — HUD শেয়ার"""
-    try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S6_HudSharePacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S6 — HUD শেয়ার পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S6 — HUD শেয়ার পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
-    except Exception as e:
-        print_tag(f"❌ .S6 ত্রুটি: {e}", "red")
-        return False
-
-
-async def handle_dot_s7(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S7` — ক্রাফটল্যান্ড ম্যাপ"""
-    try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S7_CraftlandMapPacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S7 — ক্রাফটল্যান্ড ম্যাপ পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S7 — ক্রাফটল্যান্ড ম্যাপ পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
-    except Exception as e:
-        print_tag(f"❌ .S7 ত্রুটি: {e}", "red")
-        return False
-
-
-async def handle_dot_s8(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S8` — ইনভিজিবল বাফ"""
-    try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S8_InvisibleBuffPacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S8 — ইনভিজিবল বাফ পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S8 — ইনভিজিবল বাফ পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
-    except Exception as e:
-        print_tag(f"❌ .S8 ত্রুটি: {e}", "red")
-        return False
-
-
-async def handle_dot_s11(uid, chat_id, key, iv, region, chat_type, bot_uid):
-    """`.S11` — রিলে মার্ট ডিসকাউন্ট শেয়ার"""
-    try:
-        bot_nick = globals().get('bot_nickname', 'MOHASIN TxT')
-        pkt = await S11_DiscountSharePacket(uid, chat_id, chat_type, key, iv, region, bot_uid, bot_nick)
-        if pkt and whisper_writer:
-            whisper_writer.write(pkt); await whisper_writer.drain()
-            print_tag("✅ .S11 — রিলে মার্ট ডিসকাউন্ট পাঠানো হয়েছে", "green")
-            await safe_send_message(chat_type, "[B][C][00FF00]✅ .S11 — রিলে মার্ট ডিসকাউন্ট শেয়ার পাঠানো হয়েছে!", uid, chat_id, key, iv)
-            return True
-        return False
-    except Exception as e:
-        print_tag(f"❌ .S11 ত্রুটি: {e}", "red")
-        return False
-
-
-# ═══════════════════════════════════════════════════════════════
-#              ★ স্কোয়াড / ইনভাইট / অ্যানিমেশন ★
-# ═══════════════════════════════════════════════════════════════
-
-async def Fixed_ChangeSquad(size, uid, K, V, region):
+async def DEVIL(client_id, key, iv):
+    banner_text = f"""   
+.
+.
+.
+[B][C][00FF00]★  S . K A N H A I Y A   B O T ★
+[FF0000]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][FF9900]D O N E   H A C K I N G
+[B][C][E75480]Y O U R   A C C O U N T
+[81DACA]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][FF0000]F U C K   Y O U
+[CCFFCC]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][81DACA]P O W E R E D   B Y   S . K A N H A I Y A
+[FFFF00]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][00FF00]F O L L O W   M E   O N   T I K T O K
+[B][C][FFFFFF]@your_handle
+[00008B]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][81DACA]I F   Y O U   D O N T   F O L L O W   M E
+[B][C][FF0000]I   W I L L   B A N   Y O U R   A C C O U N T
+        """
     fields = {
-        1: 17,
-        2: {1: int(uid), 2: 1, 3: int(size-1), 4: 62, 5: "\u001a", 8: 5, 13: 329}
+        1: 5,
+        2: {1: int(client_id), 2: 1, 3: int(client_id), 4: banner_text}
     }
-    if region.lower() == "ind": packet = '0514'
-    elif region.lower() == "bd": packet = "0519"
-    else: packet = "0515"
-    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
+    packet = await CrEaTe_ProTo(fields)
+    packet_hex = packet.hex()
+    encrypted_packet = await EnC_PacKeT(packet_hex, key, iv)
+    header_length = len(encrypted_packet) // 2
+    header_length_final = await DecodE_HeX(header_length)
+    if len(header_length_final) == 2:
+        final_packet = "0515000000" + header_length_final + encrypted_packet
+    elif len(header_length_final) == 3:
+        final_packet = "051500000" + header_length_final + encrypted_packet
+    elif len(header_length_final) == 4:
+        final_packet = "05150000" + header_length_final + encrypted_packet
+    elif len(header_length_final) == 5:
+        final_packet = "0515000" + header_length_final + encrypted_packet
+    else:
+        final_packet = "0515000000" + header_length_final + encrypted_packet
+    return bytes.fromhex(final_packet)
 
 
-async def Fixed_SendInvite(size, target_uid, K, V, region):
+async def DEVIL1(client_id, key, iv):
+    gay_text = f"""   
+.
+.
+.
+[B][C][00FF00]★  S . K A N H A I Y A   B O T ★
+[FF0000]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][FF9900]D O N E   H A C K I N G
+[B][C][E75480]Y O U R   A C C O U N T
+[81DACA]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][FF0000]F U C K   Y O U
+[CCFFCC]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][81DACA]P O W E R E D   B Y   S . K A N H A I Y A
+[FFFF00]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][00FF00]F O L L O W   M E   O N   T I K T O K
+[B][C][FFFFFF]@your_handle
+[00008B]━━━━━━━━━━━━━━━━━━━━━━━━━━
+[B][C][81DACA]I F   Y O U   D O N T   F O L L O W   M E
+[B][C][FF0000]I   W I L L   B A N   Y O U R   A C C O U N T
+        """
+    fields = {1: int(client_id), 2: 5, 4: 50, 5: {1: int(client_id), 2: gay_text}}
+    packet = await CrEaTe_ProTo(fields)
+    packet_hex = packet.hex()
+    encrypted_packet = await EnC_PacKeT(packet_hex, key, iv)
+    header_length = len(encrypted_packet) // 2
+    header_length_final = await DecodE_HeX(header_length)
+    if len(header_length_final) == 2:
+        final_packet = "0515000000" + header_length_final + encrypted_packet
+    elif len(header_length_final) == 3:
+        final_packet = "051500000" + header_length_final + encrypted_packet
+    elif len(header_length_final) == 4:
+        final_packet = "05150000" + header_length_final + encrypted_packet
+    elif len(header_length_final) == 5:
+        final_packet = "0515000" + header_length_final + encrypted_packet
+    else:
+        final_packet = "0515000000" + header_length_final + encrypted_packet
+    return bytes.fromhex(final_packet)                                                                 
+                                           
+                                          
+                                                                 
+
+
+                                                                 
+                         
+                                                                 
+
+async def request_join_with_badge(target_uid, badge_value, key, iv, region):
     fields = {
-        1: 2,
-        2: {1: int(target_uid), 2: region.upper(), 4: int(size)}
+        1: 33,
+        2: {
+            1: int(target_uid),
+            2: region.upper(),
+            3: 1,
+            4: 1,
+            5: bytes([1, 7, 9, 10, 11, 18, 25, 26, 32]),
+            6: "iG:[C][B][FF0000] TOM TCP",
+            7: 330,
+            8: 1000,
+            10: region.upper(),
+            11: bytes([49, 97, 99, 52, 98, 56, 48, 101, 99, 102, 48, 52, 55, 56, 97, 52, 52, 50, 48, 51, 98, 102, 56, 102, 97, 99, 54, 49, 50, 48, 102, 53]),
+            12: 1,
+            13: int(target_uid),
+            14: {
+                1: 2203434355,
+                2: 8,
+                3: "\u0010\u0015\b\n\u000b\u0013\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"
+            },
+            16: 1,
+            17: 1,
+            18: 312,
+            19: 46,
+            23: bytes([16, 1, 24, 1]),
+            24: int(get_random_avatar()),
+            26: "",
+            28: "",
+            31: {
+                1: 1,
+                2: int(badge_value)
+            },
+            32: int(badge_value),
+            34: {
+                1: int(target_uid),
+                2: 8,
+                3: bytes([15, 6, 21, 8, 10, 11, 19, 12, 17, 4, 14, 20, 7, 2, 1, 5, 16, 3, 13, 18])
+            }
+        },
+        10: "en",
+        13: {
+            2: 1,
+            3: 1
+        }
     }
-    if region.lower() == "ind": packet = '0514'
-    elif region.lower() == "bd": packet = "0519"
-    else: packet = "0515"
-    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
+    packet = (await CrEaTe_ProTo(fields)).hex()
+    if region.lower() == "ind":
+        packet_type = '0514'
+    elif region.lower() == "bd":
+        packet_type = "0519"
+    else:
+        packet_type = "0515"
+    return await GeneRaTePk(packet, packet_type, key, iv)
 
+
+async def handle_badge_command(cmd, inPuTMsG, uid, chat_id, key, iv, region, chat_type):
+    parts = inPuTMsG.strip().split()
+    if len(parts) < 2:
+        error_msg = f"[B][C][FF0000]❌ Usage: /{cmd} (uid)\nExample: /{cmd} 123456789\n"
+        await safe_send_message(chat_type, error_msg, uid, chat_id, key, iv)
+        return
+    target_uid = parts[1]
+    badge_value = BADGE_VALUES.get(cmd, 1048576)
+    if not target_uid.isdigit():
+        error_msg = f"[B][C][FF0000]❌ Please write a valid player ID!\n"
+        await safe_send_message(chat_type, error_msg, uid, chat_id, key, iv)
+        return
+    total_requests = BADGE_REQUESTS
+    packet_delay = PACKET_DELAY_ULTRA_FAST
+    badge_names = {
+        's1': 'Craftland Badge 🏆',
+        's2': 'New V-Badge 🔥',
+        's3': 'Moderator Badge 👮',
+        's4': 'Small V-Badge ⚡',
+        's5': 'Pro Badge 💎'
+    }
+    badge_name = badge_names.get(cmd, 'Unknown Badge')
+    initial_msg = f"[B][C][1E90FF]🌀 {badge_name}\n🎯 Target: {target_uid}\n📦 Requests: {total_requests}\n⚡ Speed: {packet_delay}s\n"
+    await safe_send_message(chat_type, initial_msg, uid, chat_id, key, iv)
+    try:
+        leave_packet = await ExiT(None, key, iv)
+        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', leave_packet)
+        await asyncio.sleep(0.3)
+
+        join_packet = await request_join_with_badge(target_uid, badge_value, key, iv, region)
+        for i in range(total_requests):
+            await SEndPacKeT(whisper_writer, online_writer, 'OnLine', join_packet)
+            await asyncio.sleep(packet_delay)
+
+        success_msg = f"[B][C][00FF00]✅ {badge_name} COMPLETE!\n🎯 Target: {target_uid}\n📦 Sent: {total_requests} requests\n⚡ Speed: {packet_delay}s\n"
+        await safe_send_message(chat_type, success_msg, uid, chat_id, key, iv)
+    except Exception as e:
+        error_msg = f"[B][C][FF0000]❌ Error in /{cmd}: {str(e)}\n"
+        await safe_send_message(chat_type, error_msg, uid, chat_id, key, iv)
+
+
+async def Room_Spam(Uid, Rm, Nm, K, V):
+    badge_sequence = [1048576, 32768, 2048, 64, 262144]
+    badge_index = 0
+    for i in range(3000):
+        try:
+            current_badge_value = badge_sequence[badge_index % 5]
+            fields = {
+                1: 78,
+                2: {
+                    1: int(Rm), 2: "iG:[C][B][FF0000] TOM TCP", 3: {2: 1, 3: 1},
+                    4: 330, 5: 6000, 6: 201,
+                    10: int(get_random_avatar()), 11: int(Uid), 12: 1,
+                    15: {1: 1, 2: current_badge_value}, 16: current_badge_value,
+                    18: {1: 11481904755, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0013\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"},
+                    31: {1: 1, 2: current_badge_value}, 32: current_badge_value,
+                    34: {1: int(Uid), 2: 8, 3: bytes([15, 6, 21, 8, 10, 11, 19, 12, 17, 4, 14, 20, 7, 2, 1, 5, 16, 3, 13, 18])}
+                }
+            }
+            spam_packet = await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '0e15', K, V)
+            await SEndPacKeT(whisper_writer, online_writer, 'OnLine', spam_packet)
+            badge_index += 1
+            await asyncio.sleep(PACKET_DELAY_ULTRA_FAST)
+        except Exception:
+            await asyncio.sleep(0.1)
+    return True
+
+
+                                                                 
+                      
+                                                                 
 
 async def JoinSq_original(code, K, V):
-    skinz = {1: 4, 2: {4: r"\u0001\u0007\t\n\u000b\u0012\u0019 '", 5: str(code), 6: 6, 8: 1,
-        9: {1: "08FFF3BE903F27DF0203110111110000006B0003006800169194106F13CF106E4676251411010404dfe9e8b5ca3ca4f96a3119c00000004f03060301cacfa16d",
-            2: 130, 3: r"tY_S\u0013\b\u0001M\u0002\u0000T\u0000\u0005\u000e\b\t\u0002\u0000\u0003U\u0003\u0001V\u000fR\u000e\tRQ\u0002\u0004\u0005US\u0003XS\u0005\u0001\u0002\u0011\u0001\u0002JuTAEN\u001e\u0002\u001c\u0002\u001f\u0013\b\u0003M\u001cDbz_Q@}p_QOgsC\u001dYVI\u0004UAAj_ga\u0004\u0012\u0000K\u001d\u0007_t\u0019b\bCx\u0002UeGat\u001fTTCBLER`\u0006\u0001\r\f\u0012\u0006\u0005N^^\u0002acH~r\u0004_\u0003RO|\u000bcd_@~`Rnqrgh\n\u0015\nL\\Nh\u0000~G\u000et\u0000eb]VQ\u0006t^F[ZIGxCdZD\u000b\u0011\u0002OA~LP@\u000fcSDyATQApaT^{|wa]\\\u0001E\u000f\u0013\nJfxve}\u0004J\u0003c{YL\u0007^^yDYQf\bhe\u0005_wg\r\u0010\u0007\bEHpX@||\u0002Z\\uTGyA\u0001JP\u0005t~VkTE\u0000J\\\u000b\u0013\nMr\u0018zTzK}qE]vnvwROuheYvwduvQ\r\u001a\u0005M\u0006z\u001dfXfzvHFc~dXUz}O\u001aB\u0005t\u0002i\u001co_\u0004\u0012\u0003\u0007J\u0006b\u0003\u000eqlfvbEstgu~wB\u0001v@`yI\u0002ZPx\f\u0014\u0003NR\u0002yBZvuD_cd\u0004q]lH]\u0007bD}pCe\t\u0004t\n",
-            4: "w^_R", 6: 11, 7: r"\u0014\u0004aqrg\u0015\u0013", 8: "1.132.1", 9: 3, 10: 2,
-            11: "\u0003bbSQ6wxegh9qAdV2KyoVleA17yPmYF+yTnOrl+JMknmppeUBe5ZsiHueP2mZZ4KOs6b2Ail1S9z3qIeU9hGFZ2M6PP39/zjIc/RFVPAkgDagySswMVmYaPhkzU5IqNPow2843fyQUz9xI10NdMhl1WiI4Y6wCXBotiUS9wSgujQ4j0fWXUyklCxBWo8r27hyoGSVrPdTPXFMnJJpPRRFFmWqc3fWvMg+BNfxSRJOZRSrkzG0nNvSIJ4uZB2pqAlHIPEYx7bI6zsgwUVDiLZJKTUTyuCGbOd1DegDUFfazFesTG1LJknT5WhgzCsrBIy+f2l+LeJe5DW7wEwNaHambM7ECXcJcLIhB9kJJsW0tFvXkk3HSdcQ8N1K6wjSKWhpkW0kV8Zrjj0jkhS/7AZ6T9GJRIA827YDtTorBvbx1UkXjYrqYI1nSa2GaMexGnqlurc5DE3v1R+mUBI9GqmjEPgTSYVBxyeCdQMHaMXGtspAhvkiO84ToU87sP45pylDEfFOVoc/rcmdzWeqlYPsv6txKRtIHcb0cO+MoVShoU8ZUVRDF3znbqzVrscPIfplBaa79lwvQqzRubLl9XY="},
-        11: {1: "IDC4", 2: 281, 3: "ME"}, 13: "fr", 16: "7OR\u0019", 20: r"\b\u0015", 27: r"\bH\u0010\u0003"}}
+    skinz = {
+        1: 4,
+        2: {
+            4: "\u0001\u0007\t\n\u000b\u0012\u0019 '",
+            5: str(code),
+            6: 6,
+            8: 1,
+            9: {
+                1: "08FFF3BE903F27DF0203110111110000006B0003006800169194106F13CF106E4676251411010404dfe9e8b5ca3ca4f96a3119c00000004f03060301cacfa16d",
+                2: 130,
+                3: "tY_S\u0013\b\u0001M\u0002\u0000T\u0000\u0005\u000e\b\t\u0002\u0000\u0003U\u0003\u0001V\u000fR\u000e\tRQ\u0002\u0004\u0005US\u0003XS\u0005\u0001\u0002\u0011\u0001\u0002JuTAEN\u001e\u0002\u001c\u0002\u001f\u0013\b\u0003M\u001cDbz_Q@}p_QOgsC\u001dYVI\u0004UAAj_ga\u0004\u0012\u0000K\u001d\u0007_t\u0019b\bCx\u0002UeGat\u001fTTCBLER`\u0006\u0001\r\f\u0012\u0006\u0005N^^\u0002acH~r\u0004_\u0003RO|\u000bcd_@~`Rnqrgh\n\u0015\nL\\Nh\u0000~G\u000et\u0000eb]VQ\u0006t^F[ZIGxCdZD\u000b\u0011\u0002OA~LP@\u000fcSDyATQApaT^{|wa]\\\u0001E\u000f\u0013\nJfxve}\u0004J\u0003c{YL\u0007^^yDYQf\bhe\u0005_wg\r\u0010\u0007\bEHpX@||\u0002Z\\uTGyA\u0001JP\u0005t~VkTE\u0000J\\\u000b\u0013\nMr\u0018zTzK}qE]vnvwROuheYvwduvQ\r\u001a\u0005M\u0006z\u001dfXfzvHFc~dXUz}O\u001aB\u0005t\u0002i\u001co_\u0004\u0012\u0003\u0007J\u0006b\u0003\u000eqlfvbEstgu~wB\u0001v@`yI\u0002ZPx\f\u0014\u0003NR\u0002yBZvuD_cd\u0004q]lH]\u0007bD}pCe\t\u0004t\n",
+                4: "w^_R", 6: 11, 7: "\u0014\u0004aqrg\u0015\u0013", 8: "1.132.1", 9: 3, 10: 2,
+                11: "\u0003bbSQ6wxegh9qAdV2KyoVleA17yPmYF+yTnOrl+JMknmppeUBe5ZsiHueP2mZZ4KOs6b2Ail1S9z3qIeU9hGFZ2M6PP39/zjIc/RFVPAkgDagySswMVmYaPhkzU5IqNPow2843fyQUz9xI10NdMhl1WiI4Y6wCXBotiUS9wSgujQ4j0fWXUyklCxBWo8r27hyoGSVrPdTPXFMnJJpPRRFFmWqc3fWvMg+BNfxSRJOZRSrkzG0nNvSIJ4uZB2pqAlHIPEYx7bI6zsgwUVDiLZJKTUTyuCGbOd1DegDUFfazFesTG1LJknT5WhgzCsrBIy+f2l+LeJe5DW7wEwNaHambM7ECXcJcLIhB9kJJsW0tFvXkk3HSdcQ8N1K6wjSKWhpkW0kV8Zrjj0jkhS/7AZ6T9GJRIA827YDtTorBvbx1UkXjYrqYI1nSa2GaMexGnqlurc5DE3v1R+mUBI9GqmjEPgTSYVBxyeCdQMHaMXGtspAhvkiO84ToU87sP45pylDEfFOVoc/rcmdzWeqlYPsv6txKRtIHcb0cO+MoVShoU8ZUVRDF3znbqzVrscPIfplBaa79lwvQqzRubLl9XY="
+            },
+            11: {1: "IDC4", 2: 281, 3: "ME"},
+            13: "fr", 16: "7OR\u0019", 20: "\b\u0015", 27: "\bH\u0010\u0003"
+        }
+    }
     return await GeneRaTePk((await CrEaTe_ProTo(skinz)).hex(), '0515', K, V)
 
 
-async def MahirAccepted(uid, code, K, V, region):
-    fields = {1: 4, 2: {1: int(uid), 3: int(uid), 4: r"rYUW\u0017\t\u0007NR\u000f\u0005\u0004\\W\u0002\u000fV\u0004TPQ\u0003\u000f\u0005\u0004]\u0005\u000b\u0000\u0002W\u0005\r\nVY\u0004\u0007\u0007\u0007\u0017\u0001\bNQ\fS\u0005\u000e\u0006\f\u0005\rT\u0002\r\u0000TS\u0007U\u0004X\u0006RY\u0005\u0003\u0003SW\u0000\u000eQ\u0000^\u0014\u0003\u0004JXS\u000f\u0000g{gqfePblEZJp{_xU\bmQW\f\u0007\u000f\u0015\u0007H\\U^CHXh@Ax`\u000f~\rPN~Nz\\\u001fr_ckPU\u000b\u0015\u0005\u0003Ekfp\u07fcY\u0001nWV\u0002\u0005azE~N\u0007HTg\u0007w}@\u0002{\t\u0013\u0001NeNP]DUf|]ugINs{\u0001\\rAgB_\u0004fA]\u0004\r\u001a\u0000HpOv\\\u0005|gS\u0019\\A\u07fWW\u0003\u07fTqFGi\u0004Qr\u0019dW\u0004\u0011\rD\u0002yeZ]A\u0016a\u0007Ungeg\u0007E\\P\u001b\u000b\u0004\u0005dd\ff\r\u000f\u0017\t\u000fNRyZd\u0012tZ\fe\u0007AGv\u07fw]{P\u001c\u07f\u000ff\u0005ZJK\u0004\u0005\u0014\u0001Jgq\u001frymsB\u0001\u000fd`\u001bj~[}\u0004SDZ|IxKB\u0000\n\u0011\u0002J^`tjYN\u0007WQdE[PQ\u0002_{VP`S\t\u07f\u001dP\n\u000f\u000f\u0015\u0004\u0004L{V\u0003@yP[rgJ{Hpk\u0001\u000bw\u0001Agt_\u0003HxPc\u000b\u0017\u0005E`y\ngWoy\u0006S{A\u001b``Y\u0002Xzw}dDWOKsg\t\u0013\u000eNf\u000e\\`\u0005AwJc\u0003BM\u0001^\u0000R\u0002Qoh]tbS~`G\r\u001a\u0004HibAQ\u000f^XNt~kDUWaeaNqcLQ]Py[G\u0004",
-            8: 1, 9: {1: "08FBA33CFF105FDD02030A01111100000003000100020000B687046B0D6D2083467625141101030175a63c900e748c3f6a311e04000000ff00040202cacfa16d",
-            2: 197, 3: "735154531406054a035305025a0e50560f5100040250020f5e0401520653000303505e0d520302501500064d705548424e1f051a001e12040a441d45677f5a56477574565e4f6274451d585849005a4f456d5b64670c1400496d017842740c670100040069536e72586c02016e657e566b524403081500044d0d515b637f757c19095c7c510b00417f565e5e066f5b584d6e02400a160e4d58496d0177400e750763605c575d0f7d5f475e5f4c407f4b60534b0b140549751e66407a4860726e44400e6103557e515c646f43577106077b60051b0f4b4e474e58457e4f615c01406000051e0361516e7b67614e040102540c1609004a0e40730f62517f446a135179507e706850547f7e7a67795553597c0a1206445b456640046265725c4d505d446d50737b7c42035970486370645e0b12034d506f5c7a1c554f574b0e765a0f0a7364505203477569456c6c420f0a1604014b647149136c186f795f5d78755e550e7842545e53747b08705f7f5d0a14004a08666b5a5b5f00045c7f5e584d72584262705f56055c61475564790515004b76514178587f52797a0f077a070953507d7f4d784f794f667b4256081b0e4a75627d4778417a06717574747c4c78557b4b7a0a697f0e714573600a",
-            4: "{Y_R", 6: 13, 7: "1c6f017306741513", 8: "2.126.22", 9: 2, 10: 1,
-            11: "036262535136784d584e38742b416456324b796f566c6537392f763672324d4773683377706379634f6b6b6f7447397934523930517432797246474c464c624c777a7747344d4d5257623146756d2b6556777a62597736743973492b787059612f55596e43465a59485235713348705830306c485a6f3632565145574e7145705866414c38734a754646575247386d376f5444566a4c484c576e714c52576f4e653236437a734c346a4144482b71694b55384d71476c5936546669544863716c487a345568463869396a365233366d49774b71746c36714f797568513854367945714b69742f45466d2b3636634b787649304f384d6c41385166454b6253467366477a2f30684e6a543873305369722f3962635a2f4679376c752f61632f366765704d415734566b442b36374f535756473665377a775a79312b797a42334b70632b7571782b577437414d39727761644439575765704570567849526d66654f5847627775787a68574b5664344c49586f415a364b387063647450627953575857455135706a542b653669365a2f6177444a3179356f774d5a534f64487262392b7877424a4d444f7848565a7a483372547a30314a316738517675466b656c3042433746473630683456427041494457487956684e794b4f5145507139467a4a6272686b316146306768766578512f6a2f484767426a5268675134645243372b477a5a687a2b77505967376454746f2b494d56363774642b54435653314234346b4148395a6d415872763758615941626477644e664f533170484875736b7336346f72463452534d3772656345417661484e61484854314c5545686e786a5a616d4d4f303d"},
-            10: str(code), 11: {1: "IDC3", 2: 84, 3: "BD"}, 13: "en", 16: "374f5219",
-            20: {1: 21}, 23: "a_1477547277882450725", 27: {1: 2, 2: 8}}}
+async def SKANHAIYAAccepted(uid, code, K, V, region):
+    fields = {
+        1: 4,
+        2: {
+            1: int(uid), 3: int(uid),
+            4: "rYUW\u0017\t\u0007NR\u000f\u0005\u0004\\W\u0002\u000fV\u0004TPQ\u0003\u000f\u0005\u0004]\u0005\u000b\u0000\u0002W\u0005\r\nVY\u0004\u0007\u0007\u0007\u0017\u0001\bNQ\fS\u0005\u000e\u0006\f\u0005\rT\u0002\r\u0000TS\u0007U\u0004X\u0006RY\u0005\u0003\u0003SW\u0000\u000eQ\u0000^\u0014\u0003\u0004JXS\u000f\u0000g{gqfePblEZJp{_xU\bmQW\f\u0007\u000f\u0015\u0007H\\U^CHXh@Ax`\u000f~\rPN~Nz\\\u001fr_ckPU\u000b\u0015\u0005\u0003Ekfp\u007fcY\u0001nWV\u0002\u0005azE~N\u0007HTg\u0007w}@\u0002{\t\u0013\u0001NeNP]DUf|]ugINs{\u0001\\rAgB_\u0004fA]\u0004\r\u001a\u0000HpOv\\\u0005|gS\u0019\\A\u007fWW\u0003\u007fTqFGi\u0004Qr\u0019dW\u0004\u0011\rD\u0002yeZ]A\u0016a\u0007Ungeg\u0007E\\P\u001b\u000b\u0004\u0005dd\ff\r\u000f\u0017\t\u000fNRyZd\u0012tZ\fe\u0007AGv\u007fw]{P\u001c\u007f\u000ff\u0005ZJK\u0004\u0005\u0014\u0001Jgq\u001frymsB\u0001\u000fd`\u001bj~[}\u0004SDZ|IxKB\u0000\n\u0011\u0002J^`tjYN\u0007WQdE[PQ\u0002_{VP`S\t\u007f\u001dP\n\u000f\u000f\u0015\u0004\u0004L{V\u0003@yP[rgJ{Hpk\u0001\u000bw\u0001Agt_\u0003HxPc\u000b\u0017\u0005E`y\ngWoy\u0006S{A\u001b``Y\u0002Xzw}dDWOKsg\t\u0013\u000eNf\u000e\\`\u0005AwJc\u0003BM\u0001^\u0000R\u0002Qoh]tbS~`G\r\u001a\u0004HibAQ\u000f^XNt~kDUWaeaNqcLQ]Py[G\u0004",
+            8: 1,
+            9: {
+                1: "08FBA33CFF105FDD02030A01111100000003000100020000B687046B0D6D2083467625141101030175a63c900e748c3f6a311e04000000ff00040202cacfa16d",
+                2: 197,
+                3: "735154531406054a035305025a0e50560f5100040250020f5e0401520653000303505e0d520302501500064d705548424e1f051a001e12040a441d45677f5a56477574565e4f6274451d585849005a4f456d5b64670c1400496d017842740c670100040069536e72586c02016e657e566b524403081500044d0d515b637f757c19095c7c510b00417f565e5e066f5b584d6e02400a160e4d58496d0177400e750763605c575d0f7d5f475e5f4c407f4b60534b0b140549751e66407a4860726e44400e6103557e515c646f43577106077b60051b0f4b4e474e58457e4f615c01406000051e0361516e7b67614e040102540c1609004a0e40730f62517f446a135179507e706850547f7e7a67795553597c0a1206445b456640046265725c4d505d446d50737b7c42035970486370645e0b12034d506f5c7a1c554f574b0e765a0f0a7364505203477569456c6c420f0a1604014b647149136c186f795f5d78755e550e7842545e53747b08705f7f5d0a14004a08666b5a5b5f00045c7f5e584d72584262705f56055c61475564790515004b76514178587f52797a0f077a070953507d7f4d784f794f667b4256081b0e4a75627d4778417a06717574747c4c78557b4b7a0a697f0e714573600a",
+                4: "{Y_R", 6: 13, 7: "1c6f017306741513", 8: "2.126.22", 9: 2, 10: 1,
+                11: "036262535136784d584e38742b416456324b796f566c6537392f763672324d4773683377706379634f6b6b6f7447397934523930517432797246474c464c624c777a7747344d4d5257623146756d2b6556777a62597736743973492b787059612f55596e43465a59485235713348705830306c485a6f3632565145574e7145705866414c38734a754646575247386d376f5444566a4c484c576e714c52576f4e653236437a734c346a4144482b71694b55384d71476c5936546669544863716c487a345568463869396a365233366d49774b71746c36714f797568513854367945714b69742f45466d2b3636634b787649304f384d6c41385166454b6253467366477a2f30684e6a543873305369722f3962635a2f4679376c752f61632f366765704d415734566b442b36374f535756473665377a775a79312b797a42334b70632b7571782b577437414d39727761644439575765704570567849526d66654f5847627775787a68574b5664344c49586f415a364b387063647450627953575857455135706a542b653669365a2f6177444a3179356f774d5a534f64487262392b7877424a4d444f7848565a7a483372547a30314a316738517675466b656c3042433746473630683456427041494457487956684e794b4f5145507139467a4a6272686b316146306768766578512f6a2f484767426a5268675134645243372b477a5a687a2b77505967376454746f2b494d56363774642b54435653314234346b4148395a6d415872763758615941626477644e664f533170484875736b7336346f72463452534d3772656345417661484e61484854314c5545686e786a5a616d4d4f303d"
+            },
+            10: str(code),
+            11: {1: "IDC3", 2: 84, 3: "BD"},
+            13: "en", 16: "374f5219",
+            20: {1: 21}, 23: "a_1477547277882450725", 27: {1: 2, 2: 8}
+        }
+    }
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '0515', K, V)
+
+
+async def accept_squad_invite(group_id, joiner_account_id, invitee_type, key, iv, region="bd"):
+    fields = {1: 38, 2: {1: int(group_id), 2: int(joiner_account_id), 8: int(invitee_type)}}
+    pkt_type = '0514' if region.lower() == "ind" else ('0519' if region.lower() == "bd" else '0515')
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), pkt_type, key, iv)
 
 
 async def leave_channel_req(channel_id, channel_type, key, iv):
     fields = {1: 4, 2: {1: int(channel_id), 2: int(channel_type), 3: "en"}}
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '1215', key, iv)
+
+
+async def SPamSqForSpm(Uid, K, V):
+    same_value = random.choice([4096, 16384, 8192])
+    fields = {
+        1: 33,
+        2: {
+            1: int(Uid), 2: "ME", 3: 1, 4: 1,
+            5: bytes([1, 7, 9, 10, 11, 18, 25, 26, 32]),
+            6: "iG:[C][B][FF0000] @your_handle",
+            7: 330, 8: 1000, 10: "ME",
+            11: bytes([49,97,99,52,98,56,48,101,99,102,48,52,55,56,97,52,52,50,48,51,98,102,56,102,97,99,54,49,50,48,102,53]),
+            12: 1, 13: int(Uid),
+            14: {1: 2203434355, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0013\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"},
+            16: 1, 17: 1, 18: 312, 19: 46,
+            23: bytes([16, 1, 24, 1]),
+            24: await xBunnEr(), 26: "", 28: "",
+            31: {1: 1, 2: same_value}, 32: same_value,
+            34: {1: int(Uid), 2: 8, 3: bytes([15,6,21,8,10,11,19,12,17,4,14,20,7,2,1,5,16,3,13,18])}
+        },
+        10: "en", 13: {2: 1, 3: 1}
+    }
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '0515', K, V)
+
+
+async def GhostPakcet(player_id, nm, secret_code, key, iv):
+    fields = {
+        1: 61,
+        2: {
+            1: int(player_id),
+            2: {
+                1: int(player_id), 2: 1159,
+                3: f"[b][c]{get_random_color()}{nm}", 5: 12, 6: 999, 7: 1,
+                8: {2: 1, 3: 1}, 9: 3
+            },
+            3: secret_code
+        }
+    }
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '0515', key, iv)
+
+
+async def xSKINZxLag(K, I):
+    return await GeneRaTePk((await CrEaTe_ProTo({1: 15, 2: {1: 804266360, 2: 1}})).hex(), '0515', K, I)
+
+
+async def xBaNchaTxSkInZ(uidd, K, V):
+    return await GeneRaTePk((await CrEaTe_ProTo({1: 3, 2: {1: int(uidd), 3: "fr", 4: "1750728024661459697_3qind8eeqs"}})).hex(), '1215', K, V)
+
+
+async def create_lw5_packet1(key, iv):
+    fields = {
+        1: 1,
+        2: {
+            2: "0b", 3: 43, 4: 1, 5: "en",
+            8: {1: "IDC3", 2: 109, 3: "BD"},
+            9: 1, 10: "01090a0b12192027", 11: 1, 13: 1,
+            14: {
+                1: "08FBA33CFF11B915020FEB099999000002BF000C02B3024798E574700E9B7471467625142200004375a63c900e748c3f6a311e04000000ff42002b09cacfa16d",
+                2: 1023,
+                3: "715c5f561b06054a03530500570555590f5100040250000255010e520653000303525306570c02501500064d72584347411f051a001e1206074f184a677f5a564775765b554a6d74451d58584902574440625b64670c14004b600a7d4d740c670100040264586b7d586c02016e657c5b60574b03081500044d60795258726206047f04600f405b18710347746242085f055442530a160e4d58496f0c7c4501750763605c575f02765a485e5f4c407f4b625e400e1b054973535b40655e5151566e6507797e6b47727a1c6e455762637d650708100a447e704c1e530200437a604b66065d595f58444c5a06095a6c44677a0c14040b4f705b7d75624374067840416d60067353017f5972506356014354680a12044950406940046265725c4f5d56416250737b7c42035b7d43667f645e0b12034d5262577f13554f574b0e76580201766b50520347756947616747000a1604014b6473441869176f795f5d78755c58057d4d545e53747b08725274580514004a08666b585654050b5c7f5e584d725a4f69755056055c61475566740e100f4b76514178587d5f727f00077a070953507f72467d40794f667b42560a16054f7a627d4778417a047c7e717b7c4c78557b4b7807627a01714573600a",
+                4: "{Y_R", 6: 13, 7: "136601706b6f54001513", 8: "2.126.20", 9: 2, 10: 1,
+                11: "0362625351367a6e2f56386835416456324b796f566c576a3265735033734558335070623443526c656c47355732327673496e477a425a49677375684a664336766942532f4277526d3632374a624a724c562b586b664c516c6749424634615664544e34473869494c456e4c7643347754354670754e66444b7746367765466d675a2b2b36704d57694549677343415756457144554a454d737271515a306b544266635a45334959485661774d5332622b4f6b5a477a755171576e3645624c6a3932646c31307754614d55714e355556796742506f454572376651673249754332545a773333796c71493838627562512f6e425072353577785436617955544d63624d2b756d4542345a736c5165504d58725365737864622f30577967786849384a352f73484f685730494a49643450534b6d6a41734b315251495257634c35646355554b457a6d33334475735877384a5267483364412b66414b336433726a4241317954327451326c2f73584c6d4b4b6456707062624b4f3272694c384947382b634a3863506533314241456d517876744f495631323658394c4b35414c6a38533631526d6159617077676e4579724a5a7a624d4c596c3542554b6d7934473546334c6152454c4e6d726a684f557065462f39686f64356c526378623250777244566d455665715355764a456548644e375279344c707035563466392f6f6d3837426b5a6c6159364c5439396b5579554266434c5538647a4a2b43655a35784a44585064654a51686e46496945506e7a506d32334b637a2b512b384a51307a522b5a5a41762b694873454748516a536e61467862356a517a526c374f5a793241385731437263513d"
+            },
+            19: 329, 21: "374f5219", 24: {1: 21}, 27: "a_1477547277882450725"
+        }
+    }
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '0515', key, iv)
+
+
+async def create_lw5_packet2(key, iv):
+    return await GeneRaTePk(
+        (await CrEaTe_ProTo({1: 17, 2: {1: 17165783357, 2: 1, 3: 4, 4: 6100, 5: b'\x1a', 8: 5, 13: 329}})).hex(),
+        '0515', key, iv
+    )
+
+
+async def send_sticker_packet(target_uid, chat_id, key, iv, nickname="TOM TCP"):
+    try:
+        sticker_value = get_random_sticker()
+        fields = {
+            1: 1,
+            2: {
+                1: int(target_uid), 2: int(chat_id),
+                5: int(time.time()),
+                8: f'{{"StickerStr" : "{sticker_value}", "type":"Sticker"}}',
+                9: {
+                    1: f"[C][B][FF0000]{nickname}", 2: get_random_avatar(), 4: 330, 5: 827001007,
+                    8: "TOM TCP TEAM", 10: 1, 11: 66, 12: 66, 13: {1: 2},
+                    14: {1: 1158053040, 2: 8, 3: b"\x10\x15\x08\x0a\x0b\x15\x0c\x0f\x11\x04\x07\x02\x03\x0d\x0e\x12\x01\x05\x06"}
+                },
+                10: "en", 13: {2: 2, 3: 1}, 14: {}
+            }
+        }
+        packet_hex = (await CrEaTe_ProTo(fields)).hex()
+        encrypted = await encrypt_packet(packet_hex, key, iv)
+        pl = len(encrypted) // 2
+        hl = f"{pl:04x}"
+        prefix = "121500" + ("0" * (6 - len(hl)))
+        return bytes.fromhex(prefix + hl + encrypted)
+    except Exception as e:
+        print(f"❌ Sticker error: {e}")
+        return None
 
 
 async def animation_packet(animation_id, key, iv):
@@ -939,114 +874,284 @@ async def Look_Changer(bundle_id, key, iv, look_type=1, region="bd"):
     packet_hex = (await CrEaTe_ProTo(fields)).hex()
     encrypted = await encrypt_packet(packet_hex, key, iv)
     hl = await DecodE_HeX(len(encrypted) // 2)
-    if region.lower() == "ind": pt = "0514"
-    elif region.lower() == "bd": pt = "0519"
-    else: pt = "0515"
-    if len(hl) == 2: h = f"{pt}000000"
-    elif len(hl) == 3: h = f"{pt}00000"
-    elif len(hl) == 4: h = f"{pt}0000"
-    elif len(hl) == 5: h = f"{pt}000"
-    else: h = f"{pt}000000"
+    if region.lower() == "ind":
+        pt = "0514"
+    elif region.lower() == "bd":
+        pt = "0519"
+    else:
+        pt = "0515"
+    if len(hl) == 2:
+        h = f"{pt}000000"
+    elif len(hl) == 3:
+        h = f"{pt}00000"
+    elif len(hl) == 4:
+        h = f"{pt}0000"
+    elif len(hl) == 5:
+        h = f"{pt}000"
+    else:
+        h = f"{pt}000000"
     return bytes.fromhex(h + hl + encrypted)
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ ব্যাজ প্যাকেট ও হ্যান্ডলার ★
-# ═══════════════════════════════════════════════════════════════
-async def request_join_with_badge(target_uid, badge_value, key, iv, region="IND"):
+async def banecipher(target_uid, key, iv):
+    banner_text = ".\n.\n.\n[b][FF0000]TOM TCP[FFFFFF] ⚡\n.\n.\n."
+    fields = {1: 5, 2: {1: int(target_uid), 2: 1, 3: int(target_uid), 4: banner_text}}
+    packet_hex = (await CrEaTe_ProTo(fields)).hex()
+    encrypted = await encrypt_packet(packet_hex, key, iv)
+    hl = await DecodE_HeX(len(encrypted) // 2)
+    if len(hl) == 2:
+        f = "0515000000"
+    elif len(hl) == 3:
+        f = "051500000"
+    elif len(hl) == 4:
+        f = "05150000"
+    elif len(hl) == 5:
+        f = "0515000"
+    else:
+        f = "0515000000"
+    return bytes.fromhex(f + hl + encrypted)
+
+
+async def banecipher1(target_uid, key, iv):
+    gay_text = ".\n.\n.\n[b][FF0000]TOM TCP ⚡[FFFFFF]\n.\n.\n."
+    fields = {1: int(target_uid), 2: 5, 4: 50, 5: {1: int(target_uid), 2: gay_text}}
+    packet_hex = (await CrEaTe_ProTo(fields)).hex()
+    encrypted = await encrypt_packet(packet_hex, key, iv)
+    hl = await DecodE_HeX(len(encrypted) // 2)
+    if len(hl) == 2:
+        f = "0515000000"
+    elif len(hl) == 3:
+        f = "051500000"
+    elif len(hl) == 4:
+        f = "05150000"
+    elif len(hl) == 5:
+        f = "0515000"
+    else:
+        f = "0515000000"
+    return bytes.fromhex(f + hl + encrypted)
+
+
+async def convert_kyro_to_your_system(target_uid, chat_id, key, iv, nickname="TOMTCP", title_id=None):
     try:
-        avatar_id = int(await xBunnEr())
+        if title_id is None:
+            available_titles = [905090075, 904990072, 904990069, 905190079, 904090014, 904090015,
+                                904090024, 904090025, 904090026, 904090027, 904990070, 904990071]
+            title_id = random.choice(available_titles)
         fields = {
-            1: 33,
+            1: 1,
             2: {
-                1: int(target_uid), 2: region.upper(), 3: 1, 4: 1,
-                5: bytes([1, 7, 9, 10, 11, 18, 25, 26, 32]),
-                6: "MOHASIN TxT", 7: 330, 8: 1000, 10: region.upper(),
-                11: bytes([49,97,99,52,98,56,48,101,99,102,48,52,55,56,
-                          97,52,52,50,48,51,98,102,56,102,97,99,54,49,
-                          50,48,102,53]),
-                12: 1, 13: int(target_uid),
-                14: {
-                    1: 2203434355, 2: 8,
-                    3: b"\x10\x15\x08\x0A\x0B\x13\x0C\x0F\x11\x04\x07\x02\x03\x0D\x0E\x12\x01\x05\x06"
+                1: int(target_uid), 2: int(chat_id),
+                5: int(time.time()),
+                8: f'{{"TitleID":{title_id},"type":"Title"}}',
+                9: {
+                    1: f"[C][B][FF0000]{nickname}", 2: get_random_avatar(), 4: 330, 5: 827001007,
+                    8: "TOM TCP TEAM", 10: 1, 11: 1, 13: {1: 2},
+                    14: {1: 1158053040, 2: 8, 3: b"\x10\x15\x08\x0a\x0b\x15\x0c\x0f\x11\x04\x07\x02\x03\x0d\x0e\x12\x01\x05\x06"}
                 },
-                16: 1, 17: 1, 18: 312, 19: 46,
-                23: bytes([16, 1, 24, 1]), 24: avatar_id, 26: {},
-                27: {1: 11, 2: int(bot_uid) if bot_uid else 12999994075, 3: 9999},
-                28: {}, 31: {1: 1, 2: int(badge_value)}, 32: int(badge_value),
-                34: {
-                    1: int(target_uid), 2: 8,
-                    3: b"\x0F\x06\x15\x08\x0A\x0B\x13\x0C\x11\x04\x0E\x14\x07\x02\x01\x05\x10\x03\x0D\x12"
-                }
-            },
-            10: "en",
-            13: {2: 1, 3: 1}
+                10: "en", 13: {2: 2, 3: 1}, 14: {}
+            }
         }
-        proto_hex = (await CrEaTe_ProTo(fields)).hex()
-        if region.lower() == "ind": pt = "0514"
-        elif region.lower() == "bd": pt = "0519"
-        else: pt = "0515"
-        return await GeneRaTePk(proto_hex, pt, key, iv)
+        packet_hex = (await CrEaTe_ProTo(fields)).hex()
+        encrypted = await encrypt_packet(packet_hex, key, iv)
+        pl = len(encrypted) // 2
+        hl = f"{pl:04x}"
+        prefix = "121500" + ("0" * (6 - len(hl)))
+        return bytes.fromhex(prefix + hl + encrypted)
     except Exception as e:
-        print_tag(f"ব্যাজ প্যাকেট ত্রুটি: {e}", "red")
-        return None
+        print(f"❌ Title error: {e}")
+        return None                                                                 
+                                              
+                                          
+                                                                 
 
 
-async def handle_badge_command(cmd, inPuTMsG, uid, chat_id, key, iv, region, chat_type):
-    parts = inPuTMsG.strip().split()
-    badge_name = {
-        "s1": "ক্রাফটল্যান্ড", "s2": "নিউ V", "s3": "মডারেটর",
-        "s4": "ছোট V", "s5": "প্রো ব্যাজ",
-    }.get(cmd, "ব্যাজ")
-
-    if len(parts) < 2:
-        msg = (
-            f"[B][C][FFD700]✦ MOHASIN TxT ✦\n"
-            f"[B][C][FFFFFF]{badge_name}\n"
-            f"[B][C][00FFFF]/{cmd} <uid>"
-        )
-        await safe_send_message(chat_type, msg, uid, chat_id, key, iv)
-        return
-
-    target_uid = parts[1].strip()
-    if not target_uid.isdigit():
-        msg = f"[B][C][FF0000]✦ MOHASIN TxT ✦\n[B][C][FFFFFF]❌ শুধু সংখ্যা দাও"
-        await safe_send_message(chat_type, msg, uid, chat_id, key, iv)
-        return
-
-    badge_value = BADGE_VALUES.get(cmd, 1048576)
-
-    proc = (
-        f"[B][C][00FFFF]✦ MOHASIN TxT ✦\n"
-        f"[B][C][FFFFFF]⏳ {badge_name}\n"
-        f"[B][C][FFFFFF]🎯 {target_uid}"
-    )
-    await safe_send_message(chat_type, proc, uid, chat_id, key, iv)
-
-    try:
-        pkt = await request_join_with_badge(target_uid, badge_value, key, iv, region)
-        if pkt:
-            for i in range(5):
-                await SEndPacKeT(whisper_writer, online_writer, 'OnLine', pkt)
-                await asyncio.sleep(0.2)
-            ok = (
-                f"[B][C][00FF00]✦ MOHASIN TxT ✦\n"
-                f"[B][C][FFFFFF]✅ {badge_name}\n"
-                f"[B][C][FFFFFF]🎯 {target_uid}\n"
-                f"[B][C][FFFFFF]📤 ৫ বার"
-            )
-            await safe_send_message(chat_type, ok, uid, chat_id, key, iv)
-        else:
-            fail = f"[B][C][FF0000]✦ MOHASIN TxT ✦\n[B][C][FFFFFF]❌ প্যাকেট ব্যর্থ"
-            await safe_send_message(chat_type, fail, uid, chat_id, key, iv)
-    except Exception as e:
-        err = f"[B][C][FF0000]✦ MOHASIN TxT ✦\n[B][C][FFFFFF]❌ {str(e)[:20]}"
-        await safe_send_message(chat_type, err, uid, chat_id, key, iv)
+async def spm_loop(uid, key, iv, interval=0.5):
+    while True:
+        try:
+            if online_writer is not None:
+                packet = await SPamSqForSpm(uid, key, iv)
+                await SEndPacKeT(whisper_writer, online_writer, 'OnLine', packet)
+            else:
+                await asyncio.sleep(1)
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            print(f"spm_loop error for {uid}: {e}")
+        await asyncio.sleep(interval)
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ API কল ★
-# ═══════════════════════════════════════════════════════════════
+async def ban_loop(key, iv, interval=0.5):
+    global ban_running, ban_targets
+    ban_running = True
+    while ban_running:
+        if online_writer is not None and ban_targets:
+            for uid in list(ban_targets):
+                try:
+                    ban_pkt = await xBaNchaTxSkInZ(uid, key, iv)
+                    await SEndPacKeT(whisper_writer, online_writer, 'OnLine', ban_pkt)
+                except Exception as e:
+                    print(f"Ban error: {e}")
+        await asyncio.sleep(interval)
+
+
+async def evo_gun_cycle(uids, evo_ids_list, key, iv, region):
+    global evo_cycle_running
+    cc = 0
+    while evo_cycle_running:
+        cc += 1
+        for emote_id in evo_ids_list:
+            if not evo_cycle_running:
+                break
+            for uid_str in uids:
+                try:
+                    H = await Emote_k(int(uid_str), int(emote_id), key, iv, region)
+                    await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
+                except Exception as e:
+                    print(f"Emote error: {e}")
+            if evo_cycle_running:
+                for i in range(5):
+                    if not evo_cycle_running:
+                        break
+                    await asyncio.sleep(1)
+        if evo_cycle_running:
+            await asyncio.sleep(2)
+
+
+async def fast_emote_spam(uids, emote_id, key, iv, region):
+    global fast_spam_running
+    count = 0
+    while fast_spam_running and count < 25:
+        for uid in uids:
+            try:
+                H = await Emote_k(int(uid), int(emote_id), key, iv, region)
+                await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
+            except Exception:
+                pass
+        count += 1
+        await asyncio.sleep(0.1)
+
+
+async def custom_emote_spam(uid, emote_id, times, key, iv, region):
+    global custom_spam_running
+    count = 0
+    while custom_spam_running and count < times:
+        try:
+            H = await Emote_k(int(uid), int(emote_id), key, iv, region)
+            await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
+            count += 1
+            await asyncio.sleep(0.1)
+        except Exception:
+            break
+
+
+async def reject_spam_loop(target_uid, key, iv):
+    global reject_spam_running
+    count = 0
+    while reject_spam_running and count < 150:
+        try:
+            p1 = await banecipher1(target_uid, key, iv)
+            p2 = await banecipher(target_uid, key, iv)
+            await SEndPacKeT(whisper_writer, online_writer, 'OnLine', p1)
+            await asyncio.sleep(0.1)
+            await SEndPacKeT(whisper_writer, online_writer, 'OnLine', p2)
+            count += 1
+            await asyncio.sleep(0.2)
+        except Exception as e:
+            print(f"Reject error: {e}")
+            break
+    return count
+
+
+async def msg_spam_loop(message_text, times, chat_id, key, iv, region):
+    global msg_spam_running
+    count = 0
+    while msg_spam_running and count < times:
+        try:
+            colorful = await get_colorful_message(message_text, count + 1)
+            msg_packet = await xSEndMsgsQQ(colorful, int(chat_id), key, iv)
+            if msg_packet and whisper_writer:
+                await SEndPacKeT(whisper_writer, online_writer, 'ChaT', msg_packet)
+                count += 1
+                await asyncio.sleep(0.1)
+        except Exception as e:
+            print(f"Msg error: {e}")
+            break
+    return count
+
+
+async def xSEndMsgsQQ(Msg, id, K, V):
+    fields = {
+        1: id, 2: id, 4: Msg, 5: 1756580149, 7: 2, 8: 904990072,
+        9: {
+            1: "TOM TCP - C4", 2: get_random_avatar(), 4: 330, 5: 1001000001,
+            8: "TOM TCP - C4", 10: 1, 11: 1, 13: {1: 2},
+            14: {1: 1158053040, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0015\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"}
+        },
+        10: "en", 13: {2: 2, 3: 1}
+    }
+    Pk = (await CrEaTe_ProTo(fields)).hex()
+    Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp='Uid') + Pk
+    return await GeneRaTePk(Pk, '1201', K, V)
+
+
+async def send_wave_messages(message_text, repeats, chat_id, key, iv, region):
+    global msg_spam_running
+    count = 0
+    total_cycles = 0
+    while msg_spam_running and total_cycles < repeats:
+        try:
+            for i in range(1, len(message_text) + 1):
+                if not msg_spam_running:
+                    break
+                partial = message_text[:i]
+                colorful = await get_colorful_message(partial, i)
+                msg_packet = await xSEndMsgsQ(colorful, int(chat_id), key, iv)
+                if msg_packet and whisper_writer:
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', msg_packet)
+                    count += 1
+                    await asyncio.sleep(0.1)
+            for i in range(len(message_text) - 1, 0, -1):
+                if not msg_spam_running:
+                    break
+                partial = message_text[:i]
+                colorful = await get_colorful_message(partial, i)
+                msg_packet = await xSEndMsgsQQ(colorful, int(chat_id), key, iv)
+                if msg_packet and whisper_writer:
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', msg_packet)
+                    count += 1
+                    await asyncio.sleep(0.1)
+            total_cycles += 1
+        except Exception as e:
+            print(f"Wave error: {e}")
+            break
+    return count, total_cycles
+
+
+async def freeze_emote_spam(uid, key, iv, region, chat_type, chat_id, sender_uid):
+    global freeze_running
+    FREEZE_EMOTES = [909052010, 909052010, 909052010]
+    cycles = 0
+    while freeze_running and cycles < 10:
+        for emote_id in FREEZE_EMOTES:
+            if not freeze_running:
+                break
+            try:
+                emote_packet = await Emote_k(int(uid), emote_id, key, iv, region)
+                await SEndPacKeT(whisper_writer, online_writer, 'OnLine', emote_packet)
+                await asyncio.sleep(0.1)
+            except Exception:
+                pass
+        cycles += 1
+        await asyncio.sleep(1)
+    return cycles                                                                 
+                                                      
+                                          
+                                                                 
+
+
+                                                                 
+           
+                                                                 
 
 async def send_friend_request(target_uid, token, region):
     try:
@@ -1057,50 +1162,57 @@ async def send_friend_request(target_uid, token, region):
         cipher = AES.new(kb, AES.MODE_CBC, ib)
         ep = cipher.encrypt(pad(bytes.fromhex(payload), AES.block_size)).hex()
         url = "https://clientbp.ggpolarbear.com/RequestAddingFriend"
-        headers = {"Authorization": f"Bearer {token}", "X-Unity-Version": "2018.4.11f1",
+        headers = {
+            "Authorization": f"Bearer {token}", "X-Unity-Version": "2018.4.11f1",
             "X-GA": "v1 1", "ReleaseVersion": "OB55",
             "Content-Type": "application/x-www-form-urlencoded",
-            "User-Agent": "Dalvik/2.1.0 (Linux; Android 9)"}
+            "User-Agent": "Dalvik/2.1.0 (Linux; Android 9)"
+        }
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers, data=bytes.fromhex(ep), ssl=False) as r:
-                return (True, "✅ ফ্রেন্ড রিকোয়েস্ট পাঠানো হয়েছে") if r.status == 200 else (False, f"❌ স্টেটাস: {r.status}")
+                return (True, "✅ Friend request sent") if r.status == 200 else (False, f"❌  : {r.status}")
     except Exception as e:
-        return False, f"❌ ত্রুটি: {str(e)}"
+        return False, f"❌ Error: {str(e)}"
 
 
 async def remove_friend(target_uid, token, region):
     try:
         import RemoveFriend_Req_pb2
         msg = RemoveFriend_Req_pb2.RemoveFriend()
-        msg.AuthorUid = int(admin_uid); msg.TargetUid = int(target_uid)
+        msg.AuthorUid = int(admin_uid)
+        msg.TargetUid = int(target_uid)
         kb = bytes([89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56])
         ib = bytes([54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37])
         cipher = AES.new(kb, AES.MODE_CBC, ib)
         eb = cipher.encrypt(pad(msg.SerializeToString(), AES.block_size))
         url = "https://clientbp.ggpolarbear.com/RemoveFriend"
-        headers = {'Authorization': f"Bearer {token}", 'User-Agent': "Dalvik/2.1.0 (Linux; Android 9)",
+        headers = {
+            'Authorization': f"Bearer {token}", 'User-Agent': "Dalvik/2.1.0 (Linux; Android 9)",
             'Content-Type': "application/x-www-form-urlencoded", 'X-Unity-Version': "2018.4.11f1",
-            'X-GA': "v1 1", 'ReleaseVersion': "OB55"}
+            'X-GA': "v1 1", 'ReleaseVersion': "OB55"
+        }
         async with aiohttp.ClientSession() as session:
             async with session.post(url, data=eb, headers=headers, ssl=False) as r:
-                return (True, "✅ ফ্রেন্ড রিমুভ করা হয়েছে") if r.status == 200 else (False, f"❌ স্টেটাস: {r.status}")
+                return (True, "✅ Friend removed") if r.status == 200 else (False, f"❌  : {r.status}")
     except Exception as e:
-        return False, f"❌ ত্রুটি: {str(e)}"
+        return False, f"❌ Error: {str(e)}"
 
 
 async def check_banned(player_id):
     try:
         url = f"https://ff.garena.com/api/antihack/check_banned?lang=en&uid={player_id}"
-        headers = {"User-Agent": "Mozilla/5.0 (Linux; Android 10)", "Accept": "application/json",
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Linux; Android 10)", "Accept": "application/json",
             "referer": "https://ff.garena.com/en/support/",
-            "x-requested-with": "B6FksShzIgjfrYImLpTsadjS86sddhFH"}
+            "x-requested-with": "B6FksShzIgjfrYImLpTsadjS86sddhFH"
+        }
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=headers, ssl=False) as r:
                 if r.status == 200:
                     return True, await r.json()
-                return False, f"ব্যর্থ: {r.status}"
+                return False, f"Failed: {r.status}"
     except Exception as e:
-        return False, f"ত্রুটি: {str(e)}"
+        return False, f"Error: {str(e)}"
 
 
 async def get_player_info(player_id):
@@ -1110,171 +1222,719 @@ async def get_player_info(player_id):
             async with session.get(url, ssl=False) as r:
                 if r.status == 200:
                     return True, await r.json()
-                return False, f"ব্যর্থ: {r.status}"
+                return False, f"Failed: {r.status}"
     except Exception as e:
-        return False, f"ত্রুটি: {str(e)}"
+        return False, f"Error: {str(e)}"
 
 
 def format_player_info(data):
-    basic = data.get("basicInfo", {}); clan = data.get("clanBasicInfo", {})
-    captain = data.get("captainBasicInfo", {}); pet = data.get("petInfo", {})
-    social = data.get("socialInfo", {}); credit = data.get("creditScoreInfo", {})
+    basic = data.get("basicInfo", {})
+    clan = data.get("clanBasicInfo", {})
+    captain = data.get("captainBasicInfo", {})
+    pet = data.get("petInfo", {})
+    social = data.get("socialInfo", {})
+    credit = data.get("creditScoreInfo", {})
     diamond = data.get("diamondCostRes", {})
-    def x(v): return str(v) if v else "0"
-    m1 = f"[b][c]{get_random_color()} 🎮 প্লেয়ার তথ্য\n[b][c][FFFFFF]নাম: {captain.get('nickname', basic.get('nickname', 'অজানা'))}\n[b][c][FFFFFF]ইউআইডি: {x(captain.get('accountId', basic.get('accountId', '0')))}\n[b][c][FFFFFF]লাইক: {x(captain.get('liked', basic.get('liked', '0')))}\n[b][c][FFFFFF]লেভেল: {captain.get('level', basic.get('level', '0'))}\n[b][c][FFFFFF]অঞ্চল: {captain.get('region', basic.get('region', 'অজানা'))}"
-    m2 = f"[b][c]{get_random_color()} 🏰 গিল্ড তথ্য\n[b][c][FFFFFF]গিল্ড: {clan.get('clanName', 'কোন গিল্ড নেই')}\n[b][c][FFFFFF]গিল্ড আইডি: {x(clan.get('clanId', '0'))}\n[b][c][FFFFFF]লিডার: {x(clan.get('captainId', 'অজানা'))}\n[b][c][FFFFFF]সদস্য: {clan.get('memberNum', '0')}/{clan.get('capacity', '0')}\n[b][c][FFFFFF]লেভেল: {clan.get('clanLevel', '0')}"
-    m3 = f"[b][c]{get_random_color()} ℹ️ অতিরিক্ত তথ্য\n[b][c][FFFFFF]পেট: {pet.get('name', 'N/A')} (লেভেল {pet.get('level', 'N/A')})\n[b][c][FFFFFF]ক্রেডিট: {credit.get('creditScore', 'N/A')}\n[b][c][FFFFFF]ডায়মন্ড: {diamond.get('diamondCost', 'N/A')}\n[b][c][FFFFFF]বায়ো: {social.get('signature', 'N/A')}"
+
+    def x(v):
+        return str(v) if v else "0"
+
+    m1 = (f"[b][c]{get_random_color()} 🎮 PLAYER INFO\n"
+          f"[b][c][FFFFFF]Name : {captain.get('nickname', basic.get('nickname', 'Unknown'))}\n"
+          f"[b][c][FFFFFF]UID : {x(captain.get('accountId', basic.get('accountId', '0')))}\n"
+          f"[b][c][FFFFFF]Likes : {x(captain.get('liked', basic.get('liked', '0')))}\n"
+          f"[b][c][FFFFFF]Level : {captain.get('level', basic.get('level', '0'))}\n"
+          f"[b][c][FFFFFF]Region : {captain.get('region', basic.get('region', 'Unknown'))}")
+
+    m2 = (f"[b][c]{get_random_color()} 🏰 GUILD INFO\n"
+          f"[b][c][FFFFFF]Guild : {clan.get('clanName', 'No guild')}\n"
+          f"[b][c][FFFFFF]Guild ID : {x(clan.get('clanId', '0'))}\n"
+          f"[b][c][FFFFFF]Leader : {x(clan.get('captainId', 'Unknown'))}\n"
+          f"[b][c][FFFFFF]Members : {clan.get('memberNum', '0')}/{clan.get('capacity', '0')}\n"
+          f"[b][c][FFFFFF]Level : {clan.get('clanLevel', '0')}")
+
+    m3 = (f"[b][c]{get_random_color()} ℹ️ ADDITIONAL INFO\n"
+          f"[b][c][FFFFFF]Pet : {pet.get('name', 'N/A')} (Lv {pet.get('level', 'N/A')})\n"
+          f"[b][c][FFFFFF]Credit : {credit.get('creditScore', 'N/A')}\n"
+          f"[b][c][FFFFFF]Diamond : {diamond.get('diamondCost', 'N/A')}\n"
+          f"[b][c][FFFFFF]Bio : {social.get('signature', 'N/A')}")
+
     return m1, m2, m3
 
 
 def format_check_result(data):
     try:
-        return f"[b][c]{get_random_color()} 🔍 ব্যান চেক\n[b][c][FFFFFF]ধরন: {data.get('ban_type', 'অজানা')}\n[b][c][FFFFFF]সময়কাল: {data.get('ban_duration', 'অজানা')}"
+        return (f"[b][c]{get_random_color()} 🔍 BAN CHECK\n"
+                f"[b][c][FFFFFF]Type: {data.get('ban_type', 'Unknown')}\n"
+                f"[b][c][FFFFFF]Duration: {data.get('ban_duration', 'Unknown')}")
     except Exception as e:
-        return f"[b][c]ত্রুটি: {str(e)}"
+        return f"[b][c]Error: {str(e)}"                                                                 
+                                                        
+                                          
+                                                                 
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ ইভো সাইকেল লুপ ★
-# ═══════════════════════════════════════════════════════════════
+                                                                 
+                 
+                                                                 
 
-async def evo_gun_cycle(uids, evo_ids_list, key, iv, region):
-    global evo_cycle_running
-    while evo_cycle_running:
-        for emote_id in evo_ids_list:
-            if not evo_cycle_running: break
-            for uid_str in uids:
-                try:
-                    H = await Emote_k(int(uid_str), int(emote_id), key, iv, region)
-                    await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
-                except Exception:
-                    pass
-            if evo_cycle_running:
-                for i in range(5):
-                    if not evo_cycle_running: break
-                    await asyncio.sleep(1)
-        if evo_cycle_running:
-            await asyncio.sleep(2)
-
-
-# ═══════════════════════════════════════════════════════════════
-#              ★ ইনভাইট স্বাগতম বার্তা ★
-# ═══════════════════════════════════════════════════════════════
-
-WELCOME_DELAY = 3
-_welcomed = {}
-
-async def send_welcome(chat_code, key, iv):
+async def createpacketinfo(uid, key, iv):
     try:
-        now = time.time()
-        if now - _welcomed.get(chat_code, 0) < 60:
-            return
-        _welcomed[chat_code] = now
-        await asyncio.sleep(WELCOME_DELAY)
-        msg = (
-            "[B][C][B][C][FFD700]আসসালামু আলাইকুম।\n"
-            "[B][C][FF00FF]MOHASIN TxT বটে আপনাকে স্বাগতম।\n"
-            "[B][C][00FFFF]আশা করি, বটটি ব্যবহার করে ভালো লাগবে।"
+        ida = await EnC_Uid(uid, Tp='Uid')
+        if len(ida) == 8:
+            packet = f'080112080a04{ida}1005'
+        elif len(ida) == 10:
+            packet = f"080112090a05{ida}1005"
+        else:
+            packet = f"080112090A05{ida}1005"
+        return await GeneRaTePk(packet, '0f15', key, iv)
+    except Exception as e:
+        print(f"createpacketinfo error: {e}")
+        return None
+
+
+def get_available_room(hex_packet):
+    try:
+        return json.dumps(PrOtO(hex_packet))
+    except Exception as e:
+        print(f"get_available_room error: {e}")
+        return None
+
+
+def get_player_status(packet):
+    j = get_available_room(packet)
+    if not j:
+        return "OFFLINE"
+    p = json.loads(j)
+    try:
+        data = p["5"]["data"]["1"]["data"]
+        st   = data["3"]["data"]
+        if st == 1:
+            return "SOLO"
+        if st == 2:
+            if "9" in data and "data" in data["9"]:
+                gc = data["9"]["data"]
+                mx = data["10"]["data"] + 1
+                return f"INSQUAD ({gc}/{mx})"
+            return "INSQUAD"
+        if st in (3, 5):
+            return "INGAME"
+        if st == 4:
+            return "IN ROOM"
+        if st in (6, 7):
+            return "IN SOCIAL ISLAND MODE"
+        return "NOTFOUND"
+    except Exception:
+        return "OFFLINE"
+
+
+def get_idroom_by_idplayer(packet):
+    try:
+        p = json.loads(get_available_room(packet))
+        return p["5"]["data"]["1"]["data"]["15"]["data"]
+    except Exception:
+        return None
+
+
+def get_leader(packet):
+    try:
+        p = json.loads(get_available_room(packet))
+        return p["5"]["data"]["1"]["data"]["8"]["data"]
+    except Exception:
+        return None
+
+
+def save_to_cache(player_id, data):
+    cache = {}
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "rb") as f:
+                cache = pickle.load(f)
+        except Exception:
+            cache = {}
+    data["saved_at"] = time.time()
+    cache[str(player_id)] = data
+    with open(CACHE_FILE, "wb") as f:
+        pickle.dump(cache, f)
+
+
+def load_from_cache(player_id):
+    if not os.path.exists(CACHE_FILE):
+        return None
+    try:
+        with open(CACHE_FILE, "rb") as f:
+            cache = pickle.load(f)
+    except Exception:
+        return None
+    key = str(player_id)
+    if key in cache:
+        if time.time() - cache[key].get("saved_at", 0) > CACHE_TIMEOUT:
+            del cache[key]
+            with open(CACHE_FILE, "wb") as f:
+                pickle.dump(cache, f)
+            return None
+        return cache[key]
+    return None
+
+
+def clear_cache_entry(player_id):
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "rb") as f:
+                cache = pickle.load(f)
+            cache.pop(str(player_id), None)
+            with open(CACHE_FILE, "wb") as f:
+                pickle.dump(cache, f)
+        except Exception:
+            pass
+
+
+def debug_file_cache():
+    if not os.path.exists(CACHE_FILE):
+        print("Cache: file does not exist")
+        return
+    try:
+        with open(CACHE_FILE, "rb") as f:
+            cache = pickle.load(f)
+        print(f"Cache: {len(cache)} entries")
+        for k, v in cache.items():
+            age = time.time() - v.get("saved_at", 0)
+            print(f"  {k}: {v.get('status','?')} (age {age:.1f}s)")
+    except Exception as e:
+        print(f"Cache debug error: {e}")
+
+
+                                                                 
+                
+                                                                 
+
+async def extract_emote_info(data_hex, key, iv):
+    try:
+        packet_json = json.loads(await DeCode_PackEt(data_hex[10:]))
+    except Exception:
+        return None
+    for extractor in (extract_type_21, extract_type_26,
+                      extract_type_5, generic_extract):
+        info = extractor(packet_json)
+        if info and info.get("sender_uid"):
+            return info
+    return None
+
+
+def extract_type_21(packet_json):
+    if packet_json.get("1") == 21:
+        try:
+            nested = packet_json["2"]["data"]["5"]["data"]
+            sender = nested.get("1", {}).get("data")
+            emote  = nested.get("3", {}).get("data")
+            if sender and emote:
+                return {"sender_uid": sender, "emote_id": emote,
+                        "packet_type": 21, "confidence": "high"}
+        except Exception:
+            pass
+    return None
+
+
+def extract_type_26(packet_json):
+    if packet_json.get("1") == 26:
+        try:
+            data   = packet_json["2"]["data"]
+            sender = data.get("1", {}).get("data")
+            emote  = data.get("2", {}).get("data")
+            if sender and emote:
+                return {"sender_uid": sender, "emote_id": emote,
+                        "packet_type": 26, "confidence": "high"}
+        except Exception:
+            pass
+    return None
+
+
+def extract_type_5(packet_json):
+    if packet_json.get("1") == 5:
+        try:
+            data   = packet_json["2"]["data"]
+            sender = data.get("1", {}).get("data")
+            emote  = data.get("4", {}).get("data") or 909051015
+            if sender:
+                return {"sender_uid": sender, "emote_id": emote,
+                        "packet_type": 5, "confidence": "medium"}
+        except Exception:
+            pass
+    return None
+
+
+def generic_extract(packet_json):
+    uid, emote_id = None, None
+
+    def search(obj):
+        nonlocal uid, emote_id
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if k == "data" and isinstance(v, (int, str)) and str(v).isdigit():
+                    num = int(v)
+                    if 1_000_000 < num < 99_999_999_999 and not uid:
+                        uid = num
+                    elif str(v).startswith("909") and len(str(v)) >= 9:
+                        emote_id = num
+                elif isinstance(v, dict):
+                    search(v)
+                elif isinstance(v, list):
+                    for item in v:
+                        search(item)
+
+    search(packet_json)
+    if uid:
+        return {"sender_uid": uid,
+                "emote_id":   emote_id or 909051015,
+                "packet_type": "generic", "confidence": "medium"}
+    return None                                                                 
+                                 
+                                          
+                                                                 
+
+
+                                                                 
+                                   
+                                                                 
+
+async def equip_hi_emote(sender_uid, chat_id, chat_type, key, iv, region_default="IND"):
+    def fmt_num(n):
+        return str(n)
+
+    def first_n(s, n=15):
+        if not s:
+            return "None"
+        s = str(s)
+        return s[:n] + ("..." if len(s) > n else "")
+
+    if str(sender_uid) != admin_uid:
+        await safe_send_message(
+            chat_type,
+            f"[B][C][FF0000]❌       bot owner (UID {fmt_num(admin_uid)}) only ",
+            sender_uid, chat_id, key, iv
         )
-        await safe_send_message(0, msg, None, chat_code, key, iv)
+        return
+
+    if not BOT_UID_FOR_HI or not BOT_PW_FOR_HI:
+        await safe_send_message(
+            chat_type,
+            "[B][C][FF0000]❌ Bot credentials main.py were not loaded from app.py ",
+            sender_uid, chat_id, key, iv
+        )
+        return
+
+    await safe_send_message(
+        chat_type,
+        (f"[B][C][FFFF00]🔐 STEP {fmt_num(1)}: Loading credentials\n"
+         f"[FFFFFF]📁 UID      : [FFFF00]{fmt_num(first_n(BOT_UID_FOR_HI, 5))}...\n"
+         f"[FFFFFF]🔑 Password : [FFFF00]{first_n(BOT_PW_FOR_HI, 5)}..."),
+        sender_uid, chat_id, key, iv
+    )
+    await asyncio.sleep(0.5)
+
+    try:
+                result = await login_engine.do_login(BOT_UID_FOR_HI, BOT_PW_FOR_HI, region_default)
+    except Exception as e:
+        await safe_send_message(
+            chat_type, f"[B][C][FF0000]❌ Login error: {str(e)[:100]}",
+            sender_uid, chat_id, key, iv
+        )
+        return
+
+    if not result:
+        await safe_send_message(
+            chat_type,
+            "[B][C][FF0000]❌ Login failed (MajorLogin / GetLoginData rejected the request) ",
+            sender_uid, chat_id, key, iv
+        )
+        return
+
+    jwt_token = result["token"]
+    region    = result.get("region", region_default) or region_default
+
+    await safe_send_message(
+        chat_type,
+        (f"[B][C][00FF00]✅ STEP {fmt_num(2)}: Login successful\n"
+         f"[FFFFFF]🌍 Region : [FFFF00]{region}\n"
+         f"[FFFFFF]🔑 JWT    : [FFFF00]{first_n(jwt_token, 15)}..."),
+        sender_uid, chat_id, key, iv
+    )
+    await asyncio.sleep(0.5)
+
+    region_server_map = {
+        "BD":  "https://clientbp.ggpolarbear.com",
+        "IND": "https://client.ind.freefiremobile.com",
+        "PK":  "https://clientbp.ggpolarbear.com",
+        "ME":  "https://clientbp.ggpolarbear.com",
+        "VN":  "https://clientbp.ggpolarbear.com",
+        "SG":  "https://clientbp.ggpolarbear.com",
+        "ID":  "https://clientbp.ggpolarbear.com",
+        "TH":  "https://clientbp.ggpolarbear.com",
+        "BR":  "https://client.us.freefiremobile.com",
+        "NA":  "https://client.us.freefiremobile.com",
+        "US":  "https://client.us.freefiremobile.com",
+        "RU":  "https://clientbp.ggpolarbear.com",
+    }
+    server_url = region_server_map.get(region.upper())
+    if not server_url:
+        await safe_send_message(
+            chat_type,
+            f"[B][C][FF0000]❌ Region '{region}' is not supported ",
+            sender_uid, chat_id, key, iv
+        )
+        return
+
+    await safe_send_message(
+        chat_type,
+        (f"[B][C][FFFF00]📡 STEP {fmt_num(3)}: ChooseEmote Sending\n"
+         f"[FFFFFF]🌐 URL  : [FFFF00]{server_url}/ChooseEmote\n"
+         f"[FFFFFF]🎭 Emote: [FFFF00]HI (ID: {fmt_num('909000001')})"),
+        sender_uid, chat_id, key, iv
+    )
+    await asyncio.sleep(1.5)
+
+    emote_data = bytes.fromhex("CAF683222A25C7BEFEB51F59544DB313")
+    headers = {
+        "Accept-Encoding": "gzip",
+        "Connection":      "Keep-Alive",
+        "Content-Type":    "application/x-www-form-urlencoded",
+        "Expect":          "100-continue",
+        "ReleaseVersion":  "OB55",
+        "User-Agent":      "Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)",
+        "X-GA":            "v1 1",
+        "X-Unity-Version": "2018.4.11f1",
+        "Authorization":   f"Bearer {jwt_token}",
+    }
+    url = f"{server_url}/ChooseEmote"
+
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, data=emote_data, ssl=False, timeout=10) as resp:
+                status_code   = resp.status
+                response_body = await resp.read()
+                response_text = response_body.decode("utf-8", errors="replace")
+    except Exception as e:
+        await safe_send_message(
+            chat_type, f"[B][C][FF0000]❌ Request failed: {str(e)[:100]}",
+            sender_uid, chat_id, key, iv
+        )
+        return
+
+    bot_nick = result.get("account_name", "Bot")
+
+    if status_code == 200:
+        result_msg = (
+            f"[B][C][00FF00]✅ STEP {fmt_num(4)}: EMOTE EQUIPPED!\n"
+            f"[FFFFFF]────────────────────────────\n"
+            f"[FFFF00]👤 Nickname : [00FF00]{bot_nick}\n"
+            f"[FFFF00]🆔 UID      : [00FF00]{fmt_num(result['bot_uid'])}\n"
+            f"[FFFF00]🎭 Emote    : [00FF00]HI\n"
+            f"[FFFF00]🌍 Region   : [00FF00]{region}\n"
+            f"[FFFF00]📊 HTTP     : [00FF00]{fmt_num(status_code)}\n"
+            f"[FFFFFF]────────────────────────────"
+        )
+    elif b"BR_INVENTORY_NOT_ENOUGH_ITEMS" in response_body:
+        result_msg = (
+            f"[B][C][FFFF00]⚠️ EMOTE is not in the vault!\n"
+            f"[FFFFFF]────────────────────────────\n"
+            f"[FFFF00]👤 Bot     : [00FF00]{bot_nick}\n"
+            f"[FFFF00]🆔 UID     : [00FF00]{fmt_num(result['bot_uid'])}\n"
+            f"[FFFF00]📊 HTTP    : {fmt_num(status_code)}\n"
+            f"[FFFF00]📄 Response: [FF0000]Emote not owned – Purchase it first \n"
+            f"[FFFFFF]────────────────────────────"
+        )
+    else:
+        short_response = response_text[:200] + ("..." if len(response_text) > 200 else "")
+        result_msg = (
+            f"[B][C][FF0000]❌ FAILED!\n"
+            f"[FFFFFF]────────────────────────────\n"
+            f"[FFFF00]📊 HTTP : {fmt_num(status_code)}\n"
+            f"[FFFF00]📄 Body :\n[FF0000]{short_response}\n"
+            f"[FFFFFF]────────────────────────────"
+        )
+
+    await safe_send_message(chat_type, result_msg, sender_uid, chat_id, key, iv)
+
+
+                                                                 
+                     
+                                                                 
+
+async def check_ban_auto(uid):
+    name, region_code = "N/A", "N/A"
+    try:
+        ok, data = await get_player_info(uid)
+        if ok:
+            b = data.get("basicInfo", {}) or {}
+            name = b.get("nickname", "N/A")
+            region_code = b.get("region", "N/A")
     except Exception:
         pass
 
+    is_banned, period = 0, 0
+    try:
+        ok, bd = await check_banned(uid)
+        if ok:
+            is_banned = bd.get("data", {}).get("is_banned", 0)
+            period    = bd.get("data", {}).get("period", 0)
+    except Exception:
+        pass
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ TCP অনলাইন হ্যান্ডলার ★
-# ═══════════════════════════════════════════════════════════════
+    status_text  = "BANNED"     if is_banned else "NOT BANNED"
+    status_color = "FF0000"     if is_banned else "00FF00"
+    if is_banned:
+        period_text  = f"{period} days" if period else "Permanent"
+        period_color = "FF4444"
+    else:
+        period_text, period_color = "N/A", "00FF00"
+
+    return (
+        f"[C][B][5DA9FF]━━━━━━━━━━━━━\n"
+        f"[C][B][FF6EC7]BAN STATUS CHECK\n"
+        f"[C][5DA9FF]━━━━━━━━━━━━━\n"
+        f"[C][E6E6FA]Name    : [9AD0FF]{name}\n"
+        f"[C][E6E6FA]UID     : [9AD0FF]{xMsGFixinG(uid)}\n"
+        f"[C][E6E6FA]Region  : [9AD0FF]{region_code}\n"
+        f"[C][E6E6FA]Status  : [{status_color}]{status_text}\n"
+        f"[C][E6E6FA]Period  : [{period_color}]{period_text}\n"
+        f"[C][B][5DA9FF]━━━━━━━━━━━━━"
+    )                                                                 
+                                                           
+                                          
+                                                                 
+
 
 async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
-    global online_writer, whisper_writer, region, bot_uid
+    global online_writer, whisper_writer, region
+    global pending_ghost_future, ghost_team_id, ghost_squad_code
+    global emote_hijack, bot_uid
+
     while True:
         try:
             reader, writer = await asyncio.open_connection(ip, int(port))
             online_writer = writer
             token_bytes = bytes.fromhex(AutHToKen) if isinstance(AutHToKen, str) else AutHToKen
-            writer.write(token_bytes); await writer.drain()
-            print_tag(f"অনলাইন সার্ভারে সংযুক্ত: {ip}:{port}", "green")
+            writer.write(token_bytes)
+            await writer.drain()
+            print(f"✅ ONLINE connected to {ip}:{port}")
+
             while True:
                 data = await reader.read(9999)
-                if not data: break
+                if not data:
+                    break
                 hex_data = data.hex()
-                if not hex_data.startswith("0500"): continue
-                try: packet_json = json.loads(await DeCode_PackEt(hex_data[10:]))
-                except Exception: continue
+
+                                       
+                if hex_data.startswith("0f00") and len(hex_data) > 100:
+                    try:
+                        print("📡 Received status response packet")
+                        proto_part = f'08{hex_data.split("08", 1)[1]}'
+                        parsed = get_available_room(proto_part)
+                        if parsed:
+                            pj = json.loads(parsed)
+                            if "2" in pj and pj["2"]["data"] == 15:
+                                player_id     = pj["5"]["data"]["1"]["data"]["1"]["data"]
+                                player_status = get_player_status(proto_part)
+                                entry = {
+                                    "status":      player_status,
+                                    "packet":      proto_part,
+                                    "timestamp":   time.time(),
+                                    "full_packet": hex_data,
+                                    "parsed_json": pj,
+                                }
+                                d1 = pj["5"]["data"]["1"]["data"]
+                                if (d1.get("3", {}).get("data") == 1 and
+                                        d1.get("11", {}).get("data") == 1):
+                                    entry["special_state"] = "SOLO_WITH_FLAG_1"
+                                if "IN ROOM" in player_status:
+                                    rid = get_idroom_by_idplayer(proto_part)
+                                    if rid:
+                                        entry["room_id"] = rid
+                                elif "INSQUAD" in player_status:
+                                    lid = get_leader(proto_part)
+                                    if lid:
+                                        entry["leader_id"] = lid
+                                save_to_cache(player_id, entry)
+                                print(f"✅ Cached status: {player_id} = {player_status}")
+                    except Exception as e:
+                        print(f"❌ status parse error: {e}")
+                    continue
+
+                                   
+                if hex_data.startswith('05') and len(hex_data) > 20 and emote_hijack:
+                    try:
+                        import re
+                        payload = hex_data[10:]
+                        packet_str = await DeCode_PackEt(payload)
+                        if not packet_str or '9090' not in packet_str:
+                            try:
+                                decrypted = await DEc_PacKeT(payload, key, iv)
+                                packet_str = await DeCode_PackEt(decrypted)
+                            except Exception:
+                                pass
+
+                        if packet_str and '9090' in packet_str:
+                            emote_match = re.search(r'"data":\s*(9090\d{5})', packet_str)
+                            if emote_match:
+                                emote_id = emote_match.group(1)
+                                all_ids = re.findall(r'"data":\s*(\d{8,12})', packet_str)
+                                sender_uid = None
+                                for u in all_ids:
+                                    if str(u) != str(bot_uid) and not str(u).startswith('9090'):
+                                        sender_uid = u
+                                        break
+
+                                if emote_id and sender_uid and str(sender_uid) != str(bot_uid):
+                                    bot_self_emote = await Emote_k(int(bot_uid), int(emote_id), key, iv, region)
+                                    if online_writer:
+                                        online_writer.write(bot_self_emote)
+                                        await online_writer.drain()
+                                    print(f"\n🎯 MIMIC SUCCESS!\n   👤 From: {sender_uid}\n   🎭 Emote: {emote_id}")
+                    except Exception as e:
+                        print(f"❌ Mimic error: {e}")
+
+                if not hex_data.startswith("0500"):
+                    continue
 
                 try:
-                    if ('5' in packet_json and 'data' in packet_json['5'] and '1' in packet_json['5']['data'] and '8' in packet_json['5']['data']):
+                    packet_json = json.loads(await DeCode_PackEt(hex_data[10:]))
+                except Exception:
+                    continue
+
+                                    
+                try:
+                    if ('5' in packet_json and 'data' in packet_json['5'] and
+                        '1' in packet_json['5']['data'] and '8' in packet_json['5']['data']):
                         owner = packet_json['5']['data']['1']['data']
                         code = packet_json['5']['data']['8']['data']
-                        print_tag(f"স্কোয়াড ইনভাইট: {owner}", "yellow")
-                        join_pkt = await MahirAccepted(owner, code, key, iv, region)
+                        print(f"📩 Squad invite from {owner}")
+                        join_pkt = await SKANHAIYAAccepted(owner, code, key, iv, region)
                         if join_pkt and online_writer:
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', join_pkt)
                 except Exception:
                     pass
 
+                                                          
                 try:
                     uid_g, chat_code, squad_code = await GeTSQDaTa(packet_json)
                     if uid_g is not None:
                         INV_JOIN = await AutH_Chat(3, uid_g, chat_code, key, iv)
                         await SEndPacKeT(whisper_writer, online_writer, 'ChaT', INV_JOIN)
                         asyncio.create_task(send_welcome(uid_g, key, iv))
+
+                        try:
+                            p1 = await DEVIL1(uid_g, key, iv)
+                            p2 = await DEVIL(uid_g, key, iv)
+                            if p1 and online_writer:
+                                online_writer.write(p1)
+                                await online_writer.drain()
+                                await asyncio.sleep(0.2)
+                            if p2 and online_writer:
+                                online_writer.write(p2)
+                                await online_writer.drain()
+                        except Exception:
+                            pass
                 except Exception:
                     pass
 
+                                     
+                try:
+                    if pending_ghost_future and not pending_ghost_future.done():
+                        f5 = packet_json.get('5', {}).get('data', {})
+                        if '31' in f5:
+                            ghost_squad_code = f5['31'].get('data')
+                        if '1' in f5:
+                            ghost_team_id = f5['1'].get('data')
+                        if ghost_team_id and ghost_squad_code:
+                            pending_ghost_future.set_result(True)
+                except Exception:
+                    pass
+
+                                      
                 try:
                     if packet_json.get('4', {}).get('data') == 8:
                         f5 = packet_json.get('5', {}).get('data', {})
                         if f5.get('2', {}).get('data') == 5:
                             chat_code = f5.get('17', {}).get('data')
                             if chat_code is not None:
+                                WELCOMED.pop(chat_code, None)
                                 LeAvE = await leave_channel_req(chat_code, 3, key, iv)
                                 await SEndPacKeT(whisper_writer, online_writer, 'ChaT', LeAvE)
-                                print_tag("কিক হয়েছে! চ্যানেল ছেড়ে যাওয়া হয়েছে", "red")
+                                print("🚪 Kicked! Left the channel")
                 except Exception:
                     pass
-            writer.close(); await writer.wait_closed(); online_writer = None
-        except Exception as e:
-            print_tag(f"অনলাইন সার্ভার সমস্যা: {ip}:{port} - {e}", "red")
+
+            writer.close()
+            await writer.wait_closed()
             online_writer = None
-        await asyncio.sleep(reconnect_delay)
+        except Exception as e:
+            print(f"Online error: {ip}:{port} - {e}")
+            online_writer = None
+        await asyncio.sleep(reconnect_delay)                                                                 
+                                                                  
+                                          
+                                                                 
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ TCP চ্যাট হ্যান্ডলার ★
-# ═══════════════════════════════════════════════════════════════
+async def TcPChaT(ip, port, AutHToKen, key, iv, ready_event, region,
+                  clan_id=None, clan_data=None, reconnect_delay=0.5):
+    global whisper_writer, online_writer, spm_tasks, ToKen, bot_uid
+    global bot_enabled, emote_hijack, spam_targets
+    global evo_cycle_running, evo_cycle_task, ban_task, ban_running, ban_targets
+    global fast_spam_running, fast_spam_task
+    global custom_spam_running, custom_spam_task
+    global msg_spam_running, msg_spam_task, mg_spam_task
+    global reject_spam_running, reject_spam_task
+    global freeze_running, freeze_task
+    global _clan_message_task, _clan_msg_key, _clan_msg_iv
+    global _clan_msg_bot_uid, _clan_msg_clan_id
 
-async def TcPChaT(ip, port, AutHToKen, key, iv, login_data, ready_event, region, reconnect_delay=0.5):
-    global whisper_writer, online_writer, ToKen, bot_uid, bot_enabled
-    global bot_nickname, bot_clan_id
-    global evo_cycle_running, evo_cycle_task
+    print(f"📡 {region} → TCP CHAT connecting...")
 
-    print_tag(f"{region} → চ্যাট সার্ভারে সংযুক্ত হচ্ছে...", "cyan")
     while True:
         try:
             reader, writer = await asyncio.open_connection(ip, int(port))
             whisper_writer = writer
             bytes_payload = bytes.fromhex(AutHToKen) if isinstance(AutHToKen, str) else AutHToKen
-            whisper_writer.write(bytes_payload); await whisper_writer.drain()
+            whisper_writer.write(bytes_payload)
+            await whisper_writer.drain()
             ready_event.set()
-            print_tag(f"চ্যাট সার্ভারে সংযুক্ত: {ip}:{port}", "green")
+            print(f"✅ CHAT connected to {ip}:{port}")
 
-            clan_id = login_data.get("clan_id", 0)
-            clan_data = login_data.get("clan_data", "")
-            if clan_id:
+                             
+            if clan_id and clan_data:
                 try:
-                    pK = await AuthClan(int(clan_id), str(clan_data), key, iv)
-                    if whisper_writer:
-                        whisper_writer.write(pK)
-                        await whisper_writer.drain()
-                        print_tag(f"গিল্ড অথেনটিকেশন সফল! গিল্ড আইডি: {clan_id}", "green")
+                    pK = await AuthClan(clan_id, clan_data, key, iv)
+                    whisper_writer.write(pK)
+                    await whisper_writer.drain()
+                    print(f"✅ AuthClan sent for clan {clan_id}")
                 except Exception as e:
-                    print_tag(f"গিল্ড অথেনটিকেশন ব্যর্থ: {e}", "red")
+                    print(f"❌ AuthClan failed: {e}")
+            else:
+                print(f"⚠️ No clan_id/clan_data — clan chat unavailable")
+
+                                          
+            if clan_id and clan_id > 0:
+                if _clan_message_task is None or _clan_message_task.done():
+                    _clan_msg_key = key
+                    _clan_msg_iv = iv
+                    _clan_msg_bot_uid = int(bot_uid)
+                    _clan_msg_clan_id = int(clan_id)
+                    _clan_message_task = asyncio.create_task(clan_message_loop())
+                    print(f"[CLAN] Auto-message task started for clan {_clan_msg_clan_id}")
+
+                                            
+            for tgt in spam_targets:
+                if tgt not in spm_tasks or spm_tasks[tgt].done():
+                    spm_tasks[tgt] = asyncio.create_task(spm_loop(tgt, key, iv))
 
             while True:
                 data = await reader.read(9999)
-                if not data: break
-                if not data.hex().startswith("120000"): continue
+                if not data:
+                    break
+                if not data.hex().startswith("120000"):
+                    continue
+
                 try:
                     response = await DecodeWhisperMessage(data.hex()[10:])
                     uid = response.Data.uid
@@ -1285,286 +1945,237 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, login_data, ready_event, region,
                 except Exception:
                     continue
 
-                # ═══════════════════════════════════════════════
-                # .S1 / .S2 / .S3 / .S4 / .S5 / .S6 / .S7 / .S8 / .S11
-                # ═══════════════════════════════════════════════
-                _cmd = msg_raw.strip()
-                if _cmd == '.S1':
-                    await handle_dot_s1(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
-                elif _cmd == '.S2':
-                    await handle_dot_s2(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
-                elif _cmd == '.S3':
-                    await handle_dot_s3(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
-                elif _cmd == '.S4':
-                    await handle_dot_s4(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
-                elif _cmd == '.S5':
-                    await handle_dot_s5(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
-                elif _cmd == '.S6':
-                    await handle_dot_s6(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
-                elif _cmd == '.S7':
-                    await handle_dot_s7(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
-                elif _cmd == '.S8':
-                    await handle_dot_s8(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
-                elif _cmd == '.S11':
-                    await handle_dot_s11(uid, chat_id, key, iv, region, XX, bot_uid)
-                    continue
+                                                                 
+                                               
+                                                                 
+                try:
+                    msg_str = await DeCode_PackEt(data.hex()[10:])
+                    chatdata = json.loads(msg_str) if msg_str else {}
 
+                    if "5" in chatdata and "data" in chatdata["5"]:
+                        inner = chatdata["5"]["data"]
+
+                        if "8" in inner and "data" in inner["8"]:
+                            raw_data = inner["8"]["data"]
+                            try:
+                                data_json = json.loads(raw_data)
+                                packet_type = data_json.get("type")
+
+                                               
+                                if packet_type == "Sticker":
+                                    target_uid = inner["1"]["data"]
+                                    if str(target_uid) != str(bot_uid) and NUMBER_EMOTES:
+                                        random_emote_key = random.choice(list(NUMBER_EMOTES.keys()))
+                                        emote_id = NUMBER_EMOTES[random_emote_key]
+                                        emote_packet = await Emote_k(int(target_uid), int(emote_id), key, iv, region)
+                                        if emote_packet and online_writer:
+                                            online_writer.write(emote_packet)
+                                            await online_writer.drain()
+                                            print(f"🎭 Sticker Reply: Emote {emote_id} sent to {target_uid}")
+                                        sticker_reply = "[B][C][FFFF00] TOM TCP STYLE TCP"
+                                        await safe_send_message(XX, sticker_reply, target_uid, chat_id, key, iv)
+
+                                             
+                                elif packet_type == "Title":
+                                    sender_uid = inner["1"]["data"]
+                                    title_id = data_json.get("TitleID")
+
+                                    if str(sender_uid) != str(bot_uid):
+                                        try:
+                                            nickname = response.Data.Details.Nickname
+                                        except Exception:
+                                            nickname = "Player"
+
+                                        if str(sender_uid) == str(admin_uid):
+                                            reply_msg = (
+                                                f"[B][C][00FF00]Welcome, owner {nickname} ! "
+                                                f"[FFFF00]Your title looks great. "
+                                                f"[00FFFF]Copying it now."
+                                            )
+                                        else:
+                                            reply_msg = (
+                                                f"[B][C][00FF00]Hey {nickname}, Are you checking the title? "
+                                                f"[FFFF00]We have all of this! "
+                                                f"[00FFFF]Look lol... [FFD700]TOM TCP     ☆"
+                                            )
+
+                                        await safe_send_message(XX, reply_msg, sender_uid, chat_id, key, iv)
+                                        await asyncio.sleep(0.5)
+
+                                        title_packet = await convert_kyro_to_your_system(
+                                            target_uid=sender_uid,
+                                            chat_id=chat_id,
+                                            key=key,
+                                            iv=iv,
+                                            nickname="TOM TCP",
+                                            title_id=title_id
+                                        )
+                                        if title_packet and whisper_writer:
+                                            whisper_writer.write(title_packet)
+                                            await whisper_writer.drain()
+                                            print(f"✅ Title {title_id} copied from {sender_uid}")
+
+                                        if NUMBER_EMOTES:
+                                            random_key = random.choice(list(NUMBER_EMOTES.keys()))
+                                            emote_id = NUMBER_EMOTES[random_key]
+                                            emote_pkt = await Emote_k(int(sender_uid), int(emote_id), key, iv, region)
+                                            if emote_pkt and online_writer:
+                                                online_writer.write(emote_pkt)
+                                                await online_writer.drain()
+                                                print(f"🎭 Title Reply: Emote {emote_id} sent to {sender_uid}")
+                            except Exception:
+                                pass
+                except Exception:
+                    pass
+
+                                        
                 if not bot_enabled and not inPuTMsG.strip().startswith('/on'):
-                    if inPuTMsG.strip() != '/on': continue
+                    if inPuTMsG.strip() != '/on':
+                        continue
 
-                # ═══════════════════════════════════════════════
-                # সাহায্য
-                # ═══════════════════════════════════════════════
-                if inPuTMsG.strip() in ("/help", "help", "bot help"):
-                    box1 = """
-[B][C][FFD700]═══════════════
-[B][C][00FFFF]✿ MOHASIN TxT BOT ✿
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ [00FF7F]SQUAD JOIN
-[B][C][FF00FF]   └─ [00FFFF]/join <txt>
-[B][C][FFD700]✿ 02 ┃ [00FF7F]SQUAD EXIT
-[B][C][FFD700]   └─ [00FFFF]/exit
-[B][C][FF00FF]✿ 03 ┃ [00FF7F]3 PLAYER GROUP
-[B][C][FF00FF]   └─ [00FFFF]/3
-[B][C][FFD700]✿ 04 ┃ [00FF7F]5 PLAYER GROUP
-[B][C][FFD700]   └─ [00FFFF]/5
-[B][C][FF00FF]✿ 05 ┃ [00FF7F]6 PLAYER GROUP
-[B][C][FF00FF]   └─ [00FFFF]/6
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box1, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
+                                                                 
+                       
+                                                                 
+                if inPuTMsG.strip().startswith('/menu'):
+                    parts = inPuTMsG.strip().split()
+                    page = 1
+                    if len(parts) >= 2:
+                        try:
+                            page = int(parts[1])
+                        except Exception:
+                            page = 1
+                    try:
+                        menu_text = get_menu_page(page, per_page=5)
+                        await safe_send_message(XX, menu_text, uid, chat_id, key, iv)
+                        print(f"📋 /menu page {page} sent")
+                    except Exception as e:
+                        print(f"/menu error: {e}")
+                        await safe_send_message(
+                            XX, f"[B][C][FF0000]❌ Menu error: {str(e)[:60]}",
+                            uid, chat_id, key, iv
+                        )
 
-                    box2 = """
-[B][C][FFD700]═══════════════
-[B][C][00FFFF]✿ MOHASIN TxT BOT ✿
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ [00FF7F]EVO EMOTE
-[B][C][FF00FF]   └─ [00FFFF]/evo <UID> <NUMBER>
-[B][C][FFD700]✿ 02 ┃ [00FF7F]EVO CYCLE
-[B][C][FFD700]   └─ [00FFFF]/evos
-[B][C][FF00FF]✿ 03 ┃ [00FF7F]STOP CYCLE
-[B][C][FF00FF]   └─ [00FFFF]/sevos
-[B][C][FFD700]✿ 04 ┃ [00FF7F]SEND BUNDLE
-[B][C][FFD700]   └─ [00FFFF]/b <1-12>
-[B][C][FF00FF]✿ 05 ┃ [00FF7F]EMOTE BY NAME
-[B][C][FF00FF]   └─ [00FFFF]/e <NAME>
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box2, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    box3 = """
-[B][C][FFD700]═══════════════
-[B][C][00FFFF]✿ MOHASIN TxT BOT ✿
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ [00FF7F]EMOTE BY NUMBER
-[B][C][FF00FF]   └─ [00FFFF]/e <NUMBER>
-[B][C][FFD700]✿ 02 ┃ [00FF7F]LOVE MESSAGE
-[B][C][FFD700]   └─ [00FFFF]/love <NAME>
-[B][C][FF00FF]✿ 03 ┃ [00FF7F]INSULT
-[B][C][FF00FF]   └─ [00FFFF]/gali <NAME>
-[B][C][FFD700]✿ 04 ┃ [00FF7F]ROAST
-[B][C][FFD700]   └─ [00FFFF]/rt <NAME>
-[B][C][FF00FF]✿ 05 ┃ [00FF7F]COMPLIMENT
-[B][C][FF00FF]   └─ [00FFFF]/praisa <NAME>
-[B][C][FFD700]✿ 06 ┃ [00FF7F]S5 PRO BADGE
-[B][C][FFD700]   └─ [00FFFF]/s5 <UID>
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box3, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    box4 = """
-[B][C][FFD700]═══════════════
-[B][C][00FFFF]✿ MOHASIN TxT BOT ✿
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ [00FF7F]LOVE LETTER
-[B][C][FF00FF]   └─ [00FFFF]/later <NAME>
-[B][C][FFD700]✿ 02 ┃ [00FF7F]LUCK
-[B][C][FFD700]   └─ [00FFFF]/luck <NAME>
-[B][C][FF00FF]✿ 03 ┃ [00FF7F]JOKES
-[B][C][FF00FF]   └─ [00FFFF]/joke
-[B][C][FFD700]✿ 04 ┃ [00FF7F]QUIZ
-[B][C][FFD700]   └─ [00FFFF]/quiz
-[B][C][FF00FF]✿ 05 ┃ [00FF7F]DICE ROLL
-[B][C][FF00FF]   └─ [00FFFF]/roll
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box4, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    box5 = """
-[B][C][FFD700]═══════════════
-[B][C][00FFFF]✿ MOHASIN TxT BOT ✿
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ [00FF7F]HOROSCOPE
-[B][C][FF00FF]   └─ [00FFFF]/zodiac
-[B][C][FFD700]✿ 02 ┃ [00FF7F]WEATHER
-[B][C][FFD700]   └─ [00FFFF]/weather
-[B][C][FF00FF]✿ 03 ┃ [00FF7F]TRUTH
-[B][C][FF00FF]   └─ [00FFFF]/truth
-[B][C][FFD700]✿ 04 ┃ [00FF7F]DARE
-[B][C][FFD700]   └─ [00FFFF]/dare
-[B][C][FF00FF]✿ 05 ┃ [00FF7F]CALCULATOR
-[B][C][FF00FF]   └─ [00FFFF]/mth <MATH>
-[B][C][FFD700]✿ 06 ┃ [00FF7F]S4 SMALL V-BADGE
-[B][C][FFD700]   └─ [00FFFF]/s4 <UID>
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box5, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    box6 = """
-[B][C][FFD700]═══════════════
-[B][C][00FFFF]✿ MOHASIN TxT BOT ✿
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ [00FF7F]PLAYER INFO
-[B][C][FF00FF]   └─ [00FFFF]/info <UID>
-[B][C][FFD700]✿ 02 ┃ [00FF7F]BAN CHECK
-[B][C][FFD700]   └─ [00FFFF]/check <UID>
-[B][C][FF00FF]✿ 03 ┃ [00FF7F]AI CHAT
-[B][C][FF00FF]   └─ [00FFFF]/ai <QUESTION>
-[B][C][FFD700]✿ 04 ┃ [00FF7F]YOUTUBE INFO
-[B][C][FFD700]   └─ [00FFFF]/yt <CHANNEL>
-[B][C][FF00FF]✿ 05 ┃ [00FF7F]TIKTOK INFO
-[B][C][FF00FF]   └─ [00FFFF]/tt <USERNAME>
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box6, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    box7 = """
-[B][C][FFD700]═══════════════
-[B][C][00FFFF]✿ MOHASIN TxT BOT ✿
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ [00FF7F]ADD FRIEND
-[B][C][FF00FF]   └─ [00FFFF]/add <uid>
-[B][C][FFD700]✿ 02 ┃ [00FF7F]REMOVE FRIEND
-[B][C][FFD700]   └─ [00FFFF]/remove <uid>
-[B][C][FF00FF]✿ 03 ┃ [00FF7F]S1 CRAFTLAND
-[B][C][FF00FF]   └─ [00FFFF]/s1 <uid>
-[B][C][FFD700]✿ 04 ┃ [00FF7F]S2 NEW V-BADGE
-[B][C][FFD700]   └─ [00FFFF]/s2 <uid>
-[B][C][FF00FF]✿ 05 ┃ [00FF7F]S3 MODERATOR
-[B][C][FF00FF]   └─ [00FFFF]/s3 <uid>
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box7, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    # ── বক্স ৮: নতুন .S1 - .S11 সেকশন ──
-                    box_s = """
-[B][C][FFD700]═══════════════
-[B][C][00FFFF]✿ MOHASIN TxT BOT ✿
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ [00FF7F]BATTLE ROYALE
-[B][C][FF00FF]   └─ [00FFFF].S1
-[B][C][FFD700]✿ 02 ┃ [00FF7F]BR RANK INVITE
-[B][C][FFD700]   └─ [00FFFF].S2
-[B][C][FF00FF]✿ 03 ┃ [00FF7F]ROOM RECRUIT
-[B][C][FF00FF]   └─ [00FFFF].S3
-[B][C][FFD700]✿ 04 ┃ [00FF7F]INVISIBLE ROYAL
-[B][C][FFD700]   └─ [00FFFF].S4
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box_s, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    box8 = """
-[B][C][FFD700]═══════════════
-[B][C][FF00FF]✿ 05 ┃ [00FF7F]GUILD INVITE
-[B][C][FF00FF]   └─ [00FFFF].S5
-[B][C][FFD700]✿ 06 ┃ [00FF7F]HUD SHARE
-[B][C][FFD700]   └─ [00FFFF].S6
-[B][C][FF00FF]✿ 07 ┃ [00FF7F]CRAFTLAND MAP
-[B][C][FF00FF]   └─ [00FFFF].S7
-[B][C][FFD700]✿ 08 ┃ [00FF7F]INVISIBLE BUFF
-[B][C][FFD700]   └─ [00FFFF].S8
-[B][C][FF00FF]✿ 09 ┃ [00FF7F]RELAY MART DISCOUNT
-[B][C][FF00FF]   └─ [00FFFF].S11
-[B][C][FFD700]═══════════════"""
-                    await safe_send_message(XX, box8, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    box9 = """
-[B][C][FFD700]এই ফাইলটি তৈরি করেছেন আমাদের বড় ভাই। [B][C][FF00FF]MOHASIN TxT পরিবারের পক্ষ থেকে ভাইকে জানাই আন্তরিক ভালোবাসা। [B][C][00FFFF]ভাইয়ের পরিশ্রম ও চেষ্টায় তৈরি হয়েছে এই সুন্দর ফাইল। [B][C][00FF7F]সবাই ফাইলটি ব্যবহার করবেন এবং আমাদের পাশে থাকবেন। [B][C][FFD700]সবার ভালোবাসা ও সহযোগিতায় এগিয়ে যাবে MOHASIN TxT।"""
-                    await safe_send_message(XX, box9, uid, chat_id, key, iv)
-                    await asyncio.sleep(0.5)
-
-                    box10 = "https://www.pella.app/home"
-                    await safe_send_message(XX, box10, uid, chat_id, key, iv)
-
+                                                                 
+                           
+                                                                 
                 elif inPuTMsG.strip() == '/on':
                     if str(uid) != admin_uid:
-                        await safe_send_message(XX, f"[B][C][FF0000]❌ শুধু অ্যাডমিন /on ব্যবহার করতে পারবে", uid, chat_id, key, iv)
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]❌ Only an admin /on can use",
+                            uid, chat_id, key, iv
+                        )
                     else:
                         bot_enabled = True
-                        await safe_send_message(XX, f"[B][C][FFFFFF]✅ বট এখন চালু হয়েছে", uid, chat_id, key, iv)
+                        await safe_send_message(
+                            XX, "[B][C][FFFFFF]✅ Bot is now ON",
+                            uid, chat_id, key, iv
+                        )
 
                 elif inPuTMsG.strip() == '/off':
                     if str(uid) != admin_uid:
-                        await safe_send_message(XX, f"[B][C][FF0000]❌ শুধু অ্যাডমিন /off ব্যবহার করতে পারবে", uid, chat_id, key, iv)
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]❌ Only an admin /off can use",
+                            uid, chat_id, key, iv
+                        )
                     else:
                         bot_enabled = False
-                        await safe_send_message(XX, f"[B][C][FF0000]⛔ বট এখন বন্ধ করা হয়েছে", uid, chat_id, key, iv)
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]⛔ Bot is now OFF",
+                            uid, chat_id, key, iv
+                        )                                                                 
+                                                              
+                                          
+                                                                 
 
-                elif inPuTMsG.strip() in ('/3', '/5', '/6'):
-                    mode_size = int(inPuTMsG.strip()[1])
-                    await safe_send_message(XX, f"[B][C][00FFFF]{mode_size} জনের টিম তৈরি করা হচ্ছে...\n", uid, chat_id, key, iv)
-                    try:
-                        PAc = await OpEnSq(key, iv, region)
-                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
-                        await asyncio.sleep(1.0)
 
-                        C = await Fixed_ChangeSquad(mode_size, uid, key, iv, region)
-                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', C)
-                        await asyncio.sleep(1.0)
+                                                                 
+                       
+                                                                 
+                if inPuTMsG.strip() in ("/help", "help", "bot help", "/TOM"):
+                    h1_color, h2_color, h3_color, h4_color = random.sample(
+                        ["FF0000", "00AA00", "0000FF", "FF00FF",
+                         "FF8800", "00AAAA", "AA00AA", "888800"], 4
+                    )
 
-                        V = await Fixed_SendInvite(mode_size, uid, key, iv, region)
-                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', V)
-                        await asyncio.sleep(1.0)
+                    h1 = f"""[B][C]{h1_color}╭━〔 TOM TCP BOT 〕━╮
+[C][B][FFFFFF]┃ ➤ /join <code> [00FFFF]» Join Squad
+[C][B][FFFFFF]┃ ➤ /exit [00FFFF]» Leave Squad
+[C][B][FFFFFF]┃ ➤ /spm <uid> [00FFFF]» Send Requests
+[C][B][FFFFFF]┃ ➤ /stp <uid> [00FFFF]» Stop Requests
+[C][B][FFFFFF]┃ ➤ /s1 [00FFFF]» spam craftland
+[C][B][FFFFFF]┃ ➤ /s2 [00FFFF]» spam v1
+[C][B][FFFFFF]┃ ➤ /s3 [00FFFF]» spam v2
+[C][B][FFFFFF]┃ ➤ /s4 [00FFFF]» spam moderator
+[C][B][FFFFFF]┃ ➤ /s5 [00FFFF]» spam sp
+[B][C]{h1_color}╰━━━━━━━━━━━━━━━╯"""
 
-                        E = await ExiT(None, key, iv)
-                        await asyncio.sleep(2.0)
-                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', E)
+                    h2 = f"""[B][C]{h2_color}╭━━━〔 GAME COMMANDS 〕━━━╮
+[C][B][FFFFFF]┃ ➤ /e <name> [00FFFF]» Named Emote
+[C][B][FFFFFF]┃ ➤ /evo <uid> <1-21> [00FFFF]» Evo Emote
+[C][B][FFFFFF]┃ ➤ /evos [00FFFF]» Evo Cycle
+[C][B][FFFFFF]┃ ➤ /sevos [00FFFF]» Stop Cycle
+[C][B][FFFFFF]┃ ➤ /sticker [00FFFF]» Random Sticker
+[C][B][FFFFFF]┃ ➤ /b <1-13> [00FFFF]» Send Bundle
+[C][B][FFFFFF]┃ ➤ /animation <1-12> [00FFFF]» Animation
+[C][B][FFFFFF]┃ ➤ /magic <code> [00FFFF]» Magic Bundle
+[B][C]{h2_color}╰━━━━━━━━━━━━━━━━━━━━━━━━╯"""
 
-                        await safe_send_message(XX, f"[B][C][00FF00]সফল! {mode_size} জনের টিমের ইনভাইট আপনার কাছে পাঠানো হয়েছে!\n", uid, chat_id, key, iv)
-                    except Exception as e:
-                        print_tag(f"/{mode_size} এ ত্রুটি: {e}", "red")
+                    h3 = f"""[B][C]{h3_color}╭━━━〔 TOM TxT BOT 〕━━━╮
+[C][B][FFFFFF]┃ ➤ /love <name> [00FFFF]» Love Messages
+[C][B][FFFFFF]┃ ➤ /gali <name> [00FFFF]» Gaali Messages
+[C][B][FFFFFF]┃ ➤ /rt <name> [00FFFF]» Roast
+[C][B][FFFFFF]┃ ➤ /praisa <name> [00FFFF]» Praise
+[C][B][FFFFFF]┃ ➤ /later <name> [00FFFF]» Love Letter
+[C][B][FFFFFF]┃ ➤ /sadlater <name> [00FFFF]» Sad Letter
+[C][B][FFFFFF]┃ ➤ /joke [00FFFF]» Hindi Joke
+[C][B][FFFFFF]┃ ➤ /luck <name> [00FFFF]» Fortune
+[C][B][FFFFFF]┃ ➤ /quiz [00FFFF]» Quiz Game
+[B][C]{h3_color}╰━━━━━━━━━━━━━━━━━━━━╯"""
 
-                elif inPuTMsG.startswith('/join '):
-                    try:
-                        code = inPuTMsG.split('/join ')[1].strip()
-                        EM = await JoinSq_original(code, key, iv)
-                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', EM)
-                        await safe_send_message(XX, f"[B][C]{get_random_color()}\n✅ স্কোয়াডে জয়েন করা হয়েছে: {code}", uid, chat_id, key, iv)
-                    except Exception as e:
-                        print_tag(f"স্কোয়াড জয়েনে সমস্যা: {e}", "red")
+                    h4 = f"""[B][C]{h4_color}╭━━━━〔 TOM TCP PREMIUM 〕━━━━╮
+[C][B][FFFFFF]┃ TCP BOT       [00FFFF]» @tom_x_420
+[C][B][FFFFFF]┃ GLORY BOT    [00FFFF]» @tom_x_420
+[C][B][FFFFFF]┃ LEVEL UP BOT [00FFFF]» @tom_x_420
+[C][B][FFFFFF]┃ LIKE BOT     [00FFFF]» @tom_x_420
+[B][C]{h4_color}╰━━━━━━━━━━━━━━━━━━━━━━━━╯
 
-                elif inPuTMsG.startswith('/exit') or inPuTMsG.startswith('/leave'):
-                    await SEndPacKeT(whisper_writer, online_writer, 'OnLine', await ExiT(uid, key, iv))
-                    await safe_send_message(XX, f"[B][C]{get_random_color()}\n✅ স্কোয়াড ত্যাগ করা হয়েছে", uid, chat_id, key, iv)
+[B][C]{h4_color}╭━━━━━━〔 CONTACT 〕━━━━━━╮
+[C][B][FFFFFF]┃ Telegram: @tom_x_420
+[B][C]{h4_color}╰━━━━━━━━━━━━━━━━━━━━━━━━╯"""
 
-                elif inPuTMsG.startswith('/evos'):
-                    parts = inPuTMsG.strip().split()
-                    uids = [str(uid)]
-                    for p in parts[1:]:
-                        if p.isdigit() and len(p) >= 7: uids.append(p)
-                    if evo_cycle_task and not evo_cycle_task.done():
-                        evo_cycle_running = False
-                        evo_cycle_task.cancel()
-                        await asyncio.sleep(0.3)
-                    evo_cycle_running = True
-                    evo_cycle_task = asyncio.create_task(evo_gun_cycle(uids, EVO_IDS, key, iv, region))
-                    await safe_send_message(XX, f"[B][C][FFFFFF]✅ ইভো সাইকেল চালু হয়েছে", uid, chat_id, key, iv)
+                    for m in (h1, h2, h3, h4):
+                        try:
+                            P = await SEndMsG(XX, m, uid, chat_id, key, iv)
+                            if P:
+                                await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+                            await asyncio.sleep(HELP_DELAY)
+                        except Exception:
+                            pass
 
-                elif inPuTMsG.strip() == '/sevos':
-                    if evo_cycle_task and not evo_cycle_task.done():
-                        evo_cycle_running = False
-                        evo_cycle_task.cancel()
-                        await safe_send_message(XX, f"[B][C][FFFFFF]✅ ইভো সাইকেল বন্ধ করা হয়েছে", uid, chat_id, key, iv)
+                                                                 
+                        
+                                                                 
+                elif inPuTMsG.strip() == "/admin":
+                    msg = f"""[b][c]{get_random_color()} ═══ @tom_x_420 TCP BOT ═══
 
+[b][c][FFFFFF]🎯 AVAILABLE BOTS:
+[b][c][FFFFFF]✅ Tomb Bots
+[b][c][FFFFFF]✅ Glory Bots
+[b][c][FFFFFF]✅ Friend Bots
+[b][c][FFFFFF]✅ Clan Bots
+[b][c][FFFFFF]✅ TCP Online Bots
+
+[b][c][FFFFFF]💎 Developer: \123\u0048\x41\120\x50\u004e\x4f TCP
+[b][c][FFFFFF]✈️ Telegram: @your_handle
+[b][c][FFFFFF]🔗  : https://t.me/your_link
+
+[b][c]{get_random_color()} Contact to purchase!"""
+                    P = await SEndMsG(XX, msg, uid, chat_id, key, iv)
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+
+                                                                 
+                                        
+                                                                 
                 elif inPuTMsG.strip().startswith('/s1'):
                     await handle_badge_command('s1', inPuTMsG, uid, chat_id, key, iv, region, XX)
                 elif inPuTMsG.strip().startswith('/s2'):
@@ -1576,77 +2187,380 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, login_data, ready_event, region,
                 elif inPuTMsG.strip().startswith('/s5'):
                     await handle_badge_command('s5', inPuTMsG, uid, chat_id, key, iv, region, XX)
 
-                elif inPuTMsG.startswith('/evo ') and not inPuTMsG.startswith('/evos'):
-                    parts = inPuTMsG.strip().split()
+                                                                 
+                       
+                                                                 
+                elif inPuTMsG.startswith('/join '):
                     try:
-                        if len(parts) < 3:
-                            await safe_send_message(XX, f"[B][C][FF0000]ব্যবহার: /evo <uid> <ইমোট_নম্বর>", uid, chat_id, key, iv)
-                            continue
-                        emote_key = parts[-1].lower().strip()
-                        uids_l = [p for p in parts[1:-1] if p.isdigit()]
-                        if not uids_l:
-                            await safe_send_message(XX, f"[B][C][FF0000]❌ কমপক্ষে একটি UID দাও", uid, chat_id, key, iv)
-                            continue
-                        emote_id = None
-                        if emote_key in GENERAL_EMOTES_MAP:
-                            emote_id = GENERAL_EMOTES_MAP[emote_key]
-                        elif emote_key.isdigit() and int(emote_key) in EMOTE_MAP:
-                            emote_id = EMOTE_MAP[int(emote_key)]
-                        if emote_id is None:
-                            await safe_send_message(XX, f"[B][C][FF0000]❌ ইমোট '{emote_key}' পাওয়া যায়নি", uid, chat_id, key, iv)
-                            continue
-                        for t in uids_l:
-                            try:
-                                H = await Emote_k(int(t), int(emote_id), key, iv, region)
-                                await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
-                                await asyncio.sleep(0.1)
-                            except Exception:
-                                pass
-                        await safe_send_message(XX, f"[B][C][FFFFFF]✅ ইভো ইমোট {emote_key} পাঠানো হয়েছে", uid, chat_id, key, iv)
+                        code = inPuTMsG.split('/join ')[1].strip()
+                        EM = await JoinSq_original(code, key, iv)
+                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', EM)
+                        await safe_send_message(
+                            XX,
+                            f"[B][C]{get_random_color()}\n✅ Squad joined: {code}",
+                            uid, chat_id, key, iv
+                        )
                     except Exception as e:
-                        print_tag(f"ইভো সমস্যা: {e}", "red")
+                        print(f"Join error: {e}")
 
-                elif inPuTMsG.strip().startswith('/b '):
+                                                                 
+                               
+                                                                 
+                elif inPuTMsG.startswith('/exit') or inPuTMsG.startswith('/leave'):
+                    await SEndPacKeT(whisper_writer, online_writer, 'OnLine', await ExiT(uid, key, iv))
+                    await safe_send_message(
+                        XX,
+                        f"[B][C]{get_random_color()}\n✅ Left the squad",
+                        uid, chat_id, key, iv
+                    )
+
+                                                                 
+                            
+                                                                 
+                elif inPuTMsG.startswith('/spm '):
                     parts = inPuTMsG.strip().split()
-                    bundle_ids = {"1": 914000002, "2": 914000003, "3": 914038001, "4": 914039001, "5": 914042001, "6": 914044001, "7": 914047001, "8": 914047002, "9": 914048001, "10": 914050001, "11": 914051001, "12": 914053001}
-                    if len(parts) < 2:
-                        await safe_send_message(XX, f"[B][C][FFFFFF]ব্যবহার: /b <১-১২>", uid, chat_id, key, iv)
-                    elif parts[1] in bundle_ids:
-                        bid = bundle_ids[parts[1]]
-                        try:
-                            anim_pkt = await animation_packet(bid, key, iv)
-                            if anim_pkt and online_writer:
-                                online_writer.write(anim_pkt); await online_writer.drain()
-                            await asyncio.sleep(3)
-                            b_pkt = await Look_Changer(bid, key, iv, look_type=1, region=region)
-                            if b_pkt and online_writer:
-                                online_writer.write(b_pkt); await online_writer.drain()
-                            await safe_send_message(XX, f"[B][C][FFFFFF]✅ বান্ডেল {parts[1]} পাঠানো হয়েছে!", uid, chat_id, key, iv)
-                        except Exception as e:
-                            print_tag(f"বান্ডেল সমস্যা: {e}", "red")
+                    if len(parts) >= 2 and parts[1].isdigit():
+                        tgt = parts[1]
+                        if tgt in spm_tasks:
+                            spm_tasks[tgt].cancel()
+                        spam_targets.add(tgt)
+                        save_spam_targets()
+                        spm_tasks[tgt] = asyncio.create_task(spm_loop(tgt, key, iv))
+                        await safe_send_message(
+                            XX,
+                            f"[B][C][FFFFFF]✅ {tgt} Spam started for",
+                            uid, chat_id, key, iv
+                        )
                     else:
-                        await safe_send_message(XX, f"[B][C][FF0000]❌ বান্ডেল খুঁজে পাওয়া যায়নি", uid, chat_id, key, iv)
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]Usage: /spm <uid>",
+                            uid, chat_id, key, iv
+                        )
 
+                                                                 
+                            
+                                                                 
+                elif inPuTMsG.startswith('/stp '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 2 and parts[1] in spm_tasks:
+                        spm_tasks[parts[1]].cancel()
+                        del spm_tasks[parts[1]]
+                        if parts[1] in spam_targets:
+                            spam_targets.remove(parts[1])
+                            save_spam_targets()
+                        await safe_send_message(
+                            XX, "[B][C][FFFFFF]✅ Spam stopped",
+                            uid, chat_id, key, iv
+                        )
+                    else:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]❌ No active spam",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                                       
+                                                                 
+                elif inPuTMsG.startswith('/gh '):
+                    parts = inPuTMsG.split(' ', 2)
+                    if len(parts) >= 3 and bot_uid is not None:
+                        teamcode = parts[1].strip()
+                        name = parts[2].strip()
+                        try:
+                            pending_ghost_future = asyncio.Future()
+                            await SEndPacKeT(
+                                whisper_writer, online_writer, 'OnLine',
+                                await JoinSq_original(teamcode, key, iv)
+                            )
+                            try:
+                                await asyncio.wait_for(pending_ghost_future, timeout=8.0)
+                            except asyncio.TimeoutError:
+                                await safe_send_message(
+                                    XX, "[B][C][FF0000]❌ No response",
+                                    uid, chat_id, key, iv
+                                )
+                                pending_ghost_future = None
+                                continue
+                            await SEndPacKeT(whisper_writer, online_writer, 'OnLine', await ExiT(None, key, iv))
+                            await asyncio.sleep(0.2)
+                            for _ in range(4):
+                                await SEndPacKeT(
+                                    whisper_writer, online_writer, 'OnLine',
+                                    await GhostPakcet(ghost_team_id, name, ghost_squad_code, key, iv)
+                                )
+                                await asyncio.sleep(0.1)
+                            await safe_send_message(
+                                XX, f"[B][C][FFFFFF]✅ {name} Ghost joined as",
+                                uid, chat_id, key, iv
+                            )
+                            pending_ghost_future = None
+                        except Exception as e:
+                            await safe_send_message(
+                                XX, f"[B][C][FF0000]❌ {e}",
+                                uid, chat_id, key, iv
+                            )
+                            pending_ghost_future = None
+
+                                                                 
+                                     
+                                                                 
+                elif inPuTMsG.startswith('/msg '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) < 3:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]Usage: /msg <text> <times>",
+                            uid, chat_id, key, iv
+                        )
+                    else:
+                        try:
+                            times = int(parts[-1])
+                            message = ' '.join(parts[1:-1])
+                            if msg_spam_task and not msg_spam_task.done():
+                                msg_spam_running = False
+                                msg_spam_task.cancel()
+                                await asyncio.sleep(0.1)
+                            msg_spam_running = True
+                            msg_spam_task = asyncio.create_task(
+                                msg_spam_loop(message, times, chat_id, key, iv, region)
+                            )
+                            await safe_send_message(
+                                XX,
+                                f"[B][C][FFFFFF]✅ {times}x Sending: {message}",
+                                uid, chat_id, key, iv
+                            )
+                        except ValueError:
+                            await safe_send_message(
+                                XX, "[B][C][FF0000]Usage: /msg <text> <times>",
+                                uid, chat_id, key, iv
+                            )
+
+                                                                 
+                           
+                                                                 
+                elif inPuTMsG.strip() == '/stop msg':
+                    if msg_spam_task and not msg_spam_task.done():
+                        msg_spam_running = False
+                        msg_spam_task.cancel()
+                        await safe_send_message(
+                            XX, "[B][C][FFFFFF]✅   Spam stopped",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                                      
+                                                                 
+                elif inPuTMsG.startswith('/mg '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) < 2:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]Usage: /mg <text> [repeats]",
+                            uid, chat_id, key, iv
+                        )
+                    else:
+                        try:
+                            message = parts[1]
+                            repeats = int(parts[2]) if len(parts) > 2 else 5
+                            if repeats > 10:
+                                repeats = 10
+                            if mg_spam_task and not mg_spam_task.done():
+                                msg_spam_running = False
+                                mg_spam_task.cancel()
+                                await asyncio.sleep(0.1)
+                            msg_spam_running = True
+                            mg_spam_task = asyncio.create_task(
+                                send_wave_messages(message, repeats, chat_id, key, iv, region)
+                            )
+                            await safe_send_message(
+                                XX,
+                                f"[B][C][FFFFFF]✅ Wave started: {message} x{repeats}",
+                                uid, chat_id, key, iv
+                            )
+                        except ValueError:
+                            await safe_send_message(
+                                XX, "[B][C][FF0000]Usage: /mg <text> [repeats]",
+                                uid, chat_id, key, iv
+                            )
+
+                                                                 
+                            
+                                                                 
+                elif inPuTMsG.startswith('/ban '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 2 and parts[1].isdigit():
+                        if ban_task and not ban_task.done():
+                            ban_running = False
+                            ban_task.cancel()
+                            ban_targets.clear()
+                            await asyncio.sleep(0.3)
+                        ban_targets.add(parts[1])
+                        ban_task = asyncio.create_task(ban_loop(key, iv))
+                        await safe_send_message(
+                            XX,
+                            f"[B][C][FFFFFF]✅ {parts[1]} Ban started on",
+                            uid, chat_id, key, iv
+                        )
+                    else:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]Usage: /ban <uid>",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                                             
+                                                                 
+                elif inPuTMsG.startswith('/reject '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 2 and parts[1].isdigit():
+                        if reject_spam_task and not reject_spam_task.done():
+                            reject_spam_running = False
+                            reject_spam_task.cancel()
+                            await asyncio.sleep(0.3)
+                        await safe_send_message(
+                            XX,
+                            f"[B][C][FFFFFF]🌀 {parts[1]} Reject spam started on",
+                            uid, chat_id, key, iv
+                        )
+                        reject_spam_running = True
+                        reject_spam_task = asyncio.create_task(
+                            reject_spam_loop(parts[1], key, iv)
+                        )
+                    else:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]Usage: /reject <uid>",
+                            uid, chat_id, key, iv
+                        )
+
+                elif inPuTMsG.strip() == '/reject_stop':
+                    if reject_spam_task and not reject_spam_task.done():
+                        reject_spam_running = False
+                        reject_spam_task.cancel()
+                        await safe_send_message(
+                            XX, "[B][C][FFFFFF]✅ Reject spam stopped",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                               
+                                                                 
+                elif inPuTMsG.startswith('/evos'):
+                    parts = inPuTMsG.strip().split()
+                    uids = [str(uid)]
+                    for p in parts[1:]:
+                        if p.isdigit() and len(p) >= 7:
+                            uids.append(p)
+                    if evo_cycle_task and not evo_cycle_task.done():
+                        evo_cycle_running = False
+                        evo_cycle_task.cancel()
+                        await asyncio.sleep(0.3)
+                    evo_cycle_running = True
+                    evo_cycle_task = asyncio.create_task(
+                        evo_gun_cycle(uids, EVO_IDS, key, iv, region)
+                    )
+                    await safe_send_message(
+                        XX, "[B][C][FFFFFF]✅ Evo cycle started",
+                        uid, chat_id, key, iv
+                    )
+
+                elif inPuTMsG.strip() == '/sevos':
+                    if evo_cycle_task and not evo_cycle_task.done():
+                        evo_cycle_running = False
+                        evo_cycle_task.cancel()
+                        await safe_send_message(
+                            XX, "[B][C][FFFFFF]✅ Evo cycle stopped",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                                     
+                                                                 
+                elif inPuTMsG.startswith('/fast '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 3:
+                        uids = []
+                        emote_id = None
+                        for p in parts[1:]:
+                            if p.isdigit():
+                                if len(p) > 3:
+                                    uids.append(p)
+                                else:
+                                    emote_id = p
+                        if uids and emote_id:
+                            if fast_spam_task and not fast_spam_task.done():
+                                fast_spam_running = False
+                                fast_spam_task.cancel()
+                            fast_spam_running = True
+                            fast_spam_task = asyncio.create_task(
+                                fast_emote_spam(uids, emote_id, key, iv, region)
+                            )
+                            await safe_send_message(
+                                XX, "[B][C][FFFFFF]✅ Fast spam started",
+                                uid, chat_id, key, iv
+                            )
+
+                                                                 
+                                          
+                                                                 
+                elif inPuTMsG.startswith('/p '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 4:
+                        try:
+                            tgt = parts[1]
+                            emote_id = parts[2]
+                            times = int(parts[3])
+                            if times > 100:
+                                times = 100
+                            if custom_spam_task and not custom_spam_task.done():
+                                custom_spam_running = False
+                                custom_spam_task.cancel()
+                                await asyncio.sleep(0.2)
+                            custom_spam_running = True
+                            custom_spam_task = asyncio.create_task(
+                                custom_emote_spam(tgt, emote_id, times, key, iv, region)
+                            )
+                            await safe_send_message(
+                                XX,
+                                f"[B][C][FFFFFF]✅ Custom spam started: {emote_id} x{times}",
+                                uid, chat_id, key, iv
+                            )
+                        except ValueError:
+                            await safe_send_message(
+                                XX, "[B][C][FF0000]Usage: /p <uid> <emote> <times>",
+                                uid, chat_id, key, iv
+                            )                                                                 
+                                                               
+                                          
+                                                                 
+
+
+                                                                 
+                                             
+                                                                 
                 elif inPuTMsG.startswith('/e '):
                     parts = inPuTMsG.strip().split()
                     try:
                         if len(parts) < 2:
-                            await safe_send_message(XX, f"[B][C][FF0000]ব্যবহার: /e <নম্বর> অথবা /e <uid> <নম্বর>", uid, chat_id, key, iv)
+                            await safe_send_message(
+                                XX,
+                                "[B][C][FF0000]Usage: /e <name>   /e <uid> <name>",
+                                uid, chat_id, key, iv
+                            )
                             continue
-                        last = parts[-1].lower().strip()
-                        is_num = last in GENERAL_EMOTES_MAP
-                        is_name = last in NAME_EMOTES
+                        last = parts[-1].lower()
+                        is_num = last.isdigit() and last in NUMBER_EMOTES
+                        is_name = last in NAME_EMOTES or last in NAME_TO_EMOTE_ID
                         if not (is_num or is_name):
-                            await safe_send_message(XX, f"[B][C][FF0000]❌ ইমোট '{last}' পাওয়া যায়নি", uid, chat_id, key, iv)
+                            await safe_send_message(
+                                XX,
+                                f"[B][C][FF0000]❌   '{last}' not found",
+                                uid, chat_id, key, iv
+                            )
                             continue
-                        tgt_uids = []
-                        if len(parts) == 2:
-                            tgt_uids.append(int(uid))
-                        else:
-                            for p in parts[1:-1]:
-                                if p.isdigit():
-                                    tgt_uids.append(int(p))
-                        emote_id = GENERAL_EMOTES_MAP.get(last) if is_num else NAME_EMOTES.get(last)
+                        tgt_uids = [int(uid)] if len(parts) == 2 else [
+                            int(p) for p in parts[1:-1] if p.isdigit()
+                        ]
+                        emote_id = NUMBER_EMOTES.get(last) if is_num else (
+                            NAME_EMOTES.get(last) or NAME_TO_EMOTE_ID.get(last)
+                        )
                         sc = 0
                         for t in tgt_uids:
                             try:
@@ -1657,189 +2571,599 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, login_data, ready_event, region,
                             except Exception:
                                 pass
                         if sc > 0:
-                            await safe_send_message(XX, f"[B][C][FFFFFF]✅ {sc} জনকে ইমোট পাঠানো হয়েছে", uid, chat_id, key, iv)
+                            await safe_send_message(
+                                XX,
+                                f"[B][C][FFFFFF]✅ {sc} players received the emote",
+                                uid, chat_id, key, iv
+                            )
                     except Exception as e:
-                        print_tag(f"ইমোট সমস্যা: {e}", "red")
+                        print(f"E cmd error: {e}")
 
+                                                                 
+                                   
+                                                                 
+                elif inPuTMsG.startswith('/evo ') and not inPuTMsG.startswith('/evos'):
+                    parts = inPuTMsG.strip().split()
+                    try:
+                        num = None
+                        uids_l = []
+                        for p in parts[1:]:
+                            if p.isdigit():
+                                if len(p) <= 2 and num is None:
+                                    num = p
+                                else:
+                                    uids_l.append(p)
+                        if not num or not uids_l:
+                            await safe_send_message(
+                                XX,
+                                "[B][C][FF0000]Usage: /evo <uid> <1-21>",
+                                uid, chat_id, key, iv
+                            )
+                            continue
+                        num_i = int(num)
+                        if num_i not in EMOTE_MAP:
+                            await safe_send_message(
+                                XX,
+                                "[B][C][FF0000]❌ Number must be between 1 and 21",
+                                uid, chat_id, key, iv
+                            )
+                            continue
+                        emote_id = EMOTE_MAP[num_i]
+                        for t in uids_l:
+                            try:
+                                H = await Emote_k(int(t), int(emote_id), key, iv, region)
+                                await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
+                                await asyncio.sleep(0.1)
+                            except Exception:
+                                pass
+                        await safe_send_message(
+                            XX,
+                            f"[B][C][FFFFFF]✅ Evo emote {num_i} sent",
+                            uid, chat_id, key, iv
+                        )
+                    except Exception as e:
+                        print(f"Evo error: {e}")
+
+                                                                 
+                                    
+                                                                 
+                elif inPuTMsG.strip().startswith('/title') or inPuTMsG.strip().startswith('/alltitles'):
+                    titles_list = [
+                        905090075, 904990072, 904990069, 905190079,
+                        904090014, 904090015, 904090024, 904090025,
+                        904090026, 904090027, 904990070, 904990071
+                    ]
+                    await safe_send_message(
+                        XX,
+                        f"[B][C][FFFFFF]🎖️ {len(titles_list)} Sending all titles...",
+                        uid, chat_id, key, iv
+                    )
+                    for tid in titles_list:
+                        try:
+                            pkt = await convert_kyro_to_your_system(
+                                int(uid), chat_id, key, iv,
+                                nickname="\123\x48\101\120\u0050\u004e\x4f TCP", title_id=tid
+                            )
+                            if pkt and whisper_writer:
+                                whisper_writer.write(pkt)
+                                await whisper_writer.drain()
+                            await asyncio.sleep(2)
+                        except Exception as e:
+                            print(f"Title error: {e}")
+                    await safe_send_message(
+                        XX, "[B][C][FFFFFF]✅ All titles sent!",
+                        uid, chat_id, key, iv
+                    )
+
+                                                                 
+                            
+                                                                 
+                elif inPuTMsG.strip().startswith('/animation'):
+                    parts = inPuTMsG.strip().split()
+                    anim_ids = {
+                        "1": 914000002, "2": 914000003, "3": 914038001,
+                        "4": 914039001, "5": 914042001, "6": 914044001,
+                        "7": 914047001, "8": 914047002, "9": 914048001,
+                        "10": 914050001, "11": 914051001, "12": 914053001
+                    }
+                    if len(parts) < 2:
+                        lst = (
+                            "1-rampage\n2-cannibal\n3-devil\n4-scorpio\n5-frostfire\n"
+                            "6-paradox\n7-naruto\n8-aurora\n9-midnight\n"
+                            "10-itachi\n11-dreamspace\n12-eclipse"
+                        )
+                        await safe_send_message(
+                            XX,
+                            f"[B][C][FFFFFF]Animation:\n{lst}",
+                            uid, chat_id, key, iv
+                        )
+                    elif parts[1] in anim_ids:
+                        try:
+                            pkt = await animation_packet(anim_ids[parts[1]], key, iv)
+                            if pkt and online_writer:
+                                online_writer.write(pkt)
+                                await online_writer.drain()
+                            await safe_send_message(
+                                XX,
+                                f"[B][C][FFFFFF]✅ Animation {parts[1]} sent!",
+                                uid, chat_id, key, iv
+                            )
+                        except Exception as e:
+                            print(f"Anim error: {e}")
+                    else:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]❌ Animation not found",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                                    
+                                                                 
+                elif inPuTMsG.strip().startswith('/b '):
+                    parts = inPuTMsG.strip().split()
+                    bundle_ids = {
+                        "1": 914000002, "2": 914000003, "3": 914038001,
+                        "4": 914039001, "5": 914042001, "6": 914044001,
+                        "7": 914047001, "8": 914047002, "9": 914048001,
+                        "10": 914050001, "11": 914051001, "12": 914053001,
+                        "13": 914055001
+                    }
+                    if len(parts) < 2:
+                        await safe_send_message(
+                            XX, "[B][C][FFFFFF]Usage: /b <1-13>",
+                            uid, chat_id, key, iv
+                        )
+                    elif parts[1] in bundle_ids:
+                        bid = bundle_ids[parts[1]]
+                        try:
+                            anim_pkt = await animation_packet(bid, key, iv)
+                            if anim_pkt and online_writer:
+                                online_writer.write(anim_pkt)
+                                await online_writer.drain()
+                            await asyncio.sleep(3)
+                            b_pkt = await Look_Changer(bid, key, iv, look_type=1, region=region)
+                            if b_pkt and online_writer:
+                                online_writer.write(b_pkt)
+                                await online_writer.drain()
+                            await safe_send_message(
+                                XX,
+                                f"[B][C][FFFFFF]✅ Bundle {parts[1]} sent!",
+                                uid, chat_id, key, iv
+                            )
+                        except Exception as e:
+                            print(f"Bundle error: {e}")
+                    else:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]❌ Bundle not found",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                          
+                                                                 
+                elif inPuTMsG.strip().startswith('/sticker'):
+                    try:
+                        pkt = await send_sticker_packet(uid, chat_id, key, iv)
+                        if pkt and whisper_writer:
+                            whisper_writer.write(pkt)
+                            await whisper_writer.drain()
+                    except Exception as e:
+                        print(f"Sticker error: {e}")                                                                 
+                                                               
+                                          
+                                                                 
+
+
+                                                                 
+                              
+                                                                 
                 elif inPuTMsG.strip().startswith('/love '):
                     try:
                         name = inPuTMsG.strip()[6:].strip()
                         msgs = [
-                            f"[B][C][FF1493]❤️ {name} তুমি আমার জান! ❤️",
-                            f"[B][C][FF66CC]💕 {name} তোমাকে ছাড়া কিছু নেই! 💕",
-                            f"[B][C][FF00FF]💖 {name} তুমিই আমার সব! 💖",
-                            f"[B][C][FF69B4]💗 {name} তুমি আমার দুনিয়া! 💗",
-                            f"[B][C][FF1493]💘 {name} আমি তোমাকে অনেক ভালোবাসি! 💘",
-                            f"[B][C][FF66CC]💝 {name} তুমি আমার জীবন! 💝",
+                            f"[B][C][FF0000]❤️ {name} you are very special! ❤️",
+                            f"[B][C][FF0000]💕 {name} nothing is the same without you! 💕",
+                            f"[B][C][FFFFFF]💖 {name} you mean a lot! 💖",
+                            f"[B][C][FF0000]💗 {name} you are amazing! 💗",
+                            f"[B][C][FF0000]💘 {name} I appreciate you! 💘"
                         ]
                         for m in msgs:
-                            await safe_send_message(XX, m, uid, chat_id, key, iv)
+                            P = await SEndMsG(XX, m, uid, chat_id, key, iv)
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
                             await asyncio.sleep(1.5)
                     except Exception as e:
-                        print_tag(f"ভালোবাসা সমস্যা: {e}", "red")
+                        print(f"Love error: {e}")
 
+                                                                 
+                              
+                                                                 
                 elif inPuTMsG.strip().startswith('/gali '):
                     try:
                         name = inPuTMsG.strip()[6:].strip()
-                        blocked = ["MOHASIN", "MOHASIN txt", "MOHASIN.txt"]
+                        blocked = ["rafin", "rafin txt", "rafin.txt"]
                         if name.lower() in blocked:
-                            await safe_send_message(XX, f"[B][C][FF0000]⚠️ বট মালিককে টার্গেট করা যাবে না!", uid, chat_id, key, iv)
+                            await safe_send_message(
+                                XX,
+                                "[B][C][FF0000]⚠️ bot owner   cannot be targeted!",
+                                uid, chat_id, key, iv
+                            )
                             continue
                         msgs = [
-                            f"[B][C][FF0000]{name} খা🫨নক🫨ির বা🫨চ🫨্চা! 🤬",
-                            f"[B][C][FF0000]{name} নো😮ংরা নাল😮ার কী😮ট! 🐛",
-                            f"[B][C][FF0000]{name} ভো😮স😮ড়ি😮র! 💢",
-                            f"[B][C][FF0000]{name} মা😮দার😮চো😮দ! 😡",
-                            f"[B][C][FF0000]{name} ভা😮ড়ু😮য়া! 🤬",
-                            f"[B][C][FF0000]{name} র🫨ান্ড😮ির বা😮চ্চা! 😤",
-                            f"[B][C][FF0000]{name} নালা😮য়ে😮ক কু😮ত্তা! 🐕",
-                            f"[B][C][FF0000]{name} হ😮ার😮াম😮ী! 💀",
+                            f"[B][C][FF0000]{name} insult! 🤬",
+                            f"[B][C][FF0000]{name} insult! 🐛",
+                            f"[B][C][FF0000]{name} insult! 💢",
+                            f"[B][C][FF0000]{name} insult! 😡",
+                            f"[B][C][FF0000]{name} insult! 💀"
                         ]
                         for m in msgs:
-                            await safe_send_message(XX, m, uid, chat_id, key, iv)
+                            P = await SEndMsG(XX, m, uid, chat_id, key, iv)
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
                             await asyncio.sleep(1.5)
                     except Exception as e:
-                        print_tag(f"গালি সমস্যা: {e}", "red")
+                        print(f"Gali error: {e}")
 
+                                                                 
+                                    
+                                                                 
                 elif inPuTMsG.strip().startswith('/rt '):
                     try:
                         name = inPuTMsG.strip()[4:].strip()
                         msgs = [
-                            f"[B][C][FF0000]😆 {name} তো বট, বট! 🤖",
-                            f"[B][C][FF0000]🎮 {name} তো ট্রেনিং গ্রাউন্ডের পুতুল! 🗿",
-                            f"[B][C][FF0000]💩 {name} এর হেডশট রেট মাইনাসে! 📉",
-                            f"[B][C][FF0000]🏃 {name} তো শত্রু দেখে পালায়! 🏃‍♂️",
-                            f"[B][C][FF0000]😂 {name} তো ফ্রি ফায়ারের সবচেয়ে বড় নুব! 🎯",
-                            f"[B][C][FF0000]🤣 {name} এর গেমপ্লে দেখে বটরা হাসে! 😂",
+                            f"[B][C][FF0000]😆 {name} is a bot! 🤖",
+                            f"[B][C][FF0000]🎮 {name} is a training-ground dummy! 🗿",
+                            f"[B][C][FF0000]😂 {name} is a big Free Fire newbie! 🎯"
                         ]
                         for m in msgs:
-                            await safe_send_message(XX, m, uid, chat_id, key, iv)
+                            P = await SEndMsG(XX, m, uid, chat_id, key, iv)
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
                             await asyncio.sleep(1.5)
                     except Exception as e:
-                        print_tag(f"রোস্ট সমস্যা: {e}", "red")
+                        print(f"RT error: {e}")
 
+                                                                 
+                                
+                                                                 
                 elif inPuTMsG.strip().startswith('/praisa '):
                     try:
                         name = inPuTMsG.strip()[8:].strip()
                         msgs = [
-                            f"[B][C][FFFFFF]🌟 {name} তুমি অসাধারণ মানুষ! 🌟",
-                            f"[B][C][FFFFFF]🔥 {name} তোমার পরিশ্রম একদিন রঙ দেবে! 🔥",
-                            f"[B][C][FFFFFF]💎 {name} তুমি ইউনিক! 💎",
-                            f"[B][C][FFFFFF]🚀 {name} তোমার ভবিষ্যৎ উজ্জ্বল! 🚀",
-                            f"[B][C][FFFFFF]👑 {name} তুমি লিডার হওয়ার যোগ্য! 👑",
-                            f"[B][C][FFFFFF]🌈 {name} তোমার হাসি সবার দিন ভালো করে দেয়! 🌈",
+                            f"[B][C][FFFFFF]🌟 {name}          ! 🌟",
+                            f"[B][C][FFFFFF]🔥 {name} Your hard work will pay off one day! 🔥",
+                            f"[B][C][FFFFFF]💎 {name} You are unique! 💎"
                         ]
                         for m in msgs:
-                            await safe_send_message(XX, m, uid, chat_id, key, iv)
+                            P = await SEndMsG(XX, m, uid, chat_id, key, iv)
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
                             await asyncio.sleep(0.8)
                     except Exception as e:
-                        print_tag(f"প্রশংসা সমস্যা: {e}", "red")
+                        print(f"Praisa error: {e}")
 
+                                                                 
+                               
+                                                                 
                 elif inPuTMsG.strip().startswith('/later '):
                     try:
                         name = inPuTMsG.strip()[7:].strip()
-                        msg = f"[B][C][FF1493]💌 প্রিয় {name} 💌\n\nতোমার স্মৃতিতে দিন কেটে যায়,\nতোমাকে ছাড়া মন কাঁদে,\nতুমিই তো সে, যার জন্য,\nএই মন প্রতিক্ষণ ধকধক করে।\n\n💕 তোমার চিরকাল 💕"
-                        await safe_send_message(XX, msg, uid, chat_id, key, iv)
+                        msg = (
+                            f"[B][C][FF0000]💌 Dear {name} 💌\n\n"
+                            f"Days pass with your memories,\n"
+                            f"I miss you \n\n"
+                            f"💕 Yours always 💕"
+                        )
+                        P = await SEndMsG(XX, msg, uid, chat_id, key, iv)
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
                     except Exception as e:
-                        print_tag(f"প্রেমপত্র সমস্যা: {e}", "red")
+                        print(f"Later error: {e}")
 
+                                                                 
+                                  
+                                                                 
+                elif inPuTMsG.strip().startswith('/sadlater '):
+                    try:
+                        name = inPuTMsG.strip()[10:].strip()
+                        msg = (
+                            f"[B][C][FFFFFF]💔 {name} 💔\n\n"
+                            f"Listen to the voice of a broken heart,\n"
+                            f"I remember you every night \n\n"
+                            f"💔 Alone 💔"
+                        )
+                        P = await SEndMsG(XX, msg, uid, chat_id, key, iv)
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+                    except Exception as e:
+                        print(f"Sad error: {e}")
+
+                                                                 
+                       
+                                                                 
                 elif inPuTMsG.strip() == '/joke':
                     jokes = [
-                        "এক ছেলে ডাক্তারের কাছে গেল:\nডাক্তার: কী হয়েছে?\nছেলে: স্যার, যখন হাঁটি তখন ব্যথা হয়।\nডাক্তার: তাহলে হাঁটবেন না!\n😂😂",
-                        "শিক্ষক: হোমওয়ার্ক কেন করনি?\nছাত্র: স্যার, কারেন্ট চলে গিয়েছিল।\nশিক্ষক: দিনে কেন করনি?\nছাত্র: দিনে তো ঘুম আসে।\n🤣",
-                        "বস: তুমি ৫ বছরে কী শিখলে?\nকর্মচারী: স্যার, ৫ বছরে আমি শিখলাম যে ৫ বছর নষ্ট হয়ে গেছে!\n🤣🤣",
-                        "বাচ্চা: মা, আমাকে একটা ভাই চাই।\nমা: ঠিক আছে, ভগবানের কাছে চাও।\nবাচ্চা: না, বাবার কাছে চাওয়াও, উনি ভগবানের চেয়েও বেশি দেন!\n😱😂",
+                        "Teacher: Why did you not do your homework?\nStudent: Sir, The power went out \nTeacher: Why did you not do it during the day?\nStudent: I feel sleepy during the day \n🤣",
+                        "Wife: Dear, tell me something \n : Yes, go ahead \nWife: Am I beautiful or is your mother?\n : Both are beautiful \n😂"
                     ]
-                    joke = random.choice(jokes)
-                    await safe_send_message(XX, f"[B][C][FFFFFF]😂 জোকস 😂\n\n{joke}", uid, chat_id, key, iv)
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]😂 JOKES 😂\n\n{random.choice(jokes)}",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
 
-                elif inPuTMsG.strip().startswith('/luck '):
-                    try:
-                        name = inPuTMsG.strip()[6:].strip().title()
-                        predictions = [
-                            f"🌟 {name} তুমি শীঘ্রই বড় সাফল্য পাবে!",
-                            f"💰 {name} তোমার জীবনে অনেক টাকা আসবে!",
-                            f"❤️ {name} তোমার সত্যিকারের ভালোবাসা খুব কাছে!",
-                            f"🏆 {name} তুমি একদিন চ্যাম্পিয়ন হবে!",
-                            f"🌈 {name} তোমার কঠিন দিন শেষ হচ্ছে!",
-                            f"🎯 {name} তোমার স্বপ্ন পূরণ হবে!",
-                        ]
-                        p = random.choice(predictions)
-                        await safe_send_message(XX, f"[B][C][FFFFFF]🔮 ভাগ্য 🔮\n\n[FFFFFF]👤 নাম: [FFFFFF]{name}\n\n[FFFFFF]{p}", uid, chat_id, key, iv)
-                    except Exception as e:
-                        print_tag(f"ভাগ্য সমস্যা: {e}", "red")
-
-                elif inPuTMsG.strip() == '/quiz':
-                    quizzes = [
-                        ("বাংলাদেশের রাজধানী?", "ঢাকা"),
-                        ("পৃথিবীর সবচেয়ে বড় মহাসাগর?", "প্রশান্ত মহাসাগর"),
-                        ("বাংলাদেশের জাতীয় পাখি?", "দোয়েল"),
-                        ("১ কিলোমিটার = কত মিটার?", "১০০০"),
-                        ("সূর্য কোন দিক থেকে ওঠে?", "পূর্ব"),
-                        ("পানির রাসায়নিক সূত্র?", "H2O"),
-                        ("মানব শরীরে কতটি হাড়?", "২০৬"),
-                        ("ফ্রি ফায়ারে কতজন প্লেয়ার?", "৫০"),
-                    ]
-                    q, a = random.choice(quizzes)
-                    await safe_send_message(XX, f"[B][C][FFFFFF]🧠 কুইজ 🧠\n\n[FFFFFF]❓ {q}\n\n[FFFFFF]✅ উত্তর: {a}", uid, chat_id, key, iv)
-
-                elif inPuTMsG.strip() == '/roll':
-                    d1 = random.randint(1, 6)
-                    d2 = random.randint(1, 6)
-                    total = d1 + d2
-                    faces = {1: "⚀", 2: "⚁", 3: "⚂", 4: "⚃", 5: "⚄", 6: "⚅"}
-                    await safe_send_message(XX, f"[B][C][FFFFFF]🎲 ডাইস রোল 🎲\n\n[FFFFFF]🎯 ডাইস ১: {faces[d1]} {d1}\n[FFFFFF]🎯 ডাইস ২: {faces[d2]} {d2}\n\n[FFFFFF]📊 মোট: {total}/12", uid, chat_id, key, iv)
-
-                elif inPuTMsG.strip() in ('/zodiac', '/rashi'):
-                    signs = ["মেষ ♈", "বৃষ ♉", "মিথুন ♊", "কর্কট ♋", "সিংহ ♌", "কন্যা ♍",
-                             "তুলা ♎", "বৃশ্চিক ♏", "ধনু ♐", "মকর ♑", "কুম্ভ ♒", "মীন ♓"]
-                    horos = [
-                        "আজ তোমার দিন দুর্দান্ত যাবে!",
-                        "ভালোবাসায় আজ সুখবর আসতে পারে!",
-                        "আর্থিক বিষয়ে সতর্ক থাকো।",
-                        "আজ নতুন কিছু শিখবে!",
-                        "স্বাস্থ্যের যত্ন নাও।",
-                    ]
-                    s = random.choice(signs)
-                    h = random.choice(horos)
-                    await safe_send_message(XX, f"[B][C][FFFFFF]🌟 রাশিফল 🌟\n\n[FFFFFF]🔮 রাশি: [FFFFFF]{s}\n\n[FFFFFF]📜 {h}", uid, chat_id, key, iv)
-
-                elif inPuTMsG.strip() in ('/weather', '/abohawa'):
-                    cities = ["ঢাকা", "চট্টগ্রাম", "খুলনা", "রাজশাহী", "সিলেট", "বরিশাল"]
-                    weathers = ["☀️ রোদ", "🌤️ আংশিক মেঘ", "⛅ মেঘ", "🌧️ বৃষ্টি", "🌦️ হালকা বৃষ্টি"]
-                    city = random.choice(cities)
-                    temp = f"{random.randint(20, 40)}°C"
-                    w = random.choice(weathers)
-                    hum = f"{random.randint(40, 95)}%"
-                    await safe_send_message(XX, f"[B][C][FFFFFF]🌤️ আবহাওয়া 🌤️\n\n[FFFFFF]📍 শহর: [FFFFFF]{city}\n[FFFFFF]🌡️ তাপমাত্রা: [FFFFFF]{temp}\n[FFFFFF]☁️ আবহাওয়া: [FFFFFF]{w}\n[FFFFFF]💧 আর্দ্রতা: [FFFFFF]{hum}", uid, chat_id, key, iv)
-
-                elif inPuTMsG.strip() == '/truth':
-                    truths = [
-                        "💕 তুমি কাকে সবচেয়ে বেশি ভালোবাসো?",
-                        "🤫 তোমার সবচেয়ে বড় সিক্রেট কী?",
-                        "😭 শেষ কবে কেঁদেছিলে?",
-                        "💔 তোমার ক্রাশ কে?",
-                        "🤥 শেষ কবে মিথ্যা বলেছিলে?",
-                        "😱 তোমার সবচেয়ে বড় ভয় কী?",
-                    ]
-                    t = random.choice(truths)
-                    await safe_send_message(XX, f"[B][C][FFFFFF]🤔 ট্রুথ 🤔\n\n{t}", uid, chat_id, key, iv)
-
+                                                                 
+                       
+                                                                 
                 elif inPuTMsG.strip() == '/dare':
                     dares = [
-                        "🔥 ৫ মিনিট চোখ বন্ধ করে রাখো!",
-                        "😂 পরের ১০ মিনিট শুধু হাসতে থাকো!",
-                        "🐔 মুরগির মতো ডাকো!",
-                        "🎤 একটা গান গাও!",
-                        "💃 ৩০ সেকেন্ড নাচো!",
+                        '🔥 Keep your eyes closed for 5 minutes!',
+                        '😂 Keep laughing for the next 10 minutes!',
+                        '🐔 Make a chicken sound!'
                     ]
-                    d = random.choice(dares)
-                    await safe_send_message(XX, f"[B][C][FFFFFF]🎲 ডেয়ার 🎲\n\n{d}", uid, chat_id, key, iv)
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]🎲 DARE 🎲\n\n{random.choice(dares)}",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
 
+                                                                 
+                        
+                                                                 
+                elif inPuTMsG.strip() == '/truth':
+                    truths = [
+                        '💕 Who do you love the most?',
+                        '🤫 What is your biggest secret?',
+                        '💔 Who is your crush?'
+                    ]
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]🤔 TRUTH 🤔\n\n{random.choice(truths)}",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+
+                                                                 
+                                         
+                                                                 
+                elif inPuTMsG.strip() == '/wyr':
+                    a, b = random.choice([
+                        ("The power to become invisible", "The power to fly"),
+                        ("Be Superman", "Be Batman")
+                    ])
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]🤔 Which one would you choose?\n\nA) {a}\n\nB) {b}",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+
+                                                                 
+                       
+                                                                 
+                elif inPuTMsG.strip() == '/quiz':
+                    q, a = random.choice([
+                        ("Capital of India?", "New Delhi"),
+                        ("1   = How many meters?", "1000")
+                    ])
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]🧠   🧠\n\n❓ {q}\n\n✅  : {a}",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+
+                                                                 
+                              
+                                                                 
+                elif inPuTMsG.strip() == '/roll':
+                    d1, d2 = random.randint(1, 6), random.randint(1, 6)
+                    faces = {1: "⚀", 2: "⚁", 3: "⚂", 4: "⚃", 5: "⚄", 6: "⚅"}
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]🎲   🎲\n\n🎯   1: {faces[d1]} {d1}\n🎯   2: {faces[d2]} {d2}\n\n📊  : {d1 + d2}/12",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+
+                                                                 
+                                 
+                                                                 
+                elif inPuTMsG.strip() in ('/zodiac', '/rashi'):
+                    signs = {
+                        "  ♈": ("Red", "9", "Tuesday"),
+                        "  ♉": ("Green", "6", "Friday")
+                    }
+                    s, d = random.choice(list(signs.items()))
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]🌟 HOROSCOPE 🌟\n\n🔮  : {s}\n🎨  : {d[0]}\n🔢  : {d[1]}\n📅  : {d[2]}\n\n📜 {random.choice(['Today will be a great day!', 'You may receive good news today!'])}",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+
+                                                                 
+                                    
+                                                                 
+                elif inPuTMsG.strip() in ('/weather', '/abohawa'):
+                    city = random.choice(["Delhi", "Mumbai", "Kolkata", "Chennai"])
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]🌤️ WEATHER 🌤️\n\n📍 City: {city}\n🌡️ Temperature: {random.randint(20, 40)}°C\n☁️ WEATHER: {random.choice(['☀️ Sunny', '🌤️ Partly cloudy', '🌧️ Rain'])}",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+
+                                                                 
+                              
+                                                                 
+                elif inPuTMsG.strip().startswith('/luck '):
+                    name = inPuTMsG.strip()[6:].strip().title()
+                    P = await SEndMsG(
+                        XX,
+                        f"[B][C][FFFFFF]🔮 LUCK 🔮\n\n👤 Name: {name}\n\n{random.choice([f'🌟 {name} You will achieve great success soon!', f'💰 {name} You will have financial success!'])}",
+                        uid, chat_id, key, iv
+                    )
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)                                                                 
+                                                               
+                                          
+                                                                 
+
+
+                                                                 
+                             
+                                                                 
+                elif inPuTMsG.strip().startswith('/info '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 2 and parts[1].isdigit():
+                        await safe_send_message(
+                            XX,
+                            f"[B][C][FFFFFF]🔍 {parts[1]} Fetching information for...",
+                            uid, chat_id, key, iv
+                        )
+                        try:
+                            ok, data = await get_player_info(parts[1])
+                            if ok:
+                                m1, m2, m3 = format_player_info(data)
+                                for m in (m1, m2, m3):
+                                    P = await SEndMsG(XX, m, uid, chat_id, key, iv)
+                                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+                                    await asyncio.sleep(0.5)
+                            else:
+                                await safe_send_message(
+                                    XX, f"[B][C][FF0000]❌ {data}",
+                                    uid, chat_id, key, iv
+                                )
+                        except Exception as e:
+                            await safe_send_message(
+                                XX, f"[B][C][FF0000]❌ Error: {e}",
+                                uid, chat_id, key, iv
+                            )
+                    else:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]Usage: /info <uid>",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                              
+                                                                 
+                elif inPuTMsG.strip().startswith('/check '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 2 and parts[1].isdigit():
+                        try:
+                            reply = await check_ban_auto(parts[1])
+                        except Exception as e:
+                            reply = f"[B][C][FF0000]❌ Error: {e}"
+                        P = await SEndMsG(XX, reply, uid, chat_id, key, iv)
+                        if P:
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+                    else:
+                        await safe_send_message(
+                            XX, "[B][C][FF0000]Usage: /check <uid>",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                               
+                                                                 
+                elif inPuTMsG.strip().startswith('/status'):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) < 2 or not parts[1].isdigit():
+                        await safe_send_message(
+                            XX,
+                            "[B][C][FF0000]❌ Usage: /status <player_uid>\n : /status 123456789",
+                            uid, chat_id, key, iv
+                        )
+                    else:
+                        target_uid = parts[1]
+                        debug_file_cache()
+                        clear_cache_entry(target_uid)
+                        await safe_send_message(
+                            XX,
+                            f"[B][C][FFFF00]🔍 {fix_num(target_uid)}   Status is being checked...",
+                            uid, chat_id, key, iv
+                        )
+                        try:
+                            status_packet = await createpacketinfo(target_uid, key, iv)
+                            if not status_packet:
+                                await safe_send_message(
+                                    XX,
+                                    "[B][C][FF0000]❌ Failed to build status packet!\n",
+                                    uid, chat_id, key, iv
+                                )
+                            else:
+                                await SEndPacKeT(whisper_writer, online_writer, 'OnLine', status_packet)
+                                response_received = False
+                                for attempt in range(12):
+                                    cache_data = load_from_cache(target_uid)
+                                    if cache_data:
+                                        response_received = True
+                                        status_msg = (
+                                            f"[B][C][FFFF00]📊 PLAYER STATUS\n"
+                                            f"────────────────\n"
+                                            f"👤 UID: {fix_num(target_uid)}\n"
+                                            f"📊 Status: {cache_data['status']}\n"
+                                        )
+                                        if "IN ROOM" in cache_data['status'] and 'room_id' in cache_data:
+                                            status_msg += f"🏠 Room ID: {fix_num(cache_data['room_id'])}\n"
+                                        elif "INSQUAD" in cache_data['status'] and 'leader_id' in cache_data:
+                                            status_msg += f"👑 Leader: {fix_num(cache_data['leader_id'])}\n"
+                                        elif "OFFLINE" in cache_data['status']:
+                                            status_msg += "🔴 Player is offline\n"
+                                        elif "INGAME" in cache_data['status']:
+                                            status_msg += "🎮 Player is in a match\n"
+                                        elif "SOLO" in cache_data['status']:
+                                            status_msg += "👤 Player is solo\n"
+                                        status_msg += "────────────────\n✅ REAL-TIME DATA\n"
+                                        await safe_send_message(XX, status_msg, uid, chat_id, key, iv)
+                                        break
+                                    await asyncio.sleep(0.5)
+                                if not response_received:
+                                    error_msg = (
+                                        f"[B][C][FF0000]❌ STATUS CHECK FAILED\n"
+                                        f"👤 UID: {fix_num(target_uid)}\n"
+                                        f"📛 No response from server  \n"
+                                    )
+                                    await safe_send_message(XX, error_msg, uid, chat_id, key, iv)
+                        except Exception as e:
+                            await safe_send_message(
+                                XX, f"[B][C][FF0000]❌ Error: {str(e)[:50]}\n",
+                                uid, chat_id, key, iv
+                            )
+
+                                                                 
+                                
+                                                                 
+                elif inPuTMsG.strip().startswith('/ai '):
+                    question = inPuTMsG.strip()[4:].strip()
+                    if question:
+                        await safe_send_message(
+                            XX, "[B][C][FFFFFF]🤖 AI is thinking...",
+                            uid, chat_id, key, iv
+                        )
+                        try:
+                            async with aiohttp.ClientSession() as session:
+                                async with session.get(
+                                    f"https://9x-ai.vercel.app/ask?key=SUMON9X&message={question}",
+                                    timeout=aiohttp.ClientTimeout(total=15)
+                                ) as r:
+                                    if r.status == 200:
+                                        answer = (await r.text()).strip()
+                                        msg = f"[B][C][FFFFFF]🤖 AI reply:\n\n[FFFFFF]{answer}"
+                                    else:
+                                        msg = f"[B][C][FF0000]❌ AI Error: {r.status}"
+                        except Exception as e:
+                            msg = f"[B][C][FF0000]❌ Error: {e}"
+                        P = await SEndMsG(XX, msg, uid, chat_id, key, iv)
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+
+                                                                 
+                                          
+                                                                 
                 elif inPuTMsG.strip().startswith('/mth'):
                     parts = inPuTMsG.strip().split(maxsplit=1)
                     if len(parts) < 2:
-                        await safe_send_message(XX, f"[B][C][FFFFFF]ব্যবহার: /mth 2+2", uid, chat_id, key, iv)
+                        await safe_send_message(
+                            XX, "[B][C][FFFFFF]Usage: /mth 2+2",
+                            uid, chat_id, key, iv
+                        )
                     else:
                         expr = parts[1].strip().replace("×", "*").replace("÷", "/").replace("x", "*")
                         try:
@@ -1849,92 +3173,21 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, login_data, ready_event, region,
                             result = eval(expr)
                             if isinstance(result, float) and result == int(result):
                                 result = int(result)
-                            await safe_send_message(XX, f"[B][C][FFFFFF]🧮 ফলাফল: [FFFFFF]{result}", uid, chat_id, key, iv)
+                            P = await SEndMsG(
+                                XX,
+                                f"[B][C][FFFFFF]🧮  \n\n : {expr}\n : {result}",
+                                uid, chat_id, key, iv
+                            )
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
                         except Exception:
-                            await safe_send_message(XX, f"[B][C][FF0000]❌ ভুল এক্সপ্রেশন", uid, chat_id, key, iv)
+                            await safe_send_message(
+                                XX, "[B][C][FF0000]❌ Invalid expression",
+                                uid, chat_id, key, iv
+                            )
 
-                elif inPuTMsG.strip().startswith('/info '):
-                    parts = inPuTMsG.strip().split()
-                    if len(parts) >= 2 and parts[1].isdigit():
-                        await safe_send_message(XX, f"[B][C][FFFFFF]🔍 {parts[1]} এর তথ্য আনা হচ্ছে...", uid, chat_id, key, iv)
-                        try:
-                            ok, data = await get_player_info(parts[1])
-                            if ok:
-                                m1, m2, m3 = format_player_info(data)
-                                for m in (m1, m2, m3):
-                                    await safe_send_message(XX, m, uid, chat_id, key, iv)
-                                    await asyncio.sleep(0.5)
-                            else:
-                                await safe_send_message(XX, f"[B][C][FF0000]❌ {data}", uid, chat_id, key, iv)
-                        except Exception as e:
-                            await safe_send_message(XX, f"[B][C][FF0000]❌ ত্রুটি: {e}", uid, chat_id, key, iv)
-                    else:
-                        await safe_send_message(XX, f"[B][C][FF0000]ব্যবহার: /info <uid>", uid, chat_id, key, iv)
-
-                elif inPuTMsG.strip().startswith('/check '):
-                    parts = inPuTMsG.strip().split()
-                    if len(parts) >= 2 and parts[1].isdigit():
-                        try:
-                            ok, result = await check_banned(parts[1])
-                            reply = format_check_result(result) if ok else f"[B][C][FF0000]❌ {result}"
-                        except Exception as e:
-                            reply = f"[B][C][FF0000]❌ ত্রুটি: {e}"
-                        await safe_send_message(XX, reply, uid, chat_id, key, iv)
-                    else:
-                        await safe_send_message(XX, f"[B][C][FF0000]ব্যবহার: /check <uid>", uid, chat_id, key, iv)
-
-                elif inPuTMsG.strip().startswith('/ai '):
-                    question = inPuTMsG.strip()[4:].strip()
-                    if question:
-                        await safe_send_message(XX, f"[B][C][FFFFFF]🤖 এআই ভাবছে...", uid, chat_id, key, iv)
-                        try:
-                            ai_url = f"https://9x-ai.vercel.app/ask?key=MOHASIN_TXT&message={question}"
-                            async with aiohttp.ClientSession() as session:
-                                async with session.get(ai_url, timeout=aiohttp.ClientTimeout(total=15)) as r:
-                                    if r.status == 200:
-                                        answer = (await r.text()).strip()
-                                        msg = f"[B][C][FFFFFF]🤖 এআই উত্তর:\n\n[FFFFFF]{answer}"
-                                    else:
-                                        msg = f"[B][C][FF0000]❌ এআই ত্রুটি: {r.status}"
-                        except Exception as e:
-                            msg = f"[B][C][FF0000]❌ ত্রুটি: {e}"
-                        await safe_send_message(XX, msg, uid, chat_id, key, iv)
-
-                elif inPuTMsG.strip().startswith('/yt '):
-                    channel = inPuTMsG.strip()[4:].strip()
-                    if channel:
-                        try:
-                            url = f"https://youtube-api.vercel.app/yt?channel={channel.lstrip('@')}"
-                            async with aiohttp.ClientSession() as session:
-                                async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as r:
-                                    if r.status == 200:
-                                        data = await r.json()
-                                        stats = data.get("statistics", {})
-                                        msg = f"[B][C][FFFFFF]▶️ ইউটিউব\n\n[FFFFFF]নাম: [FFFFFF]{data.get('channel_title', 'Unknown')}\n[FFFFFF]সাবস্ক্রাইবার: [FFFFFF]{stats.get('subscribers', '0')}\n[FFFFFF]ভিউ: [FFFFFF]{stats.get('views', '0')}"
-                                    else:
-                                        msg = f"[B][C][FF0000]❌ ইউটিউব এপিআই ত্রুটি"
-                        except Exception as e:
-                            msg = f"[B][C][FF0000]❌ ত্রুটি: {e}"
-                        await safe_send_message(XX, msg, uid, chat_id, key, iv)
-
-                elif inPuTMsG.strip().startswith('/tt '):
-                    username = inPuTMsG.strip()[4:].strip()
-                    if username:
-                        try:
-                            url = f"https://kawsar-tikto-info.vercel.app/tiktok?username={username}"
-                            async with aiohttp.ClientSession() as session:
-                                async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as r:
-                                    if r.status == 200:
-                                        data = await r.json()
-                                        ident = data.get("identity", {})
-                                        stats = data.get("statistics", {})
-                                        msg = f"[B][C][FFFFFF]🎵 টিকটক\n\n[FFFFFF]নাম: [FFFFFF]{ident.get('full_name', 'Unknown')}\n[FFFFFF]ফলোয়ার: [FFFFFF]{stats.get('followers', '0')}\n[FFFFFF]লাইক: [FFFFFF]{stats.get('likes', '0')}"
-                                    else:
-                                        msg = f"[B][C][FF0000]❌ টিকটক এপিআই ত্রুটি"
-                        except Exception as e:
-                            msg = f"[B][C][FF0000]❌ ত্রুটি: {e}"
-                        await safe_send_message(XX, msg, uid, chat_id, key, iv)
-
+                                                                 
+                                         
+                                                                 
                 elif inPuTMsG.strip().startswith("/add ") and str(uid) == admin_uid:
                     parts = inPuTMsG.strip().split()
                     if len(parts) >= 2 and parts[1].isdigit():
@@ -1942,11 +3195,15 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, login_data, ready_event, region,
                             ok, msg = await send_friend_request(parts[1], ToKen, region)
                             reply = f"[B][C]{get_random_color()} {msg}"
                         except Exception as e:
-                            reply = f"[B][C][FF0000]ত্রুটি: {e}"
+                            reply = f"[B][C][FF0000]Error: {e}"
                     else:
-                        reply = f"[B][C][FF0000]ব্যবহার: /add <uid>"
-                    await safe_send_message(XX, reply, uid, chat_id, key, iv)
+                        reply = "[B][C][FF0000]Usage: /add <uid>"
+                    P = await SEndMsG(XX, reply, uid, chat_id, key, iv)
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
 
+                                                                 
+                                            
+                                                                 
                 elif inPuTMsG.strip().startswith("/remove ") and str(uid) == admin_uid:
                     parts = inPuTMsG.strip().split()
                     if len(parts) >= 2 and parts[1].isdigit():
@@ -1954,122 +3211,451 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, login_data, ready_event, region,
                             ok, msg = await remove_friend(parts[1], ToKen, region)
                             reply = f"[B][C]{get_random_color()} {msg}"
                         except Exception as e:
-                            reply = f"[B][C][FF0000]ত্রুটি: {e}"
+                            reply = f"[B][C][FF0000]Error: {e}"
                     else:
-                        reply = f"[B][C][FF0000]ব্যবহার: /remove <uid>"
-                    await safe_send_message(XX, reply, uid, chat_id, key, iv)
+                        reply = "[B][C][FF0000]Usage: /remove <uid>"
+                    P = await SEndMsG(XX, reply, uid, chat_id, key, iv)
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
 
-            writer.close(); await writer.wait_closed(); whisper_writer = None
-        except Exception as e:
-            print_tag(f"চ্যাট সমস্যা: {ip}:{port} - {e}", "red")
+                                                                 
+                                            
+                                                                 
+                elif inPuTMsG.strip() == '/hi':
+                    await equip_hi_emote(uid, chat_id, XX, key, iv, region)
+                elif inPuTMsG.strip() == '/mimic_on':
+                    emote_hijack = True
+                    await safe_send_message(
+                        XX, "[B][C][FF0000]The Mimic Is Now On",
+                        uid, chat_id, key, iv
+                    )
+                elif inPuTMsG.strip() == '/mimic_off':
+                    emote_hijack = False
+                    await safe_send_message(
+                        XX, "[B][C][FF0000]The Mimic Is Now OFF",
+                        uid, chat_id, key, iv
+                    )
+
+                                                                 
+                               
+                                                                 
+                elif inPuTMsG.strip().startswith('/ice '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 2:
+                        tgt = parts[1] if parts[1].lower() not in ('me', 'self') else str(uid)
+                        if freeze_task and not freeze_task.done():
+                            freeze_running = False
+                            freeze_task.cancel()
+                            await asyncio.sleep(0.3)
+                        freeze_running = True
+                        freeze_task = asyncio.create_task(
+                            freeze_emote_spam(tgt, key, iv, region, XX, chat_id, uid)
+                        )
+                        await safe_send_message(
+                            XX,
+                            f"[B][C][FFFFFF]❄️ {tgt}   Freeze started",
+                            uid, chat_id, key, iv
+                        )
+
+                                                                 
+                                       
+                                                                 
+                elif inPuTMsG.strip().startswith('/room '):
+                    parts = inPuTMsG.strip().split()
+                    if len(parts) >= 3:
+                        tgt, rid = parts[1], parts[2]
+                        try:
+                            for i in range(3000):
+                                spam_p = await Room_Spam(tgt, rid, "\u0053\x48\x41\120\120\x4e\x4f TCP", key, iv)
+                                await SEndPacKeT(whisper_writer, online_writer, 'OnLine', spam_p)
+                                if (i + 1) % 50 == 0:
+                                    print(f"Room spam progress: {i+1}/3000")
+                                await asyncio.sleep(0.05)
+                            await safe_send_message(
+                                XX,
+                                "[B][C][FFFFFF]✅ Room spam completed",
+                                uid, chat_id, key, iv
+                            )
+                        except Exception as e:
+                            print(f"Room spam error: {e}")
+
+                                                                 
+                                              
+                                                                 
+                elif (
+                    all(p.isdigit() for p in inPuTMsG.strip().split())
+                    or (inPuTMsG.strip().count('*') == 1 and
+                        all(p.isdigit() for p in inPuTMsG.strip().split('*')))
+                ):
+                    number_part = inPuTMsG.strip()
+                    number_items = number_part.split() if ' ' in number_part else [number_part]
+                    try:
+                        for number_item in number_items:
+                            times = 1
+                            if '*' in number_item:
+                                number, repeat = number_item.split('*')
+                                times = min(int(repeat), 100)
+                            else:
+                                number = number_item
+                            emote_id = NUMBER_EMOTES.get(number)
+                            if emote_id is None and number.isdigit() and 900_000_000 <= int(number) <= 999_999_999:
+                                emote_id = int(number)
+                            if emote_id:
+                                for _ in range(times):
+                                    H = await Emote_k(int(uid), int(emote_id), key, iv, region)
+                                    await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
+                                    await asyncio.sleep(0.05)
+                                print(f"✅ Number emote: {number} → {emote_id} x{times}")
+                    except Exception as e:
+                        print(f"Number emote error: {e}")
+
+                                                                 
+                                                 
+                                                                 
+                elif inPuTMsG.strip().lower() in NAME_TO_EMOTE_ID or inPuTMsG.strip().lower() in NAME_EMOTES:
+                    try:
+                        emote_name = inPuTMsG.strip().lower()
+                        emote_id = NAME_TO_EMOTE_ID.get(emote_name) or NAME_EMOTES.get(emote_name)
+                        H = await Emote_k(int(uid), int(emote_id), key, iv, region)
+                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
+                        print(f"✅ Name emote: {inPuTMsG.strip()} → {emote_id}")
+                    except Exception as e:
+                        print(f"Name emote error: {e}")
+
+                else:
+                    if inPuTMsG.strip().startswith('/') and len(inPuTMsG.strip()) > 2:
+                        pass
+
+                                      
+            writer.close()
+            await writer.wait_closed()
             whisper_writer = None
-        await asyncio.sleep(reconnect_delay)
+        except Exception as e:
+            print(f"Chat error: {ip}:{port} - {e}")
+            whisper_writer = None
+        await asyncio.sleep(reconnect_delay)                                                                 
+                                                                  
+                                          
+                                                                 
 
 
-# ═══════════════════════════════════════════════════════════════
-#              ★ মূল এন্ট্রি ★
-# ═══════════════════════════════════════════════════════════════
+                                                                 
+                              
+                                                                 
 
-async def MaiiiinE():
-    global bot_uid, ToKen, region, bot_nickname, bot_clan_id
+async def OpEnSq(K, V, region):
+    fields = {
+        1: 1,
+        2: {
+            2: "\u0001", 3: 1, 4: 1, 5: "en",
+            9: 1, 11: 1, 13: 1,
+            14: {2: 5756, 6: 11, 8: "1.111.5", 9: 2, 10: 4}
+        }
+    }
+    if region.lower() == "ind":
+        packet = '0514'
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
 
-    Uid = UID
-    Pw  = PW
 
-    print_banner()
-    log("তথ্য", "লগইন প্রক্রিয়া শুরু হচ্ছে ...")
-    log("তথ্য", f"লক্ষ্য অঞ্চল (Region): {REGION_PREF}")
+async def cHSq(Nu, Uid, K, V, region):
+    fields = {
+        1: 17,
+        2: {1: int(Uid), 2: 1, 3: int(Nu - 1), 4: 62, 5: "\u001a", 8: 5, 13: 329}
+    }
+    if region.lower() == "ind":
+        packet = '0514'
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
+
+
+async def SEnd_InV(Nu, Uid, K, V, region):
+    fields = {1: 2, 2: {1: int(Uid), 2: region, 4: int(Nu)}}
+    if region.lower() == "ind":
+        packet = '0514'
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
+
+
+async def GenJoinSquadsPacket(code, K, V):
+    fields = {}
+    fields[1] = 4
+    fields[2] = {}
+    fields[2][4] = bytes.fromhex("01090a0b121920")
+    fields[2][5] = str(code)
+    fields[2][6] = 6
+    fields[2][8] = 1
+    fields[2][9] = {}
+    fields[2][9][2] = 800
+    fields[2][9][6] = 11
+    fields[2][9][8] = "1.111.1"
+    fields[2][9][9] = 5
+    fields[2][9][10] = 1
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), '0515', K, V)
+
+
+                                                                 
+                                      
+                                                                 
+
+async def xSEndMsg(Msg, Tp, Tp2, id, K, V):
+    feilds = {
+        1: id, 2: Tp2, 3: Tp, 4: Msg, 5: 1735129800, 7: 2,
+        9: {
+            1: "[FFFFFF]\123\110\x41\x50\u0050\u004e\x4f TCP", 2: int(await xBunnEr()), 3: 901048020, 4: 330,
+            5: 1001000001, 8: "\x53\110\u0041\120\120\u004e\x4f TCP - C4", 10: 1, 11: 1, 13: {1: 2},
+            14: {
+                1: 12484827014, 2: 8,
+                3: "\u0010\u0015\b\n\u000b\u0013\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"
+            },
+            12: 0
+        },
+        10: "en", 13: {3: 1}
+    }
+    Pk = (await CrEaTe_ProTo(feilds)).hex()
+    Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp='Uid') + Pk
+    return await GeneRaTePk(Pk, '1201', K, V)
+
+
+                                                                 
+                                              
+                                                                 
+
+async def xSEndMsgsQ(Msg, id, K, V, region="BD"):
+    avatar = await xBunnEr()
+
+    fields = {
+        1: id,
+        2: id,
+        4: Msg,
+        5: 1756580149,
+        8: 904990072,
+        9: {
+            1: "[FFFFFF]\u0053\x48\101\120\u0050\u004e\117 TCP",
+            2: avatar,
+            3: 2,
+            4: 329,
+            5: 1001000001,
+            6: 66,
+            7: 66,
+            8: "\u0053\u0048\u0041\x50\u0050\116\u004f TCP - C4",
+            9: 66,
+            10: 66,
+            11: 66,
+            12: 66,
+            13: {1: 68, 2: 67},
+            14: {
+                1: 1158053040,
+                2: 8,
+                3: b"\x10\x15\x08\x0A\x0B\x15\x0C\x0F\x11\x04\x07\x02\x03\x0D\x0E\x12\x01\x05\x06"
+            }
+        },
+        10: "en",
+        13: {66: 66, 66: 66},
+        14: {
+            11: {
+                1: 3, 2: 7, 3: 170, 4: 999, 5: 1,
+                6: region, 7: 2, 8: 2, 9: 2
+            }
+        }
+    }
+
+    Pk = (await CrEaTe_ProTo(fields)).hex()
+    Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp='Uid') + Pk
+    return await GeneRaTePk(Pk, '1201', K, V)
+
+
+                                                                 
+                                  
+                                          
+                                                                 
+
+from cfonts import render
+
+                                                                 
+REGION_PREF = "BD"
+
+def load_credentials(filename="\u0053\u0048\101\x50\u0050\u004e\x4f.txt"):
+    """Load the game UID and password from the local credentials file."""
+    values = {}
+    try:
+        with open(filename, "r", encoding="utf-8") as credential_file:
+            for raw_line in credential_file:
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                values[key.strip().upper()] = value.strip()
+    except FileNotFoundError:
+        raise RuntimeError("\123\x48\x41\u0050\120\x4e\117.txt not found. Create it with UID=... and PASSWORD=...")
+
+    uid = values.get("UID", "")
+    password = values.get("PASSWORD", "")
+    if not uid or not password:
+        raise RuntimeError("\u0053\u0048\101\u0050\120\x4e\x4f.txt must contain both UID=... and PASSWORD=...")
+    return uid, password
+
+BOT_UID, BOT_PASSWORD = load_credentials()
+BOT_UID_FOR_HI, BOT_PW_FOR_HI = BOT_UID, BOT_PASSWORD
+
+
+def log(level, message):
+    icons = {
+        "INFO":  ("\033[1;36m", "ℹ"),
+        "OK":    ("\033[1;32m", "✔"),
+        "WAIT":  ("\033[1;33m", "⏳"),
+        "WARN":  ("\033[1;33m", "⚠"),
+        "ERROR": ("\033[1;31m", "✘"),
+        "BOT":   ("\033[1;35m", "★"),
+    }
+    color, icon = icons.get(level, ("\033[1;37m", "•"))
+    reset = "\033[0m"
+    ts = time.strftime("%H:%M:%S")
+    print(f"\033[1;90m[{ts}]{reset} {color}{icon} {level:<5}{reset} │ {message}")
+
+
+def print_banner():
+    os.system("clear")
+    print()
+    print(render("\123\u0048\x41\x50\x50\u004e\117", colors=["blue", "white"], align="center"))
+    print(render("TCP", colors=["yellow", "white"], align="center"))
+    print()
+    print(f"\033[1;35m{'═' * 60}\033[0m")
+    print(f"\033[1;33m{'TCP BOT  •  PREMIUM'.center(60)}\033[0m")
+    print(f"\033[1;35m{'═' * 60}\033[0m")
+    print(f"\033[1;37m{'EVO  •  TEAM  •  MATCH  •  ONLINE'.center(60)}\033[0m")
+    print(f"\033[1;35m{'═' * 60}\033[0m")
+    print(f"\033[1;36m{'© \u0053\u0048\x41\x50\x50\116\u004f TCP PREMIUM'.center(60)}\033[0m")
+    print(f"\033[1;35m{'═' * 60}\033[0m")
     print()
 
+
+def print_box(title, lines, color="\033[1;35m"):
+    width = 58
+    reset = "\033[0m"
+    print(f"\\n{color}┌{'─' * width}┐{reset}")
+    print(f"{color}│{reset} {title.center(width - 1)}{color}│{reset}")
+    print(f"{color}├{'─' * width}┤{reset}")
+    for line in lines:
+        print(f"{color}│{reset} {line:<{width - 1}}{color}│{reset}")
+    print(f"{color}└{'─' * width}┘{reset}")
+
+
+def print_line(title, value, icon="➤"):
+    print(f"  {icon} \033[1;36m{title:<14}\033[0m : \033[1;33m{value}\033[0m")
+
+
+async def MaiiiinE():
+    global bot_uid, ToKen, region
+
+    Uid = BOT_UID
+    Pw = BOT_PASSWORD
+
+    print_banner()
+    log("INFO", "লগইন প্রক্রিয়া শুরু হচ্ছে ...")
+    log("INFO", f"লক্ষ্য অঞ্চল: {REGION_PREF}")
+
     try:
-        result = await do_login(Uid, Pw, REGION_PREF)
+        result = await login_engine.do_login(Uid, Pw, REGION_PREF)
     except Exception as e:
-        log("ত্রুটি", f"লগইনের সময় সমস্যা হয়েছে: {e}")
+        log("ERROR", f"লগইন সমস্যা: {e}")
         return
 
     if not result:
-        log("ত্রুটি", "লগইন ব্যর্থ হয়েছে, ১০ সেকেন্ড পর পুনরায় চেষ্টা করা হবে ...")
+        log("ERROR", "লগইন ব্যর্থ হয়েছে ")
         await asyncio.sleep(10)
         return
 
     bot_uid = result["bot_uid"]
-    ToKen   = result["token"]
-    region  = result["region"]
-    bot_nickname = result.get("account_name", "MOHASIN TxT") or "MOHASIN TxT"
-    bot_clan_id  = result.get("clan_id", 0) or 0
+    ToKen = result["token"]
+    region = result["region"]
 
-    key         = result["key"]
-    iv          = result["iv"]
-    timestamp   = result["timestamp"]
-    online_ip   = result["online_ip"]
+    key = result["key"]
+    iv = result["iv"]
+    timestamp = result["timestamp"]
+    online_ip = result["online_ip"]
     online_port = result["online_port"]
-    chat_ip     = result["chat_ip"]
-    chat_port   = result["chat_port"]
-    acc_name    = result["account_name"]
+    chat_ip = result["chat_ip"]
+    chat_port = result["chat_port"]
+    acc_name = result["account_name"]
+    clan_id = result.get("clan_id")
+    clan_data = result.get("clan_data")
 
-    log("সফল", "লগইন সফলভাবে সম্পন্ন হয়েছে !")
-    
-    # ═══════════════════════════════════════════
-    # ফ্রেন্ড রিকোয়েস্ট পাঠানো (async ফাংশনের ভেতরে)
-    # ═══════════════════════════════════════════
-    if PLAYER_UID and str(PLAYER_UID).strip().isdigit():
-        log("তথ্য", f"প্লেয়ার {PLAYER_UID} কে ফ্রেন্ড রিকোয়েস্ট পাঠানো হচ্ছে...")
-        try:
-            ok, msg = await send_friend_request(PLAYER_UID, ToKen, region)
-            if ok:
-                log("সফল", f"প্লেয়ার {PLAYER_UID} কে রিকোয়েস্ট পাঠানো হয়েছে!")
-            else:
-                log("সতর্ক", f"ফ্রেন্ড রিকোয়েস্ট ব্যর্থ: {msg}")
-        except Exception as e:
-            log("সতর্ক", f"ফ্রেন্ড রিকোয়েস্ট ত্রুটি: {e}")
-    
-    # ═══════════════════════════════════════════
-    
-    print_box(
-        "MOHASIN TxT — অ্যাকাউন্ট তথ্য",
-        [
-            f"\033[1;37mUID\033[0m      : \033[1;32m{result['bot_uid']}\033[0m",
-            f"\033[1;37mনাম\033[0m      : \033[1;32m{acc_name}\033[0m",
-            f"\033[1;37mঅঞ্চল\033[0m    : \033[1;32m{result['region']}\033[0m",
-            f"\033[1;37mসার্ভার\033[0m  : \033[1;32m{online_ip}:{online_port}\033[0m",
-            f"\033[1;37mচ্যাট\033[0m    : \033[1;32m{chat_ip}:{chat_port}\033[0m",
-        ]
+    os.system("clear")
+    RESET = "\033[0m"
+    GREEN = "\033[1;32m"
+    PURPLE = "\033[1;35m"
+
+    print()
+    print(render("\u0053\x48\101\u0050\u0050\u004e\x4f", colors=["blue", "white"], align="center"))
+    print(render("TCP", colors=["yellow", "white"], align="center"))
+    print()
+    print(f"{PURPLE}{'═' * 60}{RESET}")
+    print(f"\033[1;33m{'BOT ONLINE'.center(60)}\033[0m")
+    print(f"{PURPLE}{'═' * 60}{RESET}")
+    print()
+
+    print_box("ACCOUNT INFORMATION", [
+        f"UID          : {result['bot_uid']}",
+        f"NAME         : {acc_name}",
+        f"REGION       : {result['region']}",
+        f"CLAN ID      : {clan_id or 'None'}",
+        f"CHAT SERVER  : {chat_ip}:{chat_port}",
+        f"GAME SERVER  : {online_ip}:{online_port}",
+    ], GREEN)
+
+    print_box("BOT STATUS", [
+        "LOGIN SUCCESSFUL",
+        "AUTHENTICATION READY",
+        "TCP CONNECTION INITIALIZING",
+    ], PURPLE)
+
+    log("INFO", "অথ টোকেন তৈরি করা হচ্ছে ...")
+    ChatAutH = create_auth_token_chat(
+        int(result["bot_uid"]), result["token"], int(timestamp), key, iv
+    )
+    OnlineAutH, _ = build_ob55_online_auth(
+        int(result["bot_uid"]), result["token"], int(timestamp), key, iv
     )
 
-    log("তথ্য", "অথেনটিকেশন টোকেন তৈরি করা হচ্ছে ...")
-    ChatAutH      = create_auth_token_chat(int(result["bot_uid"]), result["token"], int(timestamp), key, iv)
-    OnlineAutH, _ = build_ob55_online_auth(int(result["bot_uid"]), result["token"], int(timestamp), key, iv)
-    log("সফল", "অথেনটিকেশন টোকেন সফলভাবে তৈরি হয়েছে।")
+    log("OK", "অথ টোকেন প্রস্তুত ")
+    log("WAIT", "চ্যাট সার্ভারে সংযুক্ত হচ্ছে ...")
 
-    log("অপেক্ষা", "চ্যাট সার্ভারের সাথে সংযোগ স্থাপন করা হচ্ছে ...")
     ready_event = asyncio.Event()
+    t1 = asyncio.create_task(TcPChaT(
+        chat_ip, chat_port, ChatAutH, key, iv, ready_event, result["region"],
+        clan_id=clan_id, clan_data=clan_data,
+    ))
 
-    t1 = asyncio.create_task(
-        TcPChaT(chat_ip, chat_port, ChatAutH, key, iv, result, ready_event, result["region"])
-    )
     await ready_event.wait()
-    log("সফল", "চ্যাট সার্ভার সংযোগ সফল হয়েছে।")
-
+    log("OK", "চ্যাট সার্ভার সংযোগ সফল ")
     await asyncio.sleep(1)
 
-    log("অপেক্ষা", "অনলাইন সার্ভারের সাথে সংযোগ স্থাপন করা হচ্ছে ...")
+    log("WAIT", "অনলাইন সার্ভারে সংযুক্ত হচ্ছে ...")
     t2 = asyncio.create_task(
         TcPOnLine(online_ip, online_port, key, iv, OnlineAutH)
     )
 
     print()
-    print(c("╔" + "═" * 60 + "╗", "green"))
-    print(c("║", "green") + render('BOT ONLINE', colors=['green', 'cyan'], align='center').center(62) + c("║", "green"))
-    print(c("╚" + "═" * 60 + "╝", "green"))
-    print()
-    print_line("মালিক",  "MOHASIN TxT")
-    print_line("অঞ্চল", result['region'])
-    print_line("বট UID", result['bot_uid'])
-    print_line("নাম",   acc_name)
-    print_line("অবস্থা", "\033[1;32m● চালু আছে\033[0m")
-    print()
-    print(c("▌ MOHASIN TxT — প্রিমিয়াম TCP বট ▌", "gold").center(60))
-    print(c("▌ সমস্ত সিস্টেম সচল ▌", "cyan").center(60))
+    print(f"{PURPLE}{'═' * 60}{RESET}")
+    print(render("\123\110\101\u0050\x50\u004e\u004f", colors=["blue", "white"], align="center"))
+    print(render("TCP", colors=["yellow", "white"], align="center"))
+    print(f"{PURPLE}{'═' * 60}{RESET}")
+    print_line("Owner", "\123\x48\101\120\x50\116\u004f")
+    print_line("Region", result["region"])
+    print_line("Bot UID", result["bot_uid"])
+    print_line("Name", acc_name)
+    print_line("Clan", str(clan_id) if clan_id else "None")
+    print_line("Status", "\033[1;32m● RUNNING\033[0m")
+    print(f"{PURPLE}{'═' * 60}{RESET}")
     print()
 
     await asyncio.gather(t1, t2)
@@ -2080,21 +3666,68 @@ async def StarTinG():
     while True:
         attempt += 1
         try:
-            log("বট", f"সেশন #{attempt} শুরু হচ্ছে — MOHASIN TxT")
+            log("BOT", f"সেশন #{attempt} শুরু হচ্ছে")
             await asyncio.wait_for(MaiiiinE(), timeout=7 * 60 * 60)
         except asyncio.TimeoutError:
-            log("সতর্ক", "টোকেনের সময় শেষ হয়েছে, পুনরায় চালু করা হচ্ছে ...")
+            log("WARN", "সেশন শেষ  আবার চালু হচ্ছে ...")
             await asyncio.sleep(3)
         except KeyboardInterrupt:
-            log("সতর্ক", "ব্যবহারকারী দ্বারা বন্ধ করা হয়েছে। বিদায় !")
+            log("WARN", "বট বন্ধ করা হয়েছে ")
             sys.exit(0)
         except Exception as e:
-            log("ত্রুটি", f"সমস্যা হয়েছে: {e} → ৫ সেকেন্ড পর পুনরায় চেষ্টা ...")
+            log("ERROR", f"সমস্যা: {e}")
             await asyncio.sleep(5)
 
 
-if __name__ == '__main__':
+
+_XC4_SOURCE = '\n\nimport requests\nimport json\nimport binascii\nimport time\nimport urllib3\nimport base64\nimport datetime\nimport re\nimport socket\nimport threading\nimport random\nimport os\nimport asyncio\n\nfrom protobuf_decoder.protobuf_decoder import Parser\nfrom Crypto.Cipher import AES\nfrom Crypto.Util.Padding import pad, unpad\nfrom datetime import datetime\nfrom google.protobuf.timestamp_pb2 import Timestamp\n\nurllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)\n\n\n                                                                 \n                                                             \n                                                                 \n\nbot_uid = None\nToKen   = None\nregion  = None\n\n\n                                                                 \n                                              \n                                                                 \n\nKey = bytes([89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56])\nIv  = bytes([54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37])\n\n\n                                                                 \n                                            \n                                                                 \n\nasync def EnC_AEs(HeX):\n    """API পেলোড এনক্রিপ্ট (hex → hex)"""\n    cipher = AES.new(Key, AES.MODE_CBC, Iv)\n    return cipher.encrypt(pad(bytes.fromhex(HeX), AES.block_size)).hex()\n\n\nasync def DEc_AEs(HeX):\n    """API পেলোড ডিক্রিপ্ট (hex → hex)"""\n    cipher = AES.new(Key, AES.MODE_CBC, Iv)\n    return unpad(cipher.decrypt(bytes.fromhex(HeX)), AES.block_size).hex()\n\n\nasync def EnC_PacKeT(HeX, K, V):\n    """TCP প্যাকেট এনক্রিপ্ট"""\n    return AES.new(K, AES.MODE_CBC, V).encrypt(pad(bytes.fromhex(HeX), 16)).hex()\n\n\nasync def DEc_PacKeT(HeX, K, V):\n    """TCP প্যাকেট ডিক্রিপ্ট"""\n    return unpad(AES.new(K, AES.MODE_CBC, V).decrypt(bytes.fromhex(HeX)), 16).hex()\n\n\n                                                                 \n                                           \n                                                                 \n\nasync def EnC_Uid(H, Tp):\n    """UID কে varint এ রূপান্তর"""\n    e, H = [], int(H)\n    while H:\n        e.append((H & 0x7F) | (0x80 if H > 0x7F else 0))\n        H >>= 7\n    return bytes(e).hex() if Tp == \'Uid\' else None\n\n\nasync def EnC_Vr(N):\n    """যেকোনো সংখ্যাকে varint বাইটে রূপান্তর"""\n    if N < 0:\n        return b\'\'\n    H = []\n    while True:\n        BesTo = N & 0x7F\n        N >>= 7\n        if N:\n            BesTo |= 0x80\n        H.append(BesTo)\n        if not N:\n            break\n    return bytes(H)\n\n\ndef DEc_Uid(H):\n    """varint hex থেকে আসল সংখ্যায় রূপান্তর"""\n    n = s = 0\n    for b in bytes.fromhex(H):\n        n |= (b & 0x7F) << s\n        if not b & 0x80:\n            break\n        s += 7\n    return n\n\n\n                                                                 \n                                                  \n                                                                 \n\nasync def CrEaTe_VarianT(field_number, value):\n    """Varint ফিল্ড তৈরি"""\n    field_header = (field_number << 3) | 0\n    return await EnC_Vr(field_header) + await EnC_Vr(value)\n\n\nasync def CrEaTe_LenGTh(field_number, value):\n    """Length-delimited ফিল্ড তৈরি"""\n    field_header = (field_number << 3) | 2\n    encoded_value = value.encode() if isinstance(value, str) else value\n    return await EnC_Vr(field_header) + await EnC_Vr(len(encoded_value)) + encoded_value\n\n\nasync def CrEaTe_ProTo(fields):\n    """ডিকশনারি থেকে সম্পূর্ণ protobuf বডি তৈরি"""\n    packet = bytearray()\n    for field, value in fields.items():\n        if isinstance(value, dict):\n            nested_packet = await CrEaTe_ProTo(value)\n            packet.extend(await CrEaTe_LenGTh(field, nested_packet))\n        elif isinstance(value, int):\n            packet.extend(await CrEaTe_VarianT(field, value))\n        elif isinstance(value, str) or isinstance(value, bytes):\n            packet.extend(await CrEaTe_LenGTh(field, value))\n    return packet\n\n\n                                                                 \n                                          \n                                                                 \n\nasync def DecodE_HeX(H):\n    """সংখ্যাকে 2-ডিজিট হেক্সে রূপান্তর"""\n    R = hex(H)\n    F = str(R)[2:]\n    if len(F) == 1:\n        F = "0" + F\n        return F\n    else:\n        return F\n\n\nasync def Fix_PackEt(parsed_results):\n    """protobuf পার্স রেজাল্ট ফিক্স"""\n    result_dict = {}\n    for result in parsed_results:\n        field_data = {}\n        field_data[\'wire_type\'] = result.wire_type\n        if result.wire_type == "varint":\n            field_data[\'data\'] = result.data\n        if result.wire_type == "string":\n            field_data[\'data\'] = result.data\n        if result.wire_type == "bytes":\n            field_data[\'data\'] = result.data\n        elif result.wire_type == \'length_delimited\':\n            field_data["data"] = await Fix_PackEt(result.data.results)\n        result_dict[result.field] = field_data\n    return result_dict\n\n\nasync def DeCode_PackEt(input_text):\n    """হেক্স প্যাকেট পার্স করে JSON রিটার্ন"""\n    try:\n        parsed_results = Parser().parse(input_text)\n        parsed_results_dict = await Fix_PackEt(parsed_results)\n        json_data = json.dumps(parsed_results_dict)\n        return json_data\n    except Exception as e:\n        print(f"error {e}")\n        return None\n\n\n                                                                 \n                                               \n                                                                 \n\ndef xMsGFixinG(n):\n    """৩ ডিজিট গ্রুপ করে মেসেজ স্প্লিট"""\n    return \'🗿\'.join(str(n)[i:i + 3] for i in range(0, len(str(n)), 3))\n\n\nasync def Ua():\n    """র্যান্ডম User-Agent জেনারেটর"""\n    versions = [\n        \'4.0.18P6\', \'4.0.19P7\', \'4.0.20P1\', \'4.1.0P3\', \'4.1.5P2\', \'4.2.1P8\',\n        \'4.2.3P1\', \'5.0.1B2\', \'5.0.2P4\', \'5.1.0P1\', \'5.2.0B1\', \'5.2.5P3\',\n        \'5.3.0B1\', \'5.3.2P2\', \'5.4.0P1\', \'5.4.3B2\', \'5.5.0P1\', \'5.5.2P3\'\n    ]\n    models = [\n        \'SM-A125F\', \'SM-A225F\', \'SM-A325M\', \'SM-A515F\', \'SM-A725F\', \'SM-M215F\', \'SM-M325FV\',\n        \'Redmi 9A\', \'Redmi 9C\', \'POCO M3\', \'POCO M4 Pro\', \'RMX2185\', \'RMX3085\',\n        \'moto g(9) play\', \'CPH2239\', \'V2027\', \'OnePlus Nord\', \'ASUS_Z01QD\',\n    ]\n    android_versions = [\'9\', \'10\', \'11\', \'12\', \'13\', \'14\']\n    languages = [\'en-US\', \'es-MX\', \'pt-BR\', \'id-ID\', \'ru-RU\', \'hi-IN\']\n    countries = [\'USA\', \'MEX\', \'BRA\', \'IDN\', \'RUS\', \'VN\']\n    version = random.choice(versions)\n    model = random.choice(models)\n    android = random.choice(android_versions)\n    lang = random.choice(languages)\n    country = random.choice(countries)\n    return f"GarenaMSDK/{version}({model};Android {android};{lang};{country};)"\n\n\nasync def ArA_CoLor():\n    """র্যান্ডম হেক্স কালার (নামের সামনে বসে)"""\n    Tp = [\n        "32CD32", "00BFFF", "00FA9A", "90EE90", "FF4500", "FF6347", "FF69B4",\n        "FF8C00", "FF6347", "FFD700", "FFDAB9", "F0F0F0", "F0E68C", "D3D3D3",\n        "A9A9A9", "D2691E", "CD853F", "BC8F8F", "6A5ACD", "483D8B", "4682B4",\n        "9370DB", "C71585", "FF8C00", "FFA07A"\n    ]\n    return random.choice(Tp)\n\n\nasync def xBunnEr():\n    """র্যান্ডম ব্যানার আইডি"""\n    bN = [\n        902000126, 902000154, 902000003, 902027018, 902027027, 902039014,\n        902040027, 902042011, 902048021, 902048018, 902000027, 902000078,\n        902000013, 902000093, 902000100, 902000117, 902000111, 902000151,\n        902000207, 902000203, 902027016, 902027018, 902033016, 902027018,\n        902027018, 902027018, 902027018, 902027018, 902027018, 902055006, \n        902055003\n    ]\n    return random.choice(bN)\n\n\n                                                                 \n                                                  \n                                                                 \n\nasync def xSEndMsg_new(Msg, Tp, Tp2, id, K, V):\n    """চ্যাট / স্কোয়াড মেসেজ প্যাকেট"""\n    feilds = {\n        1: id, 2: Tp2, 3: Tp, 4: Msg, 5: 1735129800, 7: 2,\n        9: {\n            1: "xBesTo - C4", 2: int(await xBunnEr()), 3: 901048018, 4: 330,\n            5: 909034009, 8: "xBesTo - C4", 10: 1, 11: 1, 13: {1: 2},\n            14: {\n                1: 12484827014, 2: 8,\n                3: "\\u0010\\u0015\\b\\n\\u000b\\u0013\\f\\u000f\\u0011\\u0004\\u0007\\u0002\\u0003\\r\\u000e\\u0012\\u0001\\u0005\\u0006"\n            },\n            12: 0\n        },\n        10: "en", 13: {3: 1}\n    }\n    Pk = (await CrEaTe_ProTo(feilds)).hex()\n    Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp=\'Uid\') + Pk\n    return await GeneRaTePk(Pk, \'1201\', K, V)\n\n\nasync def xSEndMsgsQ_new(Msg, id, K, V):\n    """স্কোয়াড চ্যাট মেসেজ"""\n    fields = {\n        1: id, 2: id, 4: Msg, 5: 1756580149, 7: 2, 8: 904990072,\n        9: {\n            1: "xBe4!sTo - C4", 2: await xBunnEr(), 4: 330, 5: 827001005,\n            8: "xBe4!sTo - C4", 10: 1, 11: 1, 13: {1: 2},\n            14: {\n                1: 1158053040, 2: 8,\n                3: "\\u0010\\u0015\\b\\n\\u000b\\u0015\\f\\u000f\\u0011\\u0004\\u0007\\u0002\\u0003\\r\\u000e\\u0012\\u0001\\u0005\\u0006"\n            }\n        },\n        10: "en", 13: {2: 2, 3: 1}\n    }\n    Pk = (await CrEaTe_ProTo(fields)).hex()\n    Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp=\'Uid\') + Pk\n    return await GeneRaTePk(Pk, \'1201\', K, V)\n\n\n                                                                 \n                                     \n                                                                 \n\nasync def AuthClan(CLan_Uid, AuTh, K, V):\n    """ক্ল্যান অথেনটিকেশন"""\n    fields = {1: 3, 2: {1: int(CLan_Uid), 2: 1, 4: str(AuTh)}}\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'1201\', K, V)\n\n\nasync def AutH_GlobAl(K, V):\n    """গ্লোবাল চ্যাট অথেনটিকেশন"""\n    fields = {1: 3, 2: {2: 5, 3: "en"}}\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'1215\', K, V)\n\n\nasync def AutH_Chat(T, uid, code, K, V):\n    """চ্যাট অথেনটিকেশন"""\n    fields = {1: T, 2: {1: uid, 3: "en", 4: str(code)}}\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'1215\', K, V)\n\n\n                                                                 \n                                         \n                                                                 \n\nasync def LagSquad(K, V):\n    """স্কোয়াড ল্যাগ চেক"""\n    fields = {1: 15, 2: {1: 1124759936, 2: 1}}\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'0515\', K, V)\n\n\nasync def GeT_Status(PLayer_Uid, K, V):\n    """প্লেয়ার স্ট্যাটাস চেক"""\n    PLayer_Uid = await EnC_Uid(PLayer_Uid, Tp=\'Uid\')\n    if len(PLayer_Uid) == 8:\n        Pk = f\'080112080a04{PLayer_Uid}1005\'\n    elif len(PLayer_Uid) == 10:\n        Pk = f"080112090a05{PLayer_Uid}1005"\n    return await GeneRaTePk(Pk, \'0f15\', K, V)\n\n\nasync def SPam_Room(Uid, Rm, Nm, K, V):\n    """রুম স্প্যাম প্যাকেট"""\n    fields = {\n        1: 78,\n        2: {\n            1: int(Rm), 2: f"[{ArA_CoLor()}]{Nm}", 3: {2: 1, 3: 1},\n            4: 330, 5: 1, 6: 201, 10: xBunnEr(), 11: int(Uid), 12: 1\n        }\n    }\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'0e15\', K, V)\n\n\nasync def GenJoinSquadsPacket_new(code, K, V):\n    """স্কোয়াড জয়েন (কোড দিয়ে)"""\n    fields = {}\n    fields[1] = 4\n    fields[2] = {}\n    fields[2][4] = bytes.fromhex("01090a0b121920")\n    fields[2][5] = str(code)\n    fields[2][6] = 6\n    fields[2][8] = 1\n    fields[2][9] = {}\n    fields[2][9][2] = 800\n    fields[2][9][6] = 11\n    fields[2][9][8] = "1.111.1"\n    fields[2][9][9] = 5\n    fields[2][9][10] = 1\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'0515\', K, V)\n\n\nasync def GenJoinGlobaL(owner, code, K, V):\n    """গ্লোবাল স্কোয়াড জয়েন"""\n    fields = {\n        1: 4,\n        2: {1: owner, 6: 1, 8: 1, 13: "en", 15: code, 16: "OR"}\n    }\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'0515\', K, V)\n\n\nasync def FS(K, V, region):\n    """ফ্রেন্ড স্ট্যাটাস / ফায়ার স্ট্যাটাস"""\n    fields = {1: 9, 2: {1: 13256361202}}\n    if region.lower() == "ind":\n        packet = \'0514\'\n    elif region.lower() == "bd":\n        packet = "0519"\n    else:\n        packet = "0515"\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)\n\n\nasync def Emote_k(TarGeT, idT, K, V, region):\n    """ইমোট প্যাকেট"""\n    fields = {1: 21, 2: {1: 804266360, 2: 909000001, 5: {1: TarGeT, 3: idT}}}\n    if region.lower() == "ind":\n        packet = \'0514\'\n    elif region.lower() == "bd":\n        packet = "0519"\n    else:\n        packet = "0515"\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)\n\n\nasync def GeTSQDaTa(D):\n    """স্কোয়াড ডেটা এক্সট্র্যাক্ট"""\n    uid = D[\'5\'][\'data\'][\'1\'][\'data\']\n    chat_code = D["5"]["data"]["17"]["data"]\n    squad_code = D["5"]["data"]["31"]["data"]\n    return uid, chat_code, squad_code\n\n\nasync def Msg_Sq(msg, owner, bot, K, V):\n    """স্কোয়াড মেসেজ"""\n    fields = {\n        1: 1,\n        2: 2,\n        2: {\n            1: bot, 2: owner, 4: msg, 5: 1757799182, 7: 2,\n            9: {\n                1: "\u0053\110\101\120\x50\u004e\x4f", 2: await xBunnEr(), 3: 909000024, 4: 330,\n                5: 909000024, 7: 2, 10: 1, 11: 1, 12: 0, 13: {1: 2},\n                14: {\n                    1: bot, 2: 8,\n                    3: "\\u0010\\u0015\\b\\n\\u000b\\u0013\\f\\u000f\\u0011\\u0004\\u0007\\u0002\\u0003\\r\\u000e\\u0012\\u0001\\u0005\\u0006"\n                }\n            },\n            10: "ar", 13: {3: 1}, 14: ""\n        }\n    }\n    proto_bytes = await CrEaTe_ProTo(fields)\n    return await GeneRaTePk(proto_bytes.hex(), \'1215\', K, V)\n\n\nasync def ghost_packet(player_id, secret_code, K, V):\n    """ঘোস্ট প্যাকেট (প্লেয়ার আইডি + সিক্রেট কোড)"""\n    fields = {\n        1: 61,\n        2: {\n            1: int(player_id),\n            2: {\n                1: int(player_id), 2: int(time.time()), 3: "\x53\u0048\u0041\u0050\x50\u004e\u004f",\n                5: 12, 6: 9999999, 7: 1,\n                8: {2: 1, 3: 1}, 9: 3,\n            },\n            3: secret_code,\n        },\n    }\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'0515\', K, V)\n\n\n                                                                 \n                                                   \n                                                                 \n\nasync def GeneRaTePk(Pk, N, K, V):\n    """প্যাকেট এনক্রিপ্ট + হেডার বসিয়ে ফাইনাল বাইট রিটার্ন"""\n    PkEnc = await EnC_PacKeT(Pk, K, V)\n    _ = await DecodE_HeX(int(len(PkEnc) // 2))\n    if len(_) == 2:\n        HeadEr = N + "000000"\n    elif len(_) == 3:\n        HeadEr = N + "00000"\n    elif len(_) == 4:\n        HeadEr = N + "0000"\n    elif len(_) == 5:\n        HeadEr = N + "000"\n    else:\n        print(\'ErroR => GeneRatinG ThE PacKeT !!\')\n        return None\n    return bytes.fromhex(HeadEr + _ + PkEnc)\n\n\n                                                                 \n                                         \n                                                                 \n\nasync def CreateNewSquad(K, V, region):\n    """নতুন স্কোয়াড তৈরি"""\n    fields = {\n        1: 1,\n        2: {\n            2: \'011d\', 3: 1, 4: 3, 5: \'ar\',\n            8: {1: \'IDC4\', 2: 145, 3: \'ME\'},\n            9: 1,\n            10: \'01030407090a0b12191a201d2729\',\n            11: 1, 13: 1,\n            14: {\n                1: {6: 56},\n                2: 731,\n                3: \'745d59541601024c01015f02020d0905030304570608570d57060d53540402025f5707545301060613050645775945454c18021c051e1a0306491a4760785c53477d735a53486073421b5d5841075642426f5c63610914084e1f005e721f6001467e0c51634263771f5f554642434556660104040f13050445636e74634379505365047256665e405459657766510f615a5250420d11084858416a0d7a470c720065655c5f5a0370584559584a457f43675f460c16024e477a4258430c6050417a45545c47786456597a7a7163545907714109160849667377607d0b4a07657c5c45045f5d784f5b5665096464065875620411050d4d7f7444766661406a6205545d5b5f74507e0b0b535c67580877607d0a1a0148761e795678487f7871465874697177534971666d5a7574677075550d17034503781a675e60787f4d406d7a625d57797d441b47057b026d1a685a0d1102044b0d60040d706067756547767d66777b7f46007346667e43065e5c780813074c5606764057727546596364037054674d590161467f73416209077108\',\n                4: \'w]ZP\', 6: 11, 7: \'140b7d71715b751011\',\n                8: \'1.126.8\', 9: 3, 10: 2,\n                11: \'0362625351363559382b505637416456324b796f566c6364724541566d46795954394b384445494d7a4b646d4b4231562f2b5a727577754a307847426c36712b38683863796b56447967524f4e3676493259347a646974684371364b73464d33724e534a4c4274594f3256565a5465786235484c324c39544a7652514c55374a525663696154544d46776e594e4b4c35353150336c5831475150635668615a77396251674b4d30395a4b6a2f4d675a38656d66757a6e4b356f5a6734367841626a7761363273366235636469637867386a6d4e4944594c383638686e756c3044316a4e445636444a4a69614758456154782b5450696c6f69476f58333638497234563266697a63783934436f5562735039765855683438356a626233356a717a5577504365554c55776374534574456d68426c3957453943524873422b76504a39704863323479517a70446c74644779536f6a6a4f573166433343413733374e617255546d734a70355431686b35635853307134557a6f7a6b75684b6d42423067354f4563634b627a68506c585943712f666a59767531624174504d766437486f4e6e39696e53767679796c6156386e315837636b7978384575626b5868414734565069425961556a75667a2b75675a474164356872324c3156615434613143485745702f6b446142364849434b756f705770706c703151373265463252744f62544957487775305a6753474659514266396f6e48744e7a5035336e72457072366f6c5349455354393839414f494858313471384d4a5763546d514267486d6c3456454c617354426d6f2b36764149525752783664617256692f345147566f4c785944593359477a366e513d3d\'\n            },\n            19: 329, 21: \'374f5219\', 24: {1: 21}\n        }\n    }\n    if region.lower() == "ind":\n        packet = \'0514\'\n    elif region.lower() == "bd":\n        packet = "0519"\n    else:\n        packet = "0515"\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)\n\n\nasync def ChangeSquadTo5(uid, K, V, region):\n    """স্কোয়াড সাইজ ৫ এ পরিবর্তন"""\n    fields = {\n        1: 17,\n        2: {1: int(uid), 2: 1, 3: 4, 4: 1, 5: \'011d\', 8: 1}\n    }\n    if region.lower() == "ind":\n        packet = \'0514\'\n    elif region.lower() == "bd":\n        packet = "0519"\n    else:\n        packet = "0515"\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)\n\n\nasync def SendInvite(target_uid, K, V, region):\n    """প্লেয়ারকে স্কোয়াডে ইনভাইট"""\n    fields = {\n        1: 2,\n        2: {1: int(target_uid), 2: \'ME\', 4: 1}\n    }\n    if region.lower() == "ind":\n        packet = \'0514\'\n    elif region.lower() == "bd":\n        packet = "0519"\n    else:\n        packet = "0515"\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)\n\n\n                                          \nasync def OpEnSq_new(K, V, region):\n    return await CreateNewSquad(K, V, region)\n\n\nasync def cHSq_new(Nu, Uid, K, V, region):\n    return await ChangeSquadTo5(Uid, K, V, region)\n\n\nasync def SEnd_InV_new(Nu, Uid, K, V, region):\n    return await SendInvite(Uid, K, V, region)\n\n\nasync def ExiT(idT, K, V):\n    """স্কোয়াড থেকে বের হওয়া"""\n    fields = {1: 7, 2: {1: idT}}\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), \'0515\', K, V)\n\n\n                                                                 \n                                               \n                                                                 \n\nasync def JoinSquadByTeamCode(team_code, K, V, region):\n    """টিম কোড দিয়ে সরাসরি স্কোয়াডে জয়েন"""\n    hh = {\n        1: 4,\n        2: {\n            4: "\\u0001\\u0007\\t\\n\\u000b\\u0012\\u0019 \'",\n            5: str(team_code),\n            6: 6, 8: 1,\n            9: {\n                1: "08FFF3BE903F27DF0203110111110000006B0003006800169194106F13CF106E4676251411010404dfe9e8b5ca3ca4f96a3119c00000004f03060301cacfa16d",\n                2: 130,\n                3: "tY_S\\u0013\\b\\u0001M\\u0002\\u0000T\\u0000\\u0005\\u000e\\b\\t\\u0002\\u0000\\u0003U\\u0003\\u0001V\\u000fR\\u000e\\tRQ\\u0002\\u0004\\u0005US\\u0003XS\\u0005\\u0001\\u0002\\u0011\\u0001\\u0002JuTAEN\\u001e\\u0002\\u001c\\u0002\\u001f\\u0013\\b\\u0003M\\u001cDbz_Q@}p_QOgsC\\u001dYVI\\u0004UAAj_ga\\u0004\\u0012\\u0000K\\u001d\\u0007_t\\u0019b\\bCx\\u0002UeGat\\u001fTTCBLER`\\u0006\\u0001\\r\\f\\u0012\\u0006\\u0005N^^\\u0002acH~r\\u0004_\\u0003RO|\\u000bcd_@~`Rnqrgh\\n\\u0015\\nL\\\\Nh\\u0000~G\\u000et\\u0000eb]VQ\\u0006t^F[ZIGxCdZD\\u000b\\u0011\\u0002OA~LP@\\u000fcSDyATQApaT^{|wa]\\\\\\u0001E\\u000f\\u0013\\nJfxve}\\u0004J\\u0003c{YL\\u0007^^yDYQf\\bhe\\u0005_wg\\r\\u0010\\u0007\\bEHpX@||\\u0002Z\\\\uTGyA\\u0001JP\\u0005t~VkTE\\u0000J\\\\\\u000b\\u0013\\nMr\\u0018zTzK}qE]vnvwROuheYvwduvQ\\r\\u001a\\u0005M\\u0006z\\u001dfXfzvHFc~dXUz}O\\u001aB\\u0005t\\u0002i\\u001co_\\u0004\\u0012\\u0003\\u0007J\\u0006b\\u0003\\u000eqlfvbEstgu~wB\\u0001v@`yI\\u0002ZPx\\f\\u0014\\u0003NR\\u0002yBZvuD_cd\\u0004q]lH]\\u0007bD}pCe\\t\\u0004t\\n",\n                4: "w^_R", 6: 11, 7: "\\u0014\\u0004aqrg\\u0015\\u0013",\n                8: "1.126.7", 9: 3, 10: 2,\n                11: "\\u0003bbSQ6wxegh9qAdV2KyoVleA17yPmYF+yTnOrl+JMknmppeUBe5ZsiHueP2mZZ4KOs6b2Ail1S9z3qIeU9hGFZ2M6PP39/zjIc/RFVPAkgDagySswMVmYaPhkzU5IqNPow2843fyQUz9xI10NdMhl1WiI4Y6wCXBotiUS9wSgujQ4j0fWXUyklCxBWo8r27hyoGSVrPdTPXFMnJJpPRRFFmWqc3fWvMg+BNfxSRJOZRSrkzG0nNvSIJ4uZB2pqAlHIPEYx7bI6zsgwUVDiLZJKTUTyuCGbOd1DegDUFfazFesTG1LJknT5WhgzCsrBIy+f2l+LeJe5DW7wEwNaHambM7ECXcJcLIhB9kJJsW0tFvXkk3HSdcQ8N1K6wjSKWhpkW0kV8Zrjj0jkhS/7AZ6T9GJRIA827YDtTorBvbx1UkXjYrqYI1nSa2GaMexGnqlurc5DE3v1R+mUBI9GqmjEPgTSYVBxyeCdQMHaMXGtspAhvkiO84ToU87sP45pylDEfFOVoc/rcmdzWeqlYPsv6txKRtIHcb0cO+MoVShoU8ZUVRDF3znbqzVrscPIfplBaa79lwvQqzRubLl9XY="\n            },\n            11: {1: "IDC4", 2: 281, 3: "ME"},\n            13: "fr", 16: "7OR\\u0019",\n            20: "\\b\\u0015", 27: "\\bH\\u0010\\u0003"\n        }\n    }\n    return await GeneRaTePk((await CrEaTe_ProTo(hh)).hex(), \'0515\', K, V)\n\n\n                                                                 \n                                                   \n                                                                 \n\n\n                                                              \n                                                                 \n                                                                           \n                                                              \n\nasync def OpEnSq(K , V,region):\n    fields = {1: 1, 2: {2: "\\u0001", 3: 1, 4: 1, 5: "en", 9: 1, 11: 1, 13: 1, 14: {2: 5756, 6: 11, 8: "1.111.5", 9: 2, 10: 4}}}\n    if region.lower() == "ind":\n        packet = \'0514\'\n    elif region.lower() == "bd":\n        packet = "0519"\n    else:\n        packet = "0515"\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex() , packet , K , V)\n\nasync def cHSq(Nu , Uid , K , V,region):\n    fields = {1: 17, 2: {1: int(Uid), 2: 1, 3: int(Nu - 1), 4: 62, 5: "\\u001a", 8: 5, 13: 329}}\n    if region.lower() == "ind":\n        packet = \'0514\'\n    elif region.lower() == "bd":\n        packet = "0519"\n    else:\n        packet = "0515"\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex() , packet , K , V)\n\nasync def SEnd_InV(Nu , Uid , K , V,region):\n    \n    fields = {1: 2 , 2: {1: int(Uid) , 2: region , 4: int(Nu)}}\n\n    if region.lower() == "ind":\n        packet = \'0514\'\n    elif region.lower() == "bd":\n        packet = "0519"\n    else:\n        packet = "0515"\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex() , packet , K , V)\n\nasync def GenJoinSquadsPacket(code,  K , V):\n    fields = {}\n    fields[1] = 4\n    fields[2] = {}\n    fields[2][4] = bytes.fromhex("01090a0b121920")\n    fields[2][5] = str(code)\n    fields[2][6] = 6\n    fields[2][8] = 1\n    fields[2][9] = {}\n    fields[2][9][2] = 800\n    fields[2][9][6] = 11\n    fields[2][9][8] = "1.111.1"\n    fields[2][9][9] = 5\n    fields[2][9][10] = 1\n    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex() , \'0515\' , K , V)\n\n\n                                                              \n                                                                             \n                             \n                                                              \nasync def xSEndMsg(Msg , Tp , Tp2 , id , K , V):\n    feilds = {1: id , 2: Tp2 , 3: Tp, 4: Msg, 5: 1735129800, 7: 2, 9: {1: "[FFFFFF]\u0053\110\101\x50\120\u004e\117", 2: int(await xBunnEr()), 3: 901048020, 4: 330, 5: 1001000001, 8: "xBesTo - C4", 10: 1, 11: 1, 13: {1: 2}, 14: {1: 12484827014, 2: 8, 3: "\\u0010\\u0015\\b\\n\\u000b\\u0013\\f\\u000f\\u0011\\u0004\\u0007\\u0002\\u0003\\r\\u000e\\u0012\\u0001\\u0005\\u0006"}, 12: 0}, 10: "en", 13: {3: 1}}    \n    Pk = (await CrEaTe_ProTo(feilds)).hex()\n    Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp=\'Uid\') + Pk\n    return await GeneRaTePk(Pk, \'1201\', K, V)\n\n\n                                                              \n                                                                         \n                               \n                                                              \nasync def xSEndMsgsQ(Msg, id, K, V, region="BD"):\n    """Fixed version - exactly like small bot"""\n    \n    avatar = await xBunnEr()\n    \n    fields = {\n        1: id, \n        2: id, \n        4: Msg, \n        5: 1756580149, \n        8: 904990072, \n        9: {\n            1: "[FFFFFF]\u0053\u0048\x41\u0050\120\u004e\x4f",                  \n            2: avatar, \n            3: 2,                             \n            4: 329, \n            5: 1001000001, \n            6: 66,\n            7: 66,                            \n            8: "xBe4!sTo - C4", \n            9: 66,\n            10: 66, \n            11: 66, \n            12: 66,\n            13: {1: 68, 2:67}, \n            14: {\n                1: 1158053040, \n                2: 8, \n                3: b"\\x10\\x15\\x08\\x0A\\x0B\\x15\\x0C\\x0F\\x11\\x04\\x07\\x02\\x03\\x0D\\x0E\\x12\\x01\\x05\\x06"\n            }\n        }, \n        10: "en", \n        13: {66: 66, 66: 66},\n        14: {                                                       \n            11: {\n                1: 3,\n                2: 7,\n                3: 170,\n                4: 999,\n                5: 1,\n                6: region,\n                7: 2,\n                8: 2,\n                9: 2\n            }\n        }\n    }\n    \n    Pk = (await CrEaTe_ProTo(fields)).hex()\n    Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp=\'Uid\') + Pk\n    return await GeneRaTePk(Pk, \'1201\', K, V)\n'
+_XC4_NS = {}
+exec(compile(_XC4_SOURCE, "<xC4.py>", "exec"), _XC4_NS)
+globals().update({k:v for k,v in _XC4_NS.items() if not k.startswith("__")})
+
+_XP_SOURCE = '\n\nimport requests\nimport json\nimport binascii\nimport time\nimport urllib3\nimport base64\nimport datetime\nimport re\nimport socket\nimport threading\nimport random\nimport os\nimport sys\nimport psutil\n\nfrom protobuf_decoder.protobuf_decoder import Parser\nfrom Crypto.Cipher import AES\nfrom Crypto.Util.Padding import pad, unpad\nfrom datetime import datetime\nfrom google.protobuf.timestamp_pb2 import Timestamp\n\nurllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)\n\n\n                                                                 \n                                              \n                                                                 \n\nKey = bytes([89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56])\nIv  = bytes([54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37])\n\n\n                                                                 \n                                                 \n                                                                 \n\ndef generate_random_color():\n    """র্যান্ডম চ্যাট কালার ট্যাগ"""\n    color_list = ["[FF0000][b][c]", "[FFFFFF][b][c]"]\n    return random.choice(color_list)\n\n\ndef Device():\n    """র্যান্ডম ডিভাইস প্রোফাইল (ভবিষ্যতে ব্যবহারের জন্য)"""\n    versions = [\n        \'4.0.18P6\', \'4.0.19P7\', \'4.0.20P1\', \'4.1.0P3\', \'4.1.5P2\', \'4.2.1P8\',\n        \'4.2.3P1\', \'5.0.1B2\', \'5.0.2P4\', \'5.1.0P1\', \'5.2.0B1\', \'5.2.5P3\',\n        \'5.3.0B1\', \'5.3.2P2\', \'5.4.0P1\', \'5.4.3B2\', \'5.5.0P1\', \'5.5.2P3\'\n    ]\n    models = [\n        \'SM-A125F\', \'SM-A225F\', \'SM-A325M\', \'SM-A515F\', \'SM-A725F\', \'SM-M215F\', \'SM-M325FV\',\n        \'Redmi 9A\', \'Redmi 9C\', \'POCO M3\', \'POCO M4 Pro\', \'RMX2185\', \'RMX3085\',\n        \'moto g(9) play\', \'CPH2239\', \'V2027\', \'OnePlus Nord\', \'ASUS_Z01QD\',\n    ]\n    android_versions = [\'9\', \'10\', \'11\', \'12\', \'13\', \'14\']\n    languages = [\'en-US\', \'es-MX\', \'pt-BR\', \'id-ID\', \'ru-RU\', \'hi-IN\']\n    countries = [\'USA\', \'MEX\', \'BRA\', \'IDN\', \'RUS\', \'IND\']\n    return (\n        random.choice(versions),\n        random.choice(models),\n        random.choice(android_versions),\n        random.choice(languages),\n        random.choice(countries),\n    )\n\n\n                                                                 \n                                            \n                                                                 \n\ndef EnC_AEs(HeX):\n    """API পেলোড এনক্রিপ্ট (hex → hex)"""\n    cipher = AES.new(Key, AES.MODE_CBC, Iv)\n    return cipher.encrypt(pad(bytes.fromhex(HeX), AES.block_size)).hex()\n\n\ndef DEc_AEs(HeX):\n    """API পেলোড ডিক্রিপ্ট (hex → hex)"""\n    cipher = AES.new(Key, AES.MODE_CBC, Iv)\n    return unpad(cipher.decrypt(bytes.fromhex(HeX)), AES.block_size).hex()\n\n\ndef EnC_PacKeT(HeX, K, V):\n    """TCP প্যাকেট এনক্রিপ্ট"""\n    return AES.new(K, AES.MODE_CBC, V).encrypt(pad(bytes.fromhex(HeX), 16)).hex()\n\n\ndef DEc_PacKeT(HeX, K, V):\n    """TCP প্যাকেট ডিক্রিপ্ট"""\n    return unpad(AES.new(K, AES.MODE_CBC, V).decrypt(bytes.fromhex(HeX)), 16).hex()\n\n\n                                                                 \n                                           \n                                                                 \n\ndef EnC_Uid(H, Tp):\n    """UID কে varint hex এ রূপান্তর"""\n    e, H = [], int(H)\n    while H:\n        e.append((H & 0x7F) | (0x80 if H > 0x7F else 0))\n        H >>= 7\n    return bytes(e).hex() if Tp == \'Uid\' else None\n\n\ndef EnC_Vr(N):\n    """সংখ্যাকে varint বাইটে রূপান্তর"""\n    if N < 0:\n        return b\'\'\n    H = []\n    while True:\n        BesTo = N & 0x7F\n        N >>= 7\n        if N:\n            BesTo |= 0x80\n        H.append(BesTo)\n        if not N:\n            break\n    return bytes(H)\n\n\ndef DEc_Uid(H):\n    """varint hex থেকে আসল সংখ্যায়"""\n    n = s = 0\n    for b in bytes.fromhex(H):\n        n |= (b & 0x7F) << s\n        if not b & 0x80:\n            break\n        s += 7\n    return n\n\n\n                                                                 \n                                                   \n                                                                 \n\ndef CrEaTe_VarianT(field_number, value):\n    """Varint ফিল্ড তৈরি"""\n    field_header = (field_number << 3) | 0\n    return EnC_Vr(field_header) + EnC_Vr(value)\n\n\ndef CrEaTe_LenGTh(field_number, value):\n    """Length-delimited ফিল্ড তৈরি"""\n    field_header = (field_number << 3) | 2\n    encoded_value = value.encode() if isinstance(value, str) else value\n    return EnC_Vr(field_header) + EnC_Vr(len(encoded_value)) + encoded_value\n\n\ndef CrEaTe_ProTo(fields):\n    """ডিকশনারি → protobuf বডি"""\n    packet = bytearray()\n    for field, value in fields.items():\n        if isinstance(value, dict):\n            nested_packet = CrEaTe_ProTo(value)\n            packet.extend(CrEaTe_LenGTh(field, nested_packet))\n        elif isinstance(value, int):\n            packet.extend(CrEaTe_VarianT(field, value))\n        elif isinstance(value, str) or isinstance(value, bytes):\n            packet.extend(CrEaTe_LenGTh(field, value))\n    return packet\n\n\n                                                                 \n                                          \n                                                                 \n\ndef DecodE_HeX(H):\n    """সংখ্যা → 2-ডিজিট হেক্স স্ট্রিং"""\n    R = hex(H)\n    F = str(R)[2:]\n    if len(F) == 1:\n        F = "0" + F\n        return F\n    else:\n        return F\n\n\ndef Fix_PackEt(parsed_results):\n    """protobuf পার্স রেজাল্ট ফিক্স"""\n    result_dict = {}\n    for result in parsed_results:\n        field_data = {}\n        field_data[\'wire_type\'] = result.wire_type\n        if result.wire_type == "varint":\n            field_data[\'data\'] = result.data\n        if result.wire_type == "string":\n            field_data[\'data\'] = result.data\n        if result.wire_type == "bytes":\n            field_data[\'data\'] = result.data\n        elif result.wire_type == \'length_delimited\':\n            field_data["data"] = Fix_PackEt(result.data.results)\n        result_dict[result.field] = field_data\n    return result_dict\n\n\ndef DeCode_PackEt(input_text):\n    """হেক্স প্যাকেট পার্স করে JSON রিটার্ন"""\n    try:\n        parsed_results = Parser().parse(input_text)\n        parsed_results_dict = Fix_PackEt(parsed_results)\n        return json.dumps(parsed_results_dict)\n    except Exception as e:\n        print(f"error {e}")\n        return None\n\n\n                                                                 \n                                                  \n                                                                 \n\ndef xBunnEr():\n    """ব্যানার আইডি রিটার্ন"""\n    bN = [902000306]\n    return random.choice(bN)\n\n\ndef xMsgPr(Msg, Tp, Tp2, id, K, V):\n    """চ্যাট মেসেজ প্যাকেট (\x53\x48\x41\x50\u0050\116\u004f)"""\n    feilds = {\n        1: id,\n        2: Tp2,\n        3: Tp,\n        4: Msg,\n        5: 1735129800,\n        7: 2,\n        9: {\n            1: "xBesTo - C4",\n            2: xBunnEr(),\n            3: 901048018,\n            4: 330,\n            5: 909000014,\n            8: "xBesTo - C4",\n            10: 1,\n            11: random.choice([1]),\n            13: {1: 2, 2: 1},\n            14: {\n                1: 1158053040,\n                2: 8,\n                3: "\\u0010\\u0015\\b\\n\\u000b\\u0015\\f\\u000f\\u0011\\u0004\\u0007\\u0002\\u0003\\r\\u000e\\u0012\\u0001\\u0005\\u0006"\n            }\n        },\n        10: "en",\n        13: {2: 1, 3: 1},\n        14: {}\n    }\n    Pk = str(CrEaTe_ProTo(feilds).hex())\n    Pk = "080112" + EnC_Uid(len(Pk) // 2, Tp=\'Uid\') + Pk\n    return GeneRaTePk(str(Pk), \'1215\', K, V)\n\n\ndef ArA_CoLor():\n    """লাইট-কালার র্যান্ডম হেক্স"""\n    Tp = [\n        "FF9999", "99FF99", "99CCFF", "FFD700", "FFB6C1", "FFA07A",\n        "98FB98", "E6E6FA", "AFEEEE", "F0E68C", "FFE4B5", "D8BFD8",\n        "FFFACD", "87CEFA", "FFDEAD", "B0E0E6", "FFDAB9", "E0FFFF",\n        "F5DEB3", "FFC0CB", "FFF0F5", "ADD8E6"\n    ]\n    return random.choice(Tp)\n\n\n                                                                 \n                                           \n                                                                 \n\ndef OpenCh(idT, sq, K, V):\n    """চ্যাট ওপেন"""\n    fields = {1: 3, 2: {1: idT, 3: "fr", 4: sq}}\n    return GeneRaTePk(str(CrEaTe_ProTo(fields).hex()), \'1215\', K, V)\n\n\ndef OpenSq(K, V):\n    """স্কোয়াড ওপেন"""\n    fields = {\n        1: 1,\n        2: {2: "\\u0001", 3: 1, 4: 1, 5: "en", 9: 1, 11: 1, 13: 1,\n            14: {2: 5756, 6: 11, 8: "1.111.5", 9: 2, 10: 4}}\n    }\n    return GeneRaTePk(str(CrEaTe_ProTo(fields).hex()), \'0515\', K, V)\n\n\ndef ChSq(Nu, Uid, K, V):\n    """স্কোয়াড সাইজ পরিবর্তন"""\n    fields = {\n        1: 17,\n        2: {1: int(Uid), 2: 1, 3: int(Nu - 1), 4: 62, 5: "\\u001a", 8: 5, 13: 329}\n    }\n    return GeneRaTePk(str(CrEaTe_ProTo(fields).hex()), \'0515\', K, V)\n\n\ndef ExitSq(id, K, V):\n    """স্কোয়াড থেকে বের হওয়া"""\n    fields = {1: 7, 2: {1: int(11037044965)}}\n    return GeneRaTePk(str(CrEaTe_ProTo(fields).hex()), \'0515\', K, V)\n\n\ndef MsqSq(msg, idT, K, V):\n    """স্কোয়াড মেসেজ"""\n    fields = {\n        1: 1,\n        2: {\n            1: 12404281032,\n            2: idT,\n            4: msg,\n            7: 2,\n            10: "fr",\n            9: {\n                1: "C4 TEAM",\n                2: xBunnEr(),\n                4: 330,\n                5: 909000014,\n                8: "C4 TEAM",\n                10: 1,\n                11: 1,\n                12: {1: 2},\n                14: {\n                    1: 1158053040,\n                    2: 8,\n                    3: "\\u0010\\u0015\\b\\n\\u000b\\u0015\\f\\u000f\\u0011\\u0004\\u0007\\u0002\\u0003\\r\\u000e\\u0012\\u0001\\u0005\\u0006"\n                }\n            },\n            13: {1: 2, 2: 1},\n            14: {}\n        }\n    }\n    return GeneRaTePk(str(CrEaTe_ProTo(fields).hex()), \'1215\', K, V)\n\n\ndef SendSq(Nu, Uid, K, V):\n    """স্কোয়াড ইনভাইট পাঠানো"""\n    fields = {1: 2, 2: {1: int(Uid), 2: "ME", 4: int(Nu)}}\n    return GeneRaTePk(str(CrEaTe_ProTo(fields).hex()), \'0515\', K, V)\n\n\ndef JoinSq(code, key, iv):\n    """টিম কোড দিয়ে স্কোয়াড জয়েন"""\n    fields = {}\n    fields[1] = 4\n    fields[2] = {}\n    fields[2][4] = bytes.fromhex("01090a0b121920")\n    fields[2][5] = str(code)\n    fields[2][6] = 6\n    fields[2][8] = 1\n    fields[2][9] = {}\n    fields[2][9][2] = 800\n    fields[2][9][6] = 11\n    fields[2][9][8] = "1.111.1"\n    fields[2][9][9] = 5\n    fields[2][9][10] = 1\n    return GeneRaTePk(str(CrEaTe_ProTo(fields).hex()), \'0515\', key, iv)\n\n\ndef GhostSq(player_id, nm, secret_code, key, iv):\n    """ঘোস্ট স্কোয়াড প্যাকেট"""\n    fields = {\n        1: 61,\n        2: {\n            1: int(player_id),\n            2: {\n                1: int(player_id),\n                2: 1159,\n                3: f"[b][c][{ArA_CoLor()}]{nm}",\n                5: 12,\n                6: 999,\n                7: 1,\n                8: {2: 1, 3: 1},\n                9: 3,\n            },\n            3: secret_code,\n        },\n    }\n    return GeneRaTePk(str(CrEaTe_ProTo(fields).hex()), \'0515\', key, iv)\n\n\n                                                                 \n                                                 \n                                                                 \n\ndef xMsGFixinG(n):\n    """৩ ডিজিট গ্রুপ করে UID সুন্দর দেখাবে"""\n    return \'🗿\'.join(str(n)[i:i + 3] for i in range(0, len(str(n)), 3))\n\n\ndef _V(b, i):\n    """varint রিডার (ইন্টারনাল)"""\n    r = s = 0\n    while True:\n        c = b[i]\n        i += 1\n        r |= (c & 0x7F) << s\n        if c < 0x80:\n            break\n        s += 7\n    return r, i\n\n\ndef PrOtO(hx):\n    """লো-লেভেল protobuf পার্সার"""\n    b, i, R = bytes.fromhex(hx), 0, {}\n    while i < len(b):\n        H, i = _V(b, i)\n        F, T = H >> 3, H & 7\n        if T == 0:\n            R[F], i = _V(b, i)\n        elif T == 2:\n            L, i = _V(b, i)\n            S = b[i:i + L]\n            i += L\n            try:\n                R[F] = S.decode()\n            except Exception:\n                try:\n                    R[F] = PrOtO(S.hex())\n                except Exception:\n                    R[F] = S\n        elif T == 5:\n            R[F] = int.from_bytes(b[i:i + 4], \'little\')\n            i += 4\n        else:\n            raise ValueError(f\'Unknown wire type: {T}\')\n    return R\n\n\ndef GeT_KEy(obj, target):\n    """যেকোনো ডিকশনারি থেকে নির্দিষ্ট key খুঁজে বের করে"""\n    values = []\n\n    def collect(o):\n        if isinstance(o, dict):\n            for k, v in o.items():\n                if k == target:\n                    values.append(v)\n                collect(v)\n        elif isinstance(o, list):\n            for v in o:\n                collect(v)\n\n    collect(obj)\n    return values[-1] if values else None\n\n\n                                                                 \n                                                 \n                                                                 \n\ndef GeneRaTePk(Pk, N, K, V):\n    """প্যাকেট এনক্রিপ্ট + হেডার বসিয়ে ফাইনাল বাইট"""\n    PkEnc = EnC_PacKeT(Pk, K, V)\n    _ = DecodE_HeX(int(len(PkEnc) // 2))\n    if len(_) == 2:\n        HeadEr = N + "000000"\n    elif len(_) == 3:\n        HeadEr = N + "00000"\n    elif len(_) == 4:\n        HeadEr = N + "0000"\n    elif len(_) == 5:\n        HeadEr = N + "000"\n    else:\n        print(\'ErroR => GeneRatinG ThE PacKeT !!\')\n        return None\n    return bytes.fromhex(HeadEr + _ + PkEnc)\n\n\n                                                                 \n                                      \n                                                                 \n\ndef GuiLd_AccEss(Tg, Nm, Uid, BLk, OwN, AprV):\n    """গিল্ড অ্যাক্সেস যাচাই"""\n    return Tg in Nm and Uid not in BLk and Uid in (OwN | AprV)\n\n\ndef ChEck_Commande(id):\n    """কমান্ডে ভুল ক্যারেক্টার চেক"""\n    return "<" not in id and ">" not in id and "[" not in id and "]" not in id\n\n\n                                                                 \n                                              \n                                                                 \n\ndef ResTarT_BoT():\n    """এরর হলে বট নিজেই রিস্টার্ট করে"""\n    print(\'\\nError In Src! \')\n    p = psutil.Process(os.getpid())\n    open_files = p.open_files()\n    connections = p.net_connections()\n    for handler in open_files:\n        try:\n            os.close(handler.fd)\n        except Exception:\n            pass\n    for conn in connections:\n        try:\n            conn.close()\n        except Exception:\n            pass\n    sys.path.append(os.path.dirname(os.path.abspath(sys.argv[0])))\n    python = sys.executable\n    os.execl(python, python, *sys.argv)\n\n\ndef GeT_Time(timestamp):\n    """টাইমস্ট্যাম্প থেকে দিন/ঘণ্টা/মিনিট/সেকেন্ড বের করবে"""\n    last_login = datetime.fromtimestamp(timestamp)\n    now = datetime.now()\n    diff = now - last_login\n    d = diff.days\n    h, rem = divmod(diff.seconds, 3600)\n    m, s = divmod(rem, 60)\n    return d, h, m, s\n\n\n                                                                 \n                                              \n                                                                 '
+_XP_NS = {}
+exec(compile(_XP_SOURCE, "<xP.py>", "exec"), _XP_NS)
+JoinSq = _XP_NS["JoinSq"]
+OpenCh = _XP_NS["OpenCh"]
+MsqSq = _XP_NS["MsqSq"]
+ExitSq = _XP_NS["ExitSq"]
+PrOtO = _XP_NS["PrOtO"]
+
+_BYTE_SOURCE = ' \n\nfrom Crypto.Cipher import AES\nfrom Crypto.Util.Padding import pad, unpad\nimport time\n\n\n                                                                 \n                                                  \n                                                                 \n\ndef print_header(title="—͞\u0053\u0048\x41\u0050\x50\x4e\117 — CRYPTO ENGINE"):\n    """প্রিমিয়াম সেকশন হেডার"""\n    print("\\n" + "═" * 66)\n    print(f"  \\033[1;35m▌ {title.center(60)} ▌\\033[0m")\n    print("═" * 66)\n\n\ndef print_result(label, value, color="\\033[1;32m"):\n    """সুন্দর ফরম্যাটে ফলাফল দেখাবে"""\n    print(f"  \\033[1;36m➤ {label:<22}\\033[0m : {color}{value}\\033[0m")\n\n\ndef log(level, msg):\n    """টাইমস্ট্যাম্পযুক্ত প্রিমিয়াম লগ"""\n    icons = {\n        "INFO":  ("\\033[1;36m", "ℹ"),\n        "OK":    ("\\033[1;32m", "✔"),\n        "WARN":  ("\\033[1;33m", "⚠"),\n        "ERROR": ("\\033[1;31m", "✘"),\n        "BOT":   ("\\033[1;35m", "★"),\n    }\n    color, icon = icons.get(level, ("\\033[1;37m", "•"))\n    ts = time.strftime("%H:%M:%S")\n    print(f"\\033[1;90m[{ts}]\\033[0m {color}{icon} {level:<5}\\033[0m │ {msg}")\n\n\n                                                                 \n                                                \n                                                                 \n\n                                 \n_DEC = [\n    \'80\',\'81\',\'82\',\'83\',\'84\',\'85\',\'86\',\'87\',\'88\',\'89\',\'8a\',\'8b\',\'8c\',\'8d\',\'8e\',\'8f\',\n    \'90\',\'91\',\'92\',\'93\',\'94\',\'95\',\'96\',\'97\',\'98\',\'99\',\'9a\',\'9b\',\'9c\',\'9d\',\'9e\',\'9f\',\n    \'a0\',\'a1\',\'a2\',\'a3\',\'a4\',\'a5\',\'a6\',\'a7\',\'a8\',\'a9\',\'aa\',\'ab\',\'ac\',\'ad\',\'ae\',\'af\',\n    \'b0\',\'b1\',\'b2\',\'b3\',\'b4\',\'b5\',\'b6\',\'b7\',\'b8\',\'b9\',\'ba\',\'bb\',\'bc\',\'bd\',\'be\',\'bf\',\n    \'c0\',\'c1\',\'c2\',\'c3\',\'c4\',\'c5\',\'c6\',\'c7\',\'c8\',\'c9\',\'ca\',\'cb\',\'cc\',\'cd\',\'ce\',\'cf\',\n    \'d0\',\'d1\',\'d2\',\'d3\',\'d4\',\'d5\',\'d6\',\'d7\',\'d8\',\'d9\',\'da\',\'db\',\'dc\',\'dd\',\'de\',\'df\',\n    \'e0\',\'e1\',\'e2\',\'e3\',\'e4\',\'e5\',\'e6\',\'e7\',\'e8\',\'e9\',\'ea\',\'eb\',\'ec\',\'ed\',\'ee\',\'ef\',\n    \'f0\',\'f1\',\'f2\',\'f3\',\'f4\',\'f5\',\'f6\',\'f7\',\'f8\',\'f9\',\'fa\',\'fb\',\'fc\',\'fd\',\'fe\',\'ff\'\n]\n\n                               \n_XXX = [\n    \'1\',\'01\',\'02\',\'03\',\'04\',\'05\',\'06\',\'07\',\'08\',\'09\',\'0a\',\'0b\',\'0c\',\'0d\',\'0e\',\'0f\',\n    \'10\',\'11\',\'12\',\'13\',\'14\',\'15\',\'16\',\'17\',\'18\',\'19\',\'1a\',\'1b\',\'1c\',\'1d\',\'1e\',\'1f\',\n    \'20\',\'21\',\'22\',\'23\',\'24\',\'25\',\'26\',\'27\',\'28\',\'29\',\'2a\',\'2b\',\'2c\',\'2d\',\'2e\',\'2f\',\n    \'30\',\'31\',\'32\',\'33\',\'34\',\'35\',\'36\',\'37\',\'38\',\'39\',\'3a\',\'3b\',\'3c\',\'3d\',\'3e\',\'3f\',\n    \'40\',\'41\',\'42\',\'43\',\'44\',\'45\',\'46\',\'47\',\'48\',\'49\',\'4a\',\'4b\',\'4c\',\'4d\',\'4e\',\'4f\',\n    \'50\',\'51\',\'52\',\'53\',\'54\',\'55\',\'56\',\'57\',\'58\',\'59\',\'5a\',\'5b\',\'5c\',\'5d\',\'5e\',\'5f\',\n    \'60\',\'61\',\'62\',\'63\',\'64\',\'65\',\'66\',\'67\',\'68\',\'69\',\'6a\',\'6b\',\'6c\',\'6d\',\'6e\',\'6f\',\n    \'70\',\'71\',\'72\',\'73\',\'74\',\'75\',\'76\',\'77\',\'78\',\'79\',\'7a\',\'7b\',\'7c\',\'7d\',\'7e\',\'7f\'\n]\n\n\n                                                                 \n                                                  \n                                                                 \n\ndef encrypt_packet(plain_text):\n    """প্যাকেট এনক্রিপ্ট করে হেক্স স্ট্রিং রিটার্ন করবে"""\n    plain_text = bytes.fromhex(plain_text)\n    key = bytes([101, 116, 33, 120, 72, 83, 97, 119, 82, 94, 37, 56, 74, 50, 83, 53])\n    iv  = bytes([84, 76, 82, 118, 120, 100, 114, 114, 117, 51, 37, 80, 85, 113, 65, 54])\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    return cipher.encrypt(pad(plain_text, AES.block_size)).hex()\n\n\ndef decrypt_packet(packet):\n    """প্যাকেট ডিক্রিপ্ট করে হেক্স স্ট্রিং রিটার্ন করবে"""\n    packet = bytes.fromhex(packet)\n    key = bytes([101, 116, 33, 120, 72, 83, 97, 119, 82, 94, 37, 56, 74, 50, 83, 53])\n    iv  = bytes([84, 76, 82, 118, 120, 100, 114, 114, 117, 51, 37, 80, 85, 113, 65, 54])\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    return unpad(cipher.decrypt(packet), AES.block_size).hex()\n\n\n                                                                 \n                                             \n                                                                 \n\ndef encrypt_api(plain_text):\n    """API ডেটা এনক্রিপ্ট করবে"""\n    plain_text = bytes.fromhex(plain_text)\n    key = bytes([89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56])\n    iv  = bytes([54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37])\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    return cipher.encrypt(pad(plain_text, AES.block_size)).hex()\n\n\ndef decrypt_api(cipher_text):\n    """API ডেটা ডিক্রিপ্ট করবে"""\n    key = bytes([89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56])\n    iv  = bytes([54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37])\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    return unpad(cipher.decrypt(bytes.fromhex(cipher_text)), AES.block_size).hex()\n\n\n                                                                 \n                                           \n                                                                 \n\ndef Decrypt_ID(da):\n    """হেক্স আইডি থেকে আসল নাম্বারে রূপান্তর করবে"""\n    if da is not None and len(da) == 10:\n        w = 128\n        xxx = str(len(da) / 2 - 1)[:1]\n        for _ in range(int(xxx) - 1):\n            w = w * 128\n        x1, x2, x3, x4, x5 = da[:2], da[2:4], da[4:6], da[6:8], da[8:10]\n        return str(\n            w * _XXX.index(x5)\n            + (_DEC.index(x2) * 128)\n            + _DEC.index(x1)\n            + (_DEC.index(x3) * 128 * 128)\n            + (_DEC.index(x4) * 128 * 128 * 128)\n        )\n\n    if da is not None and len(da) == 8:\n        w = 128\n        xxx = str(len(da) / 2 - 1)[:1]\n        for _ in range(int(xxx) - 1):\n            w = w * 128\n        x1, x2, x3, x4 = da[:2], da[2:4], da[4:6], da[6:8]\n        return str(\n            w * _XXX.index(x4)\n            + (_DEC.index(x2) * 128)\n            + _DEC.index(x1)\n            + (_DEC.index(x3) * 128 * 128)\n        )\n\n    return None\n\n\n                                                                 \n                                          \n                                                                 \n\ndef Encrypt_ID(x):\n    """আসল নাম্বার থেকে হেক্স আইডিতে রূপান্তর করবে"""\n    x = int(x)\n    x = x / 128\n\n    if x > 128:\n        x = x / 128\n        if x > 128:\n            x = x / 128\n            if x > 128:\n                                      \n                x = x / 128\n                strx = int(x)\n                y = (x - int(strx)) * 128\n                z = (y - int(str(int(y)))) * 128\n                n = (z - int(str(int(z)))) * 128\n                m = (n - int(str(int(n)))) * 128\n                return _DEC[int(m)] + _DEC[int(n)] + _DEC[int(z)] + _DEC[int(y)] + _XXX[int(x)]\n            else:\n                                      \n                strx = int(x)\n                y = (x - int(strx)) * 128\n                z = (y - int(str(int(y)))) * 128\n                n = (z - int(str(int(z)))) * 128\n                return _DEC[int(n)] + _DEC[int(z)] + _DEC[int(y)] + _XXX[int(x)]\n    else:\n        strx = int(x)\n        if strx == 0:\n                                  \n            y = (x - int(strx)) * 128\n            return _XXX[int(y)]\n        else:\n            y = (x - int(strx)) * 128\n            return _DEC[int(y)] + _XXX[int(x)]\n\n\n                                                                 \n                                               \n                                                                 \n\ndef Encrypt(x):\n    """Encrypt_ID এর ছোট সংস্করণ (কমপ্যাটিবিলিটি)"""\n    return Encrypt_ID(x)\n\n\n                                                                 \n                                                \n                                                                 \n\nif __name__ == "__main__":\n    print_header("—͞\x53\u0048\u0041\120\x50\u004e\u004f — PREMIUM CRYPTO ENGINE v1.0")\n\n    log("INFO", "API ডিক্রিপশন পরীক্ষা করা হচ্ছে ...")\n    encrypted_input = b\'\\xb7C\\x1bG\\xb8u\\x8b\\xec\\xad\\x82\\x9c\\xa9)\\xe3\\xde)\'.hex()\n    decrypted = decrypt_api(encrypted_input)\n    print_result("Decrypted API", decrypted, "\\033[1;32m")\n\n    log("INFO", "ID এনক্রিপশন পরীক্ষা করা হচ্ছে ...")\n    encoded = Encrypt_ID(270279853)\n    print_result("Encrypted ID", encoded, "\\033[1;33m")\n\n    log("INFO", "রাউন্ড-ট্রিপ ভেরিফিকেশন চলছে ...")\n    restored = Decrypt_ID(encoded)\n    print_result("Decrypted ID", restored, "\\033[1;36m")\n\n    if restored == "270279853":\n        log("OK", "রাউন্ড-ট্রিপ সফল — এনক্রিপ্ট → ডিক্রিপ্ট মিলে গেছে !")\n    else:\n        log("WARN", f"অমিল পাওয়া গেছে : {restored} ≠ 270279853")\n\n    print("\\n" + "═" * 66)\n    print(f"  \\033[1;35m▌ সমস্ত পরীক্ষা সম্পন্ন — —͞\x53\u0048\x41\x50\120\u004e\x4f ▌\\033[0m")\n    print("═" * 66 + "\\n")'
+_BYTE_NS = {}
+exec(compile(_BYTE_SOURCE, "<byte.py>", "exec"), _BYTE_NS)
+Encrypt_ID = _BYTE_NS["Encrypt_ID"]
+encrypt_api = _BYTE_NS["encrypt_api"]
+
+_THUNDER_SOURCE = '\n                                                                 \n\n"""Generated protocol buffer code — \u0053\110\u0041\u0050\120\116\x4f Edition."""\n\n                              \nfrom google.protobuf import descriptor as _descriptor\nfrom google.protobuf import descriptor_pool as _descriptor_pool\nfrom google.protobuf import runtime_version as _runtime_version\nfrom google.protobuf import symbol_database as _symbol_database\nfrom google.protobuf.internal import builder as _builder\n\n\n                                                                 \n                                                  \n                                                                 \n\ntry:\n    _runtime_version.ValidateProtobufRuntimeVersion(\n        _runtime_version.Domain.PUBLIC,\n        7,\n        35,\n        1,\n        \'\',\n        \'thunderFF.proto\'\n    )\nexcept Exception:\n    pass\n\n                                   \n\n\n                                                                 \n                                              \n                                                                 \n\n_sym_db = _symbol_database.Default()\n\n\n                                                                 \n                                                         \n                                                                 \n \n                            \n \n                                                            \n                                                             \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                             \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                             \n                                                            \n                                                            \n                                                            \n                                                            \n                                                             \n                                                            \n                                                            \n                                                            \n                                                            \n                                                                 \n\nDESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(\n    b\'\\n\\x0fthunderFF.proto\\"\\x87\\x0b\\n\\rMajorLoginReq\\x12\\x12\\n\\nevent_time\\x18\\x03 \\x01(\\t\\x12\\x11\\n\\tgame_name\\x18\\x04 \\x01(\\t\\x12\\x13\\n\\x0bplatform_id\\x18\\x05 \\x01(\\x05\\x12\\x16\\n\\x0e\\x63lient_version\\x18\\x07 \\x01(\\t\\x12\\x17\\n\\x0fsystem_software\\x18\\x08 \\x01(\\t\\x12\\x17\\n\\x0fsystem_hardware\\x18\\t \\x01(\\t\\x12\\x18\\n\\x10telecom_operator\\x18\\n \\x01(\\t\\x12\\x14\\n\\x0cnetwork_type\\x18\\x0b \\x01(\\t\\x12\\x14\\n\\x0cscreen_width\\x18\\x0c \\x01(\\r\\x12\\x15\\n\\rscreen_height\\x18\\r \\x01(\\r\\x12\\x12\\n\\nscreen_dpi\\x18\\x0e \\x01(\\t\\x12\\x19\\n\\x11processor_details\\x18\\x0f \\x01(\\t\\x12\\x0e\\n\\x06memory\\x18\\x10 \\x01(\\r\\x12\\x14\\n\\x0cgpu_renderer\\x18\\x11 \\x01(\\t\\x12\\x13\\n\\x0bgpu_version\\x18\\x12 \\x01(\\t\\x12\\x18\\n\\x10unique_device_id\\x18\\x13 \\x01(\\t\\x12\\x11\\n\\tclient_ip\\x18\\x14 \\x01(\\t\\x12\\x10\\n\\x08language\\x18\\x15 \\x01(\\t\\x12\\x0f\\n\\x07open_id\\x18\\x16 \\x01(\\t\\x12\\x14\\n\\x0copen_id_type\\x18\\x17 \\x01(\\t\\x12\\x13\\n\\x0b\\x64\\x65vice_type\\x18\\x18 \\x01(\\t\\x12\\x31\\n\\x10memory_available\\x18\\x19 \\x01(\\x0b\\x32\\x17.MajorLoginGameSecurity\\x12\\x14\\n\\x0c\\x61\\x63\\x63\\x65ss_token\\x18\\x1d \\x01(\\t\\x12\\x17\\n\\x0fplatform_sdk_id\\x18\\x1e \\x01(\\x05\\x12\\x1a\\n\\x12network_operator_a\\x18) \\x01(\\t\\x12\\x16\\n\\x0enetwork_type_a\\x18* \\x01(\\t\\x12\\x1c\\n\\x14\\x63lient_using_version\\x18\\x39 \\x01(\\t\\x12\\x1e\\n\\x16\\x65xternal_storage_total\\x18< \\x01(\\x05\\x12\\"\\n\\x1a\\x65xternal_storage_available\\x18= \\x01(\\x05\\x12\\x1e\\n\\x16internal_storage_total\\x18> \\x01(\\x05\\x12\\"\\n\\x1ainternal_storage_available\\x18? \\x01(\\x05\\x12#\\n\\x1bgame_disk_storage_available\\x18@ \\x01(\\x05\\x12\\x1f\\n\\x17game_disk_storage_total\\x18\\x41 \\x01(\\x05\\x12%\\n\\x1d\\x65xternal_sdcard_avail_storage\\x18\\x42 \\x01(\\x05\\x12%\\n\\x1d\\x65xternal_sdcard_total_storage\\x18\\x43 \\x01(\\x05\\x12\\x10\\n\\x08login_by\\x18I \\x01(\\x05\\x12\\x14\\n\\x0clibrary_path\\x18J \\x01(\\t\\x12\\x12\\n\\nreg_avatar\\x18L \\x01(\\x05\\x12\\x15\\n\\rlibrary_token\\x18M \\x01(\\t\\x12\\x14\\n\\x0c\\x63hannel_type\\x18N \\x01(\\x05\\x12\\x10\\n\\x08\\x63pu_type\\x18O \\x01(\\x05\\x12\\x18\\n\\x10\\x63pu_architecture\\x18Q \\x01(\\t\\x12\\x1b\\n\\x13\\x63lient_version_code\\x18S \\x01(\\t\\x12\\x14\\n\\x0cgraphics_api\\x18V \\x01(\\t\\x12\\x1d\\n\\x15supported_astc_bitset\\x18W \\x01(\\r\\x12\\x1a\\n\\x12login_open_id_type\\x18X \\x01(\\x05\\x12\\x18\\n\\x10\\x61nalytics_detail\\x18Y \\x01(\\x0c\\x12\\x14\\n\\x0cloading_time\\x18\\\\ \\x01(\\r\\x12\\x17\\n\\x0frelease_channel\\x18] \\x01(\\t\\x12\\x12\\n\\nextra_info\\x18^ \\x01(\\t\\x12 \\n\\x18\\x61ndroid_engine_init_flag\\x18_ \\x01(\\r\\x12\\x0f\\n\\x07if_push\\x18\\x61 \\x01(\\x05\\x12\\x0e\\n\\x06is_vpn\\x18\\x62 \\x01(\\x05\\x12\\x1c\\n\\x14origin_platform_type\\x18\\x63 \\x01(\\t\\x12\\x1d\\n\\x15primary_platform_type\\x18\\x64 \\x01(\\t\\"?\\n\\x16MajorLoginGameSecurity\\x12\\x0f\\n\\x07version\\x18\\x06 \\x01(\\x05\\x12\\x14\\n\\x0chidden_value\\x18\\x08 \\x01(\\x04\\"\\x82\\x01\\n\\rMajorLoginRes\\x12\\x12\\n\\naccount_id\\x18\\x01 \\x01(\\x04\\x12\\x0e\\n\\x06region\\x18\\x02 \\x01(\\t\\x12\\r\\n\\x05token\\x18\\x08 \\x01(\\t\\x12\\x0b\\n\\x03url\\x18\\n \\x01(\\t\\x12\\x13\\n\\x0bserver_time\\x18\\x15 \\x01(\\x04\\x12\\x0e\\n\\x06\\x61\\x65s_ak\\x18\\x16 \\x01(\\x0c\\x12\\x0c\\n\\x04iv_i\\x18\\x17 \\x01(\\x0c\\"Z\\n\\x0fGetLoginDataRes\\x12\\x10\\n\\x08nickname\\x18\\x04 \\x01(\\t\\x12\\x18\\n\\x10\\x66unctional_addrs\\x18\\x0e \\x01(\\t\\x12\\x1b\\n\\x13informational_addrs\\x18  \\x01(\\t\\"\\xe0\\x01\\n\\nStartMatch\\x12!\\n\\x04main\\x18\\x02 \\x01(\\x0b\\x32\\x13.StartMatch.nested1\\x1a\\xae\\x01\\n\\x07nested1\\x12\\x30\\n\\x0bregion_list\\x18\\x07 \\x03(\\x0b\\x32\\x1b.StartMatch.nested1.nested2\\x12\\x33\\n\\x0e\\x63lient_version\\x18\\x0c \\x01(\\x0b\\x32\\x1b.StartMatch.nested1.nested3\\x1a\\x19\\n\\x07nested2\\x12\\x0e\\n\\x06region\\x18\\x03 \\x01(\\t\\x1a!\\n\\x07nested3\\x12\\x16\\n\\x0eremote_version\\x18\\x08 \\x01(\\tb\\x06proto3\'\n)\n\n\n                                                                 \n                                                 \n                                                                 \n\n_globals = globals()\n_builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)\n_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, \'thunderFF_pb2\', _globals)\n\n\n                                                                 \n                                                        \n                                                                 \n\nif not _descriptor._USE_C_DESCRIPTORS:\n    DESCRIPTOR._loaded_options = None\n\n                                                                            \n    _globals[\'_MAJORLOGINREQ\']._serialized_start                = 20\n    _globals[\'_MAJORLOGINREQ\']._serialized_end                  = 1435\n    _globals[\'_MAJORLOGINGAMESECURITY\']._serialized_start       = 1437\n    _globals[\'_MAJORLOGINGAMESECURITY\']._serialized_end         = 1500\n    _globals[\'_MAJORLOGINRES\']._serialized_start                = 1503\n    _globals[\'_MAJORLOGINRES\']._serialized_end                  = 1633\n    _globals[\'_GETLOGINDATARES\']._serialized_start              = 1635\n    _globals[\'_GETLOGINDATARES\']._serialized_end                = 1725\n    _globals[\'_STARTMATCH\']._serialized_start                   = 1728\n    _globals[\'_STARTMATCH\']._serialized_end                     = 1952\n    _globals[\'_STARTMATCH_NESTED1\']._serialized_start           = 1778\n    _globals[\'_STARTMATCH_NESTED1\']._serialized_end             = 1952\n    _globals[\'_STARTMATCH_NESTED1_NESTED2\']._serialized_start   = 1892\n    _globals[\'_STARTMATCH_NESTED1_NESTED2\']._serialized_end     = 1917\n    _globals[\'_STARTMATCH_NESTED1_NESTED3\']._serialized_start   = 1919\n    _globals[\'_STARTMATCH_NESTED1_NESTED3\']._serialized_end     = 1952\n\n\n                                        \n\n\n                                                                 \n                                              \n                                                                 '
+_THUNDER_NS = {}
+# Skipped: thunderFF descriptor duplicates MajorLoginRes from Pb2.MajoRLoGinrEs_pb2.
+
+_LOGIN_SOURCE = '                             \n\nimport asyncio\nimport random\nimport uuid\nimport time\nimport json\nimport sys\nfrom datetime import datetime\n\nimport httpx\nfrom google_play_scraper import app as play_scraper\nfrom protobuf_decoder.protobuf_decoder import Parser\nfrom Crypto.Cipher import AES\nfrom Crypto.Util.Padding import pad\n\nfrom Pb2 import MajoRLoGinrEs_pb2, PorTs_pb2\n\n\n                                                                 \n                                                                                      \n\ndef _c(text, color):\n    """সহজ রঙিন টেক্সট হেল্পার"""\n    colors = {\n        "cyan":    "\\033[1;36m",\n        "green":   "\\033[1;32m",\n        "yellow":  "\\033[1;33m",\n        "red":     "\\033[1;31m",\n        "magenta": "\\033[1;35m",\n        "white":   "\\033[1;37m",\n        "gray":    "\\033[1;90m",\n        "reset":   "\\033[0m",\n    }\n    return f"{colors.get(color, \'\')}{text}{colors[\'reset\']}"\n\n\ndef log(level, msg):\n    """টাইমস্ট্যাম্প ও আইকনসহ প্রিমিয়াম লগ"""\n    icons = {\n        "INFO":  ("cyan",    "ℹ"),\n        "OK":    ("green",   "✔"),\n        "WAIT":  ("yellow",  "⏳"),\n        "WARN":  ("yellow",  "⚠"),\n        "ERROR": ("red",     "✘"),\n        "BOT":   ("magenta", "★"),\n        "NET":   ("cyan",    "⇄"),\n    }\n    color, icon = icons.get(level, ("white", "•"))\n    ts = time.strftime("%H:%M:%S")\n    print(f"{_c(f\'[{ts}]\', \'gray\')} {_c(f\'{icon} {level:<5}\', color)} │ {msg}")\n\n\ndef print_banner():\n    """লগইন ইঞ্জিনের প্রিমিয়াম ব্যানার"""\n    print("\\n" + "═" * 68)\n    print(_c("      ★  \u0053\u0048\u0041\120\120\u004e\x4f  —  P R E M I U M   L O G I N  ★", "magenta"))\n    print(_c("             Free Fire OB55 Guest Login Engine", "cyan"))\n    print("═" * 68 + "\\n")\n\n\ndef print_box(title, pairs):\n    """সুন্দর বক্সে কী-ভ্যালু দেখাবে"""\n    width = 60\n    print(_c(f"┌{\'─\' * width}┐", "magenta"))\n    print(_c("│", "magenta") + _c(f" {title.center(width - 2)} ", "yellow") + _c("│", "magenta"))\n    print(_c(f"├{\'─\' * width}┤", "magenta"))\n    for k, v in pairs:\n        line = f"  {_c(f\'{k:<16}\', \'cyan\')}: {_c(str(v), \'green\')}"\n        pad_len = width - 4 - len(k) - len(str(v))\n        print(_c("│", "magenta") + f" {line}{\' \' * max(pad_len, 0)}" + _c("│", "magenta"))\n    print(_c(f"└{\'─\' * width}┘", "magenta") + "\\n")\n\n\n                                                                 \n                                                 \n                                                                 \n\nAES_KEY = b\'Yg&tc%DEuh6%Zc^8\'\nAES_IV  = b\'6oyZDr22E3ychjM%\'\n\nREGION_LANG = {\n    "BD": "bn", "IND": "hi", "PK": "ur", "SG": "en", "ID": "id",\n    "ME": "ar", "VN": "vi", "TW": "zh", "CIS": "ru", "TH": "th",\n    "EU": "en", "US": "en", "SAC": "es", "LK": "en", "BR": "pt",\n}\n\nDEFAULT_HEADERS = {\n    \'User-Agent\': \'UnityPlayer/2018.4.12f1 (UnityWebRequest/1.0, libcurl/8.5.0-DEV)\',\n    \'Connection\': \'Keep-Alive\',\n    \'Accept-Encoding\': \'gzip\',\n    \'Content-Type\': \'application/x-www-form-urlencoded\',\n    \'Expect\': \'100-continue\',\n    \'X-Unity-Version\': \'2018.4.12f1\',\n    \'X-GA-SV\': \'1789535859\',\n    \'X-GA\': \'v1 1\',\n    \'ReleaseVersion\': \'OB55\',\n}\n\n\n                                                                 \n                                         \n                                                                 \n\ndef _pb_varint(n):\n    if n < 0:\n        n = (1 << 64) + n\n    out = bytearray()\n    while True:\n        b = n & 0x7F\n        n >>= 7\n        if n:\n            b |= 0x80\n        out.append(b)\n        if not n:\n            break\n    return bytes(out)\n\n\ndef _pb_tag(f, w):\n    return _pb_varint((f << 3) | w)\n\n\ndef _pb_field(f, v):\n    if isinstance(v, bool):\n        v = int(v)\n    if isinstance(v, int):\n        return _pb_tag(f, 0) + _pb_varint(v)\n    if isinstance(v, str):\n        d = v.encode(\'utf-8\')\n        return _pb_tag(f, 2) + _pb_varint(len(d)) + d\n    if isinstance(v, (bytes, bytearray)):\n        d = bytes(v)\n        return _pb_tag(f, 2) + _pb_varint(len(d)) + d\n    return b""\n\n\n                                                                 \n                                               \n                                                                 \n\nasync def aes_encrypt(payload, key, iv):\n    """AES-CBC দিয়ে পেলোড এনক্রিপ্ট করবে"""\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    return cipher.encrypt(pad(payload, AES.block_size))\n\n\ndef get_proto_field(d, key, default=None):\n    """পার্সড ডিকশনারি থেকে ফিল্ড বের করবে"""\n    if not d or not isinstance(d, dict):\n        return default\n    if key in d:\n        return d[key].get(\'data\', default)\n    if str(key) in d:\n        return d[str(key)].get(\'data\', default)\n    return default\n\n\nasync def parse_results(parsed_results):\n    """protobuf-decoder এর ফলাফলকে ডিকশনারিতে রূপান্তর"""\n    result_dict = {}\n    for result in parsed_results:\n        field_data = {"wire_type": result.wire_type}\n        if result.wire_type in ("varint", "string", "bytes"):\n            field_data["data"] = result.data\n        elif result.wire_type == "length_delimited":\n            if hasattr(result.data, "results"):\n                field_data["data"] = await parse_results(result.data.results)\n            elif isinstance(result.data, list):\n                field_data["data"] = await parse_results(result.data)\n            else:\n                field_data["data"] = str(result.data)\n        result_dict[str(result.field)] = field_data\n    return result_dict\n\n\n                                                                 \n                                                 \n                                                                 \n\nasync def get_playstore_version():\n    """Google Play Store থেকে Free Fire এর সর্বশেষ ভার্সন বের করবে"""\n    loop = asyncio.get_event_loop()\n    try:\n        res = await loop.run_in_executor(\n            None,\n            lambda: play_scraper(\'com.dts.freefireth\', lang=\'hi\', country=\'id\'),\n        )\n        return res.get("version", "1.132.8")\n    except Exception:\n        return "1.132.8"\n\n\nasync def version_config(client_http, region="IND"):\n    """গেমের লেটেস্ট ভার্সন কনফিগারেশন আনবে"""\n    app_version = await get_playstore_version()\n    lang = REGION_LANG.get(region, "hi")\n    api_url = (\n        f"https://version.ggwhitehawk.com/live/ver.php?version={app_version}"\n        f"&lang={lang}&device=android&channel=android&appstore=googleplay"\n        f"&region={region}&whitelist_version=1.3.0&whitelist_sp_version=1.0.0"\n    )\n    try:\n        res = await client_http.get(api_url)\n        data = res.json()\n        return (\n            data.get("latest_release_version"),\n            data.get("remote_version"),\n            data.get("server_url"),\n        )\n    except Exception:\n        return None\n\n\nasync def get_access_token(client_http, uid, password):\n    """গেস্ট অ্যাকাউন্টের জন্য অ্যাক্সেস টোকেন আনবে"""\n    url = "https://100067.connect.garena.com/oauth/guest/token/grant"\n    hdrs = {\n        "Host": "100067.connect.garena.com",\n        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 12; SM-G998B Build/SP1A.210812.016)",\n        "Content-Type": "application/x-www-form-urlencoded",\n        "Accept-Encoding": "gzip, deflate, br",\n        "Connection": "close",\n    }\n    data = {\n        "uid": str(uid),\n        "password": str(password),\n        "response_type": "token",\n        "client_type": "2",\n        "client_secret": "2ee44819e9b4598845141067b281621874d0d5d7af9d8f7e00c1e54715b7d1e3",\n        "client_id": "100067",\n    }\n    for attempt in range(3):\n        try:\n            r = await client_http.post(url, headers=hdrs, data=data)\n            if r.status_code == 200:\n                rd = r.json()\n                return rd.get("open_id"), rd.get("access_token"), rd.get("platform", 4)\n        except Exception:\n            pass\n        await asyncio.sleep(0.5)\n    return None\n\n\n                                                                 \n                                        \n                                                                 \n\nasync def build_majorlogin_payload_new(open_id, access_token, platform, client_version):\n    """MajorLogin protobuf পেলোড তৈরি করবে"""\n    try:\n        from Pb2 import MajoRLoGinrEq_pb2 as ML\n        proto = ML.MajorLogin()\n        proto.event_time = str(datetime.now())[:-7]\n        proto.game_name = "free fire India"\n        proto.platform_id = 1\n        proto.client_version = "1.134.1"\n        proto.client_version_code = "2019121229"\n        proto.system_software = "Android OS 15 / API-35 (AP3A.240905.015.A2/185014)"\n        proto.system_hardware = "Handheld"\n        proto.device_type = "Handheld"\n        proto.screen_width = 1600\n        proto.screen_height = 719\n        proto.screen_dpi = "234"\n        proto.processor_details = "ARM64 FP ASIMD AES | 1820 | 8"\n        proto.memory = 2798\n        proto.gpu_renderer = "Mali-G57"\n        proto.gpu_version = "OpenGL ES 3.2 v1.r49p1-04eac0.2848c17a2fd4e9340e06555168eaa3c9"\n        proto.unique_device_id = f"Google|{str(uuid.uuid4())}"\n        proto.client_ip = "{random.randint(103,223)}.{random.randint(10,250)}.{random.randint(10,250)}.{random.randint(10,250)}"\n        proto.language = "en"\n        proto.open_id = str(open_id)\n        proto.open_id_type = "4"\n        proto.login_open_id_type = 4\n        proto.access_token = str(access_token)\n        proto.login_by = 2\n        proto.platform_sdk_id = 1\n        proto.origin_platform_type = "4"\n        proto.primary_platform_type = "4"\n        proto.reg_avatar = 1\n        proto.channel_type = 3\n        proto.telecom_operator = "JIO"\n        proto.network_operator_a = "JIO"\n        proto.network_type = "WIFI"\n        proto.network_type_a = "WIFI"\n        proto.cpu_type = 2\n        proto.cpu_architecture = "64"\n        proto.graphics_api = "OpenGLES2"\n        proto.supported_astc_bitset = 8191\n        proto.client_using_version = "7428b253defc164018c604a1ebbfebdf"\n        proto.loading_time = 15078\n        proto.release_channel = "android"\n        proto.extra_info = "KqsHTx3+QOmBRR1WKvaWewlcpqJBfjki+PPHQoQG8+0yV+Uos7gUFFjHMQ/e7u6han6Fl77r7c3vMN3p8UbKgN+nfycQCgwBmWgBzomx2gj84c+p"\n        proto.android_engine_init_flag = 111207\n        proto.if_push = 1\n        proto.is_vpn = 0\n        proto.memory_available.version = 55\n        proto.memory_available.hidden_value = 81\n        proto.external_storage_total = 49973\n        proto.external_storage_available = 11338\n        proto.internal_storage_total = 854\n        proto.internal_storage_available = 11466\n        proto.game_disk_storage_total = 49973\n        proto.game_disk_storage_available = 11466\n        proto.external_sdcard_total_storage = 49973\n        proto.external_sdcard_avail_storage = 11466\n        proto.library_path = "/data/app/~~lHFxTCCbupG2QVJmsURtZw==/com.dts.freefireth-N3aCHpHNXpdxjD80uIIbww==/lib/arm64"\n        proto.library_token = "b8e0cd5e295eee42f5860d3c86e483dd|/data/app/~~lHFxTCCbupG2QVJmsURtZw==/com.dts.freefireth-N3aCHpHNXpdxjD80uIIbww==/base.apk"\n\n        base_payload = proto.SerializeToString()\n\n                                 \n        extra = b""\n        extra += _pb_field(96, \'{"cur_rate":[90,60,120],"support_etc2":false}\')\n        extra += _pb_field(97, 1)\n        extra += _pb_field(99, "4")\n        extra += _pb_field(100, "4")\n        extra += _pb_field(102, b"\\x17]ENWU\\x0eR5")\n        extra += _pb_field(104, 52882)\n        extra += _pb_field(105, 1)\n        extra += _pb_field(106, "https://dl.ak.freefiremobile.com/live/ABHotUpdates/|https://core-ak.freefiremobile.com/live/ABHotUpdates/|6b2078db9d22dd98f8e9386a39af8462")\n        extra += _pb_field(107, "c8e41b7a93f02d56e1a94c7b8203f5d1")\n\n        return await aes_encrypt(base_payload + extra, AES_KEY, AES_IV)\n    except Exception as e:\n        log("ERROR", f"পেলোড তৈরিতে সমস্যা : {e}")\n        return None\n\n\n                                                                 \n                                                         \n                                                                \n                                                                                \n                                                                 \n\nUSE_OLD_MAJORLOGIN = False\n\n\nasync def build_majorlogin_payload_old(open_id, access_token):\n    """Old main.py er EncRypTMajoRLoGin hubohu - protobuf + AES"""\n    from Pb2 import MajoRLoGinrEq_pb2 as ML\n    major_login = ML.MajorLogin()\n    major_login.event_time = str(datetime.now())[:-7]\n    major_login.game_name = "free fire India"\n    major_login.platform_id = 1\n    major_login.client_version = "1.123.2"\n    major_login.system_software = "Android OS 9 / API-28 (PQ3B.190801.10101846/G9650ZHU2ARC6)"\n    major_login.system_hardware = "Handheld"\n    major_login.telecom_operator = "Verizon"\n    major_login.network_type = "WIFI"\n    major_login.screen_width = 1920\n    major_login.screen_height = 1080\n    major_login.screen_dpi = "280"\n    major_login.processor_details = "ARM64 FP ASIMD AES VMH | 2865 | 4"\n    major_login.memory = 3003\n    major_login.gpu_renderer = "Adreno (TM) 640"\n    major_login.gpu_version = "OpenGL ES 3.1 v1.46"\n    major_login.unique_device_id = "Google|34a7dcdf-a7d5-4cb6-8d7e-3b0e448a0c57"\n    major_login.client_ip = "223.191.51.89"\n    major_login.language = "en"\n    major_login.open_id = open_id\n    major_login.open_id_type = "4"\n    major_login.device_type = "Handheld"\n    memory_available = major_login.memory_available\n    memory_available.version = 55\n    memory_available.hidden_value = 81\n    major_login.access_token = access_token\n    major_login.platform_sdk_id = 1\n    major_login.network_operator_a = "Verizon"\n    major_login.network_type_a = "WIFI"\n    major_login.client_using_version = "7428b253defc164018c604a1ebbfebdf"\n    major_login.external_storage_total = 36235\n    major_login.external_storage_available = 31335\n    major_login.internal_storage_total = 2519\n    major_login.internal_storage_available = 703\n    major_login.game_disk_storage_available = 25010\n    major_login.game_disk_storage_total = 26628\n    major_login.external_sdcard_avail_storage = 32992\n    major_login.external_sdcard_total_storage = 36235\n    major_login.login_by = 3\n    major_login.library_path = "/data/app/com.dts.freefireth-YPKM8jHEwAJlhpmhDhv5MQ==/lib/arm64"\n    major_login.reg_avatar = 1\n    major_login.library_token = "5b892aaabd688e571f688053118a162b|/data/app/com.dts.freefireth-YPKM8jHEwAJlhpmhDhv5MQ==/base.apk"\n    major_login.channel_type = 3\n    major_login.cpu_type = 2\n    major_login.cpu_architecture = "64"\n    major_login.client_version_code = "2019118695"\n    major_login.graphics_api = "OpenGLES2"\n    major_login.supported_astc_bitset = 16383\n    major_login.login_open_id_type = 4\n    major_login.analytics_detail = b"FwQVTgUPX1UaUllDDwcWCRBpWA0FUgsvA1snWlBaO1kFYg=="\n    major_login.loading_time = 13564\n    major_login.release_channel = "android"\n    major_login.extra_info = "KqsHTymw5/5GB23YGniUYN2/q47GATrq7eFeRatf0NkwLKEMQ0PK5BKEk72dPflAxUlEBir6Vtey83XqF593qsl8hwY="\n    major_login.android_engine_init_flag = 110009\n    major_login.if_push = 1\n    major_login.is_vpn = 1\n    major_login.origin_platform_type = "4"\n    major_login.primary_platform_type = "4"\n    return await aes_encrypt(major_login.SerializeToString(), AES_KEY, AES_IV)\n\n\nasync def build_majorlogin_payload(open_id, access_token, platform, client_version):\n    """Dispatcher - do_login() ei function e call kore"""\n    if USE_OLD_MAJORLOGIN:\n        try:\n            return await build_majorlogin_payload_old(open_id, access_token)\n        except Exception as e:\n            log("ERROR", f"Old MajorLogin payload error : {e}")\n            return None\n    return await build_majorlogin_payload_new(open_id, access_token, platform, client_version)\n\n\n                                                                 \n                                        \n                                                                 \n\nasync def send_majorlogin(client_http, data, release_version, server_url):\n    """MajorLogin API তে রিকোয়েস্ট পাঠাবে"""\n    try:\n        url = f"{server_url}MajorLogin" if server_url.endswith(\'/\') else f"{server_url}/MajorLogin"\n        req_headers = DEFAULT_HEADERS.copy()\n        req_headers["ReleaseVersion"] = str(release_version)\n\n        response = await client_http.post(url, headers=req_headers, data=data)\n        if response.status_code != 200 or len(response.content) < 40:\n                                                               \n            log("WARN", f"DEBUG | URL={url}")\n            log("WARN", f"DEBUG | HTTP status={response.status_code} | response bytes={len(response.content)}")\n            log("WARN", f"DEBUG | ReleaseVersion={release_version} | USE_OLD_MAJORLOGIN={USE_OLD_MAJORLOGIN}")\n            try:\n                log("WARN", f"DEBUG | body={response.content[:200]!r}")\n            except Exception:\n                pass\n            return None\n\n        res_proto = MajoRLoGinrEs_pb2.MajorLoginRes()\n        try:\n            res_proto.ParseFromString(response.content)\n        except Exception:\n            pass\n\n        if not (res_proto.account_uid and res_proto.token):\n            for offset in range(min(128, len(response.content))):\n                try:\n                    c = MajoRLoGinrEs_pb2.MajorLoginRes()\n                    c.ParseFromString(response.content[offset:])\n                    if c.account_uid and c.token:\n                        res_proto = c\n                        break\n                except Exception:\n                    pass\n\n        parsed = Parser().parse(response.content.hex())\n        dict_res = await parse_results(parsed)\n\n        key_val = get_proto_field(dict_res, 22) or res_proto.key or AES_KEY\n        iv_val  = get_proto_field(dict_res, 23) or res_proto.iv  or AES_IV\n\n        if isinstance(key_val, str):\n            try: key_val = bytes.fromhex(key_val)\n            except Exception: pass\n        if isinstance(iv_val, str):\n            try: iv_val = bytes.fromhex(iv_val)\n            except Exception: pass\n\n        res_proto.key = key_val\n        res_proto.iv  = iv_val\n        if not res_proto.url:\n            res_proto.url = server_url\n        return res_proto\n    except Exception as e:\n        log("ERROR", f"MajorLogin সমস্যা : {e}")\n        return None\n\n\n                                                                 \n                                          \n                                                                 \n\nasync def send_getlogin(client_http, data, base_url, token, release_version):\n    """GetLoginData API তে রিকোয়েস্ট পাঠাবে"""\n    try:\n        url = f"{base_url.rstrip(\'/\')}/GetLoginData"\n        req_headers = DEFAULT_HEADERS.copy()\n        req_headers["ReleaseVersion"] = str(release_version)\n        req_headers[\'Authorization\'] = f"Bearer {token}"\n\n        response = await client_http.post(url, headers=req_headers, data=data)\n        if response.status_code != 200:\n            return None\n\n        res_proto = PorTs_pb2.GetLoginData()\n        try:\n            res_proto.ParseFromString(response.content)\n        except Exception:\n            pass\n\n        parsed = Parser().parse(response.content.hex())\n        dict_res = await parse_results(parsed)\n        return res_proto, dict_res\n    except Exception as e:\n        log("ERROR", f"GetLoginData সমস্যা : {e}")\n        return None\n\n\n                                                                 \n                                              \n                                                                 \n\nasync def do_login(uid, password, region_pref="IND"):\n    """সম্পূর্ণ লগইন প্রক্রিয়া — সব তথ্য ডিকশনারি আকারে রিটার্ন করবে"""\n    async with httpx.AsyncClient(verify=False, timeout=15.0) as client_http:\n\n                                     \n        log("NET", "ভার্সন কনফিগারেশন আনা হচ্ছে ...")\n        vc = await version_config(client_http, region_pref)\n        if not vc:\n            log("ERROR", "ভার্সন কনফিগ ব্যর্থ হয়েছে ")\n            return None\n        release_version, client_version, server_url = vc\n        log("OK", f"ভার্সন : {client_version} │ রিলিজ : {release_version}")\n\n                                        \n        log("NET", "অ্যাক্সেস টোকেন আনা হচ্ছে ...")\n        tg = await get_access_token(client_http, uid, password)\n        if not tg:\n            log("ERROR", "UID বা পাসওয়ার্ড ভুল — অ্যাক্সেস টোকেন পাওয়া যায়নি ")\n            return None\n        open_id, access_token, platform = tg\n        log("OK", "অ্যাক্সেস টোকেন সফলভাবে পাওয়া গেছে ")\n\n                                          \n        log("INFO", "MajorLogin পেলোড তৈরি হচ্ছে ...")\n        payload = await build_majorlogin_payload(open_id, access_token, platform, client_version)\n        if not payload:\n            log("ERROR", "পেলোড তৈরি ব্যর্থ হয়েছে ")\n            return None\n\n                                          \n        log("NET", "MajorLogin রিকোয়েস্ট পাঠানো হচ্ছে ...")\n        major_res = await send_majorlogin(client_http, payload, release_version, server_url)\n        if not major_res or not major_res.account_uid:\n            log("ERROR", "MajorLogin সার্ভার দ্বারা প্রত্যাখ্যাত হয়েছে ")\n            return None\n        log("OK", f"অ্যাকাউন্ট UID গৃহীত : {major_res.account_uid}")\n\n                                            \n        log("NET", "GetLoginData রিকোয়েস্ট পাঠানো হচ্ছে ...")\n        gl = await send_getlogin(client_http, payload, major_res.url, major_res.token, release_version)\n        if not gl:\n            log("ERROR", "GetLoginData ব্যর্থ হয়েছে ")\n            return None\n        res_proto, dict_res = gl\n        log("OK", "লগইন তথ্য সফলভাবে গৃহীত হয়েছে ")\n\n                                                        \n        online_addr = res_proto.Online_IP_Port or get_proto_field(dict_res, 14, "0.0.0.0:0")\n        if \':\' in online_addr:\n            online_ip, online_port = online_addr.split(":")\n        else:\n            online_ip, online_port = "0.0.0.0", "0"\n\n        chat_addr = res_proto.AccountIP_Port or get_proto_field(dict_res, 32, online_addr)\n        if \':\' in chat_addr:\n            chat_ip, chat_port = chat_addr.split(":")\n        else:\n            chat_ip, chat_port = online_ip, online_port\n\n                                                   \n        print_box("—͞\u0053\u0048\x41\u0050\120\116\u004f YT — LOGIN SUCCESS", [\n            ("Bot UID",     major_res.account_uid),\n            ("Account Name", res_proto.AccountName or "Unknown"),\n            ("Region",      major_res.region or region_pref),\n            ("Clan ID",     res_proto.Clan_ID or 0),\n            ("Online",      f"{online_ip}:{online_port}"),\n            ("Chat",        f"{chat_ip}:{chat_port}"),\n            ("Server",      major_res.url),\n        ])\n\n        return {\n            "bot_uid":      str(major_res.account_uid),\n            "token":        major_res.token,\n            "region":       major_res.region or region_pref,\n            "key":          major_res.key or AES_KEY,\n            "iv":           major_res.iv or AES_IV,\n            "timestamp":    major_res.timestamp or int(time.time()),\n            "online_ip":    online_ip,\n            "online_port":  online_port,\n            "chat_ip":      chat_ip,\n            "chat_port":    chat_port,\n            "account_name": res_proto.AccountName or "Unknown",\n            "clan_id":      res_proto.Clan_ID or 0,\n            "clan_data":    res_proto.Clan_Compiled_Data or "",\n            "server_url":   major_res.url,\n        }\n'
+_LOGIN_NS = {}
+exec(compile(_LOGIN_SOURCE, "<login_engine.py>", "exec"), _LOGIN_NS)
+import types
+login_engine = types.SimpleNamespace(**{k:v for k,v in _LOGIN_NS.items() if not k.startswith("__")})
+
+                                                                 
+                                           
+                                          
+                                                                 
+
+
+
+_XHEADERS_SOURCE = '\n\nimport requests\nimport os\nimport psutil\nimport sys\nimport jwt\nimport pickle\nimport json\nimport binascii\nimport time\nimport urllib3\nimport base64\nimport datetime\nimport re\nimport socket\nimport threading\n\nfrom protobuf_decoder.protobuf_decoder import Parser\nglobals().update(_XC4_NS)\nfrom datetime import datetime\nfrom google.protobuf.timestamp_pb2 import Timestamp\nfrom concurrent.futures import ThreadPoolExecutor\nfrom threading import Thread\n\nurllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)\n\n\n                                                                 \n                                              \n                                                                 \n\nTOKEN_API = "https://tokens-asfufvfshnfkhvbb.francecentral-01.azurewebsites.net/ReQuesT"\nLIKE_API  = "https://tokens-asfufvfshnfkhvbb.francecentral-01.azurewebsites.net/ReQuesT"\nUID_API   = "https://panel-g2ccathtf6gdcmdw.polandcentral-01.azurewebsites.net/Uids"\n\nDEFAULT_OB_HEADERS = {\n    \'X-Unity-Version\': \'2018.4.11f1\',\n    \'ReleaseVersion\':   \'OB53\',\n    \'Content-Type\':     \'application/x-www-form-urlencoded\',\n    \'X-GA\':             \'v1 1\',\n    \'Content-Length\':   \'16\',\n    \'User-Agent\':       \'Dalvik/2.1.0 (Linux; U; Android 7.1.2; ASUS_Z01QD Build/QKQ1.190825.002)\',\n    \'Host\':             \'clientbp.ggblueshark.com\',\n    \'Connection\':       \'Keep-Alive\',\n    \'Accept-Encoding\':  \'gzip\',\n}\n\n\n                                                                 \n                                                     \n                                                                 \n\ndef ToK():\n    """প্রতি ৫ ঘণ্টায় টোকেন ফাইল রিফ্রেশ করে"""\n    while True:\n        try:\n            r = requests.get(f\'{TOKEN_API}?&type=ToKens\')\n            t = r.text\n            i = t.find("ToKens : [")\n            if i != -1:\n                j = t.find("]", i)\n                L = [x.strip(" \'\\"") for x in t[i+11:j].split(\',\') if x.strip()]\n                if L:\n                    with open("token.txt", "w") as f:\n                        f.write(random.choice(L))\n        except Exception:\n            pass\n        time.sleep(5 * 60 * 60)\n\n\n                                           \nThread(target=ToK, daemon=True).start()\n\n\n                                                                 \n                                          \n                                                                 \n\ndef GeTToK():\n    """token.txt থেকে টোকেন পড়বে"""\n    with open("token.txt") as f:\n        return f.read().strip()\n\n\ndef equie_emote(JWT, url):\n    """ইমোট সেট করার রিকোয়েস্ট"""\n    url = f"{url}/ChooseEmote"\n\n    headers = {\n        "Accept-Encoding": "gzip",\n        "Authorization":   f"Bearer {JWT}",\n        "Connection":      "Keep-Alive",\n        "Content-Type":    "application/x-www-form-urlencoded",\n        "Expect":          "100-continue",\n        "ReleaseVersion":  "OB53",\n        "User-Agent":      "Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)",\n        "X-GA":            "v1 1",\n        "X-Unity-Version": "2018.4.11f1",\n    }\n\n    data = bytes.fromhex("CA F6 83 22 2A 25 C7 BE FE B5 1F 59 54 4D B3 13")\n\n    requests.post(url, headers=headers, data=data)\n\n\n                                                                 \n                                           \n                                                                 \n\ndef Likes(id):\n    """প্লেয়ারের Likes তথ্য বের করবে"""\n    try:\n        text = requests.get(f"{LIKE_API}?id={id}&type=likes").text\n        get = lambda p: re.search(p, text)\n        name, lvl, exp, lb, la, lg = (\n            get(r).group(1) if get(r) else None\n            for r in [\n                r"PLayer NamE\\s*:\\s*(.+)",\n                r"PLayer SerVer\\s*:\\s*(.+)",\n                r"Exp\\s*:\\s*(\\d+)",\n                r"LiKes BeFore\\s*:\\s*(\\d+)",\n                r"LiKes After\\s*:\\s*(\\d+)",\n                r"LiKes GiVen\\s*:\\s*(\\d+)",\n            ]\n        )\n        return (\n            name,\n            f"{lvl}" if lvl else None,\n            int(lb) if lb else None,\n            int(la) if la else None,\n            int(lg) if lg else None,\n        )\n    except Exception:\n        return None, None, None, None, None\n\n\ndef Requests_SPam(id):\n    """স্প্যাম রিকোয়েস্ট পাঠাবে"""\n    Api = requests.get(f\'{TOKEN_API}?id={id}&type=spam\')\n    if Api.status_code in [200, 201] and \'[SuccessFuLy] -> SenDinG Spam ReQuesTs !\' in Api.text:\n        return True\n    else:\n        return False\n\n\n                                                                 \n                                            \n                                                                 \n\ndef GeT_Name(uid, Token):\n    """প্লেয়ারের নাম বের করবে"""\n    data = bytes.fromhex(EnC_AEs(f"08{EnC_Uid(uid, Tp=\'Uid\')}1007"))\n    url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"\n\n    headers = DEFAULT_OB_HEADERS.copy()\n    headers[\'Authorization\'] = f\'Bearer {GeTToK()}\'\n\n    response = requests.post(url, headers=headers, data=data, verify=False)\n    if response.status_code in (200, 201):\n        packet = binascii.hexlify(response.content).decode(\'utf-8\')\n        BesTo_data = json.loads(DeCode_PackEt(packet))\n        try:\n            a1 = BesTo_data["1"]["data"]["3"]["data"]\n            return a1\n        except Exception:\n            return \'\'\n    else:\n        return \'\'\n\n\n                                                                 \n                                                 \n                                                                 \n\ndef GeT_PLayer_InFo(uid, Token):\n    """প্লেয়ারের সম্পূর্ণ প্রোফাইল + গিল্ড তথ্য"""\n    data = bytes.fromhex(EnC_AEs(f"08{EnC_Uid(uid, Tp=\'Uid\')}1007"))\n    url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"\n\n    headers = DEFAULT_OB_HEADERS.copy()\n    headers[\'Authorization\'] = f\'Bearer {GeTToK()}\'\n\n    response = requests.post(url, headers=headers, data=data, verify=False)\n\n    if response.status_code in (200, 201):\n        packet = binascii.hexlify(response.content).decode(\'utf-8\')\n        BesTo_data = json.loads(DeCode_PackEt(packet))\n        NoCLan = False\n        try:\n            a1 = str(BesTo_data["1"]["data"]["1"]["data"])\n            a2 = BesTo_data["1"]["data"]["21"]["data"]\n            a3 = BesTo_data["1"]["data"]["3"]["data"]\n            player_server = BesTo_data["1"]["data"]["5"]["data"]\n            player_bio    = BesTo_data["9"]["data"]["9"]["data"]\n            player_level  = BesTo_data["1"]["data"]["6"]["data"]\n            account_date  = datetime.fromtimestamp(BesTo_data["1"]["data"]["44"]["data"]).strftime("%I:%M %p - %d/%m/%y")\n            last_login    = datetime.fromtimestamp(BesTo_data["1"]["data"]["24"]["data"]).strftime("%I:%M %p - %d/%m/%y")\n\n            try:\n                clan_id         = BesTo_data["6"]["data"]["1"]["data"]\n                clan_name       = BesTo_data["6"]["data"]["2"]["data"]\n                clan_leader     = BesTo_data["6"]["data"]["3"]["data"]\n                clan_level      = BesTo_data["6"]["data"]["4"]["data"]\n                clan_members_num= BesTo_data["6"]["data"]["6"]["data"]\n                clan_leader_name= BesTo_data["7"]["data"]["3"]["data"]\n            except Exception:\n                NoCLan = True\n\n            if NoCLan:\n                a = f\'\'\'\n[b][c][FFFFFF] [SuccessFully] - Get PLayer s\'InFo !\n\n[FFFFFF][1] - ProFile InFo :\n[FFFFFF]\t\n Name : {a3}\n Uid : {xMsGFixinG(a1)}\n Likes : {xMsGFixinG(a2)}\n LeveL : {player_level}\n Server : {player_server}\n Bio : {player_bio}\n Creating : {account_date}\n LasT LoGin : {last_login}\n \n  [FFFFFF]Dev : \u0053\110\x41\x50\x50\x4e\117\\n\'\'\'\n                a = a.replace(\'[i]\', \'\')\n                return a\n\n            else:\n                a = f\'\'\'\n[b][c][FFFFFF] [SuccessFully] - Get PLayer s\'InFo !\n\n[FFFFFF][1] - ProFile InFo :\n[FFFFFF]\t\n Name : {a3}\n Uid : {xMsGFixinG(a1)}\n Likes : {xMsGFixinG(a2)}\n LeveL : {player_level}\n Server : {player_server}\n Bio : {player_bio}\n Creating : {account_date}\n LasT LoGin : {last_login}\n\n[b][c][FFFFFF][2] - Guild InFo :\n[FFFFFF]\n Guild Name : {clan_name}\n Guild Uid : {xMsGFixinG(clan_id)}\n Guild LeveL : {clan_level}\n Guild Members : {clan_members_num}\n Leader s\'Uid : {xMsGFixinG(clan_leader)}\n Leader s\'Name : {clan_leader_name}\n\n  [FFFFFF]Dev : \u0053\x48\101\120\120\116\117\\n\'\'\'\n                a = a.replace(\'[i]\', \'\')\n                return a\n\n        except Exception:\n            return f\'\\n[b][c][FF0000]FaiLEd GeTinG PLayer InFo !\\n\'\n    else:\n        return f\'\\n[b][c][FF0000]FaiLEd GeTinG PLayer InFo !\\n\'\n\n\n                                                                 \n                                            \n                                                                 \n\ndef DeLet_Uid(id, Tok):\n    """ফ্রেন্ড লিস্ট থেকে প্লেয়ার রিমুভ করবে"""\n    print(f\' Done FuckinG > {id} \')\n    url = \'https://clientbp.common.ggbluefox.com/RemoveFriend\'\n\n    headers = DEFAULT_OB_HEADERS.copy()\n    headers[\'Authorization\'] = f\'Bearer {Tok}\'\n\n    data = bytes.fromhex(EnC_AEs(f"08a7c4839f1e10{EnC_Uid(id, Tp=\'Uid\')}"))\n    ResPonse = requests.post(url, headers=headers, data=data, verify=False)\n\n    if ResPonse.status_code == 400 and \'BR_FRIEND_NOT_SAME_REGION\' in ResPonse.text:\n        return f\'[b][c]Id : {xMsGFixinG(id)} Not In Same Region !\'\n    elif ResPonse.status_code == 200:\n        return f\'[b][c]Good Response Done Delete Id : {xMsGFixinG(id)} !\'\n    else:\n        return f\'[b][c]Erorr !\'\n\n\n                                                                 \n                                               \n                                                                 \n\ndef ChEck_The_Uid(id):\n    """UID এর স্ট্যাটাস ও এক্সপায়ারি চেক করবে"""\n    Api = requests.get(UID_API)\n    if Api.status_code not in [200, 201]:\n        return False\n\n    lines = Api.text.splitlines()\n    for i, line in enumerate(lines):\n        if f\' - Uid : {id}\' in line:\n            expire, status = None, None\n            for sub_line in lines[i:]:\n                if "Expire In" in sub_line:\n                    expire = re.search(r"Expire In\\s*:\\s*(.*)", sub_line).group(1).strip()\n                if "Status" in sub_line:\n                    status = re.search(r"Status\\s*:\\s*(\\w+)", sub_line).group(1)\n                if expire and status:\n                    return status, expire\n            return False\n    return False\n\n\n                                                                 \n                                              \n                                                                 '
+_XHEADERS_NS = dict(_XC4_NS)
+_XHEADERS_NS["_XC4_NS"] = _XC4_NS
+exec(compile(_XHEADERS_SOURCE, "<xHeaders.py>", "exec"), _XHEADERS_NS)
+for _xheaders_name, _xheaders_value in _XHEADERS_NS.items():
+    if not _xheaders_name.startswith("__"):
+        globals()[_xheaders_name] = _xheaders_value
+
+
+if __name__ == "__main__":
     try:
         asyncio.run(StarTinG())
     except KeyboardInterrupt:
-        print(f"\n\033[1;31m▌ বট বন্ধ করা হয়েছে — MOHASIN TxT ▌\033[0m\n")
+        print("\\nবট বন্ধ করা হয়েছে ")
