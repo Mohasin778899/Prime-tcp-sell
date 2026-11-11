@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOHASIN TCP - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #050505; font-family: 'Rajdhani', sans-serif; color: #fff; }
+        .gradient-text { background: linear-gradient(90deg, #f97316, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card { background: rgba(22, 22, 22, 0.8); border-radius: 15px; border: 1px solid #333; backdrop-filter: blur(10px); }
+        .admin-tab.active { background: #ef4444; color: #fff; }
+        .neon-btn { transition: 0.3s; }
+        .neon-btn:hover { box-shadow: 0 0 15px rgba(239,68,68,0.6); transform: translateY(-2px); }
+    </style>
+</head>
+<body class="p-4">
+
+    <header class="flex justify-between items-center mb-6 p-4 card border-red-500/30">
+        <div>
+            <h1 class="text-2xl font-bold gradient-text">👑 ADMIN TERMINAL</h1>
+            <p class="text-xs text-red-400">MOHASIN TCP Master Control</p>
+        </div>
+        <a href="/logout" class="px-4 py-2 bg-red-600 rounded-lg text-sm font-bold hover:bg-red-500">LOGOUT</a>
+    </header>
+
+    <!-- Admin Tabs -->
+    <div class="flex gap-2 mb-6 bg-black p-1 rounded-xl border border-white/10 flex-wrap">
+        <button onclick="showTab('settings')" id="tab-settings" class="admin-tab flex-1 py-2 rounded-lg font-bold text-sm bg-red-600">⚙️ Settings</button>
+        <button onclick="showTab('packages')" id="tab-packages" class="admin-tab flex-1 py-2 rounded-lg font-bold text-sm text-gray-500">📦 Packages</button>
+        <button onclick="showTab('users')" id="tab-users" class="admin-tab flex-1 py-2 rounded-lg font-bold text-sm text-gray-500">👥 Users</button>
+        <button onclick="showTab('bots')" id="tab-bots" class="admin-tab flex-1 py-2 rounded-lg font-bold text-sm text-gray-500">🤖 Bots</button>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div id="sec-settings" class="space-y-4">
+        <div class="card p-5">
+            <h3 class="text-lg font-bold text-orange-400 mb-4">💳 Payment Numbers</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs text-gray-400">bKash Number</label>
+                    <input type="text" id="set-bkash" class="w-full p-3 bg-black rounded-lg border border-white/10 mt-1">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Nagad Number</label>
+                    <input type="text" id="set-nagad" class="w-full p-3 bg-black rounded-lg border border-white/10 mt-1">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Rocket Number</label>
+                    <input type="text" id="set-rocket" class="w-full p-3 bg-black rounded-lg border border-white/10 mt-1">
+                </div>
+                <div class="flex items-center gap-3 mt-4 bg-black p-3 rounded-lg border border-white/10">
+                    <input type="checkbox" id="set-payment-enabled" class="w-5 h-5 accent-red-600">
+                    <label class="text-sm font-bold text-gray-300">Payment System Enabled</label>
+                </div>
+                <button onclick="saveSettings()" class="w-full py-3 bg-red-600 rounded-lg font-bold neon-btn mt-4">💾 SAVE SETTINGS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PACKAGES TAB -->
+    <div id="sec-packages" class="hidden">
+        <button onclick="openPackageModal()" class="w-full py-3 mb-4 bg-green-600 rounded-lg font-bold neon-btn">➕ CREATE NEW PACKAGE</button>
+        <div id="admin-packages-list" class="space-y-2"></div>
+    </div>
+
+    <!-- USERS TAB -->
+    <div id="sec-users" class="hidden">
+        <button onclick="loadAdminUsers()" class="w-full py-2 mb-4 bg-cyan-600 rounded-lg font-bold">🔄 REFRESH USERS</button>
+        <div id="admin-users-list" class="space-y-2"></div>
+    </div>
+
+    <!-- BOTS TAB -->
+    <div id="sec-bots" class="hidden">
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <button onclick="loadAdminBots()" class="py-2 bg-cyan-600 rounded-lg font-bold">🔄 Refresh</button>
+            <button onclick="stopAllBots()" class="py-2 bg-red-600 rounded-lg font-bold">🛑 Stop All</button>
+        </div>
+        <div id="admin-bots-list" class="space-y-2"></div>
+    </div>
+
+    <!-- PACKAGE MODAL -->
+    <div id="pkg-modal" class="hidden fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4">
+        <div class="card p-6 max-w-md w-full border border-green-500/30">
+            <div class="flex justify-between mb-4">
+                <h2 id="pkg-title" class="text-xl font-bold text-orange-400">➕ Create Package</h2>
+                <button onclick="closePackageModal()" class="text-2xl text-red-500">×</button>
+            </div>
+            <input type="hidden" id="pkg-id" value="">
+            <label class="text-xs text-gray-500">Package Name</label>
+            <input type="text" id="pkg-name" placeholder="e.g. 🥉 Bronze" class="w-full p-3 mb-3 bg-black rounded-lg border border-white/10">
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-xs text-gray-500">Days</label>
+                    <input type="number" id="pkg-days" placeholder="7" class="w-full p-3 mb-3 bg-black rounded-lg border border-white/10">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500">Price (৳)</label>
+                    <input type="number" id="pkg-price" placeholder="150" class="w-full p-3 mb-3 bg-black rounded-lg border border-white/10">
+                </div>
+            </div>
+            <label class="text-xs text-gray-500">Features (One per line)</label>
+            <textarea id="pkg-features" rows="3" class="w-full p-3 mb-3 bg-black rounded-lg border border-white/10"></textarea>
+            <label class="text-xs text-gray-500">Badge Color</label>
+            <input type="color" id="pkg-color" value="#ff6b35" class="w-full h-10 mb-4 bg-black rounded-lg border border-white/10">
+            <button onclick="savePackage()" class="w-full py-3 bg-green-600 rounded-lg font-bold neon-btn">💾 SAVE PACKAGE</button>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            ['settings', 'packages', 'users', 'bots'].forEach(t => {
+                document.getElementById('sec-' + t).classList.add('hidden');
+                document.getElementById('tab-' + t).className = 'admin-tab flex-1 py-2 rounded-lg font-bold text-sm text-gray-500';
+            });
+            document.getElementById('sec-' + tab).classList.remove('hidden');
+            document.getElementById('tab-' + tab).className = 'admin-tab flex-1 py-2 rounded-lg font-bold text-sm bg-red-600';
+
+            if (tab === 'settings') loadSettings();
+            if (tab === 'packages') loadAdminPackages();
+            if (tab === 'users') loadAdminUsers();
+            if (tab === 'bots') loadAdminBots();
+        }
+
+        // SETTINGS
+        async function loadSettings() {
+            try {
+                const res = await fetch('/api/settings');
+                const data = await res.json();
+                document.getElementById('set-bkash').value = data.bkash_number || '';
+                document.getElementById('set-nagad').value = data.nagad_number || '';
+                document.getElementById('set-rocket').value = data.rocket_number || '';
+                document.getElementById('set-payment-enabled').checked = data.payment_enabled !== false;
+            } catch (e) {}
+        }
+
+        async function saveSettings() {
+            const payload = {
+                bkash_number: document.getElementById('set-bkash').value.trim(),
+                nagad_number: document.getElementById('set-nagad').value.trim(),
+                rocket_number: document.getElementById('set-rocket').value.trim(),
+                payment_enabled: document.getElementById('set-payment-enabled').checked
+            };
+            try {
+                const res = await fetch('/api/admin/settings/update', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                alert(data.message);
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        // PACKAGES
+        async function loadAdminPackages() {
+            try {
+                const res = await fetch('/api/admin/packages');
+                const data = await res.json();
+                const list = document.getElementById('admin-packages-list');
+                list.innerHTML = '';
+                if (!data.packages || data.packages.length === 0) {
+                    list.innerHTML = '<p class="text-center text-gray-500">No packages</p>';
+                    return;
+                }
+                data.packages.forEach(pkg => {
+                    const enabled = pkg.enabled !== false;
+                    list.innerHTML += `
+                        <div class="card p-4 mb-2" style="border-left: 4px solid ${pkg.badge_color || '#ff6b35'};">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-bold text-lg">${pkg.name}</h3>
+                                    <p class="text-xs text-gray-500">ID: ${pkg.id}</p>
+                                    <p class="text-sm text-green-500 font-bold">৳${pkg.price} • ${pkg.days} দিন</p>
+                                    <p class="text-xs">${enabled ? '✅ Active' : '❌ Disabled'}</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 mt-3">
+                                <button onclick='editPackage(${JSON.stringify(pkg).replace(/'/g, "&#39;")})' class="flex-1 py-1 bg-cyan-600 rounded text-xs">✏️ Edit</button>
+                                <button onclick="togglePackageAdmin('${pkg.id}')" class="flex-1 py-1 bg-orange-600 rounded text-xs">${enabled ? '🔒 Disable' : '🔓 Enable'}</button>
+                                <button onclick="deletePackageAdmin('${pkg.id}')" class="flex-1 py-1 bg-red-600 rounded text-xs">🗑 Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) { alert('Failed: ' + e.message); }
+        }
+
+        function openPackageModal() {
+            document.getElementById('pkg-title').textContent = '➕ Create Package';
+            document.getElementById('pkg-id').value = '';
+            document.getElementById('pkg-name').value = '';
+            document.getElementById('pkg-days').value = '';
+            document.getElementById('pkg-price').value = '';
+            document.getElementById('pkg-features').value = '';
+            document.getElementById('pkg-color').value = '#ff6b35';
+            document.getElementById('pkg-modal').classList.remove('hidden');
+        }
+
+        function editPackage(pkg) {
+            document.getElementById('pkg-title').textContent = '✏️ Edit Package';
+            document.getElementById('pkg-id').value = pkg.id;
+            document.getElementById('pkg-name').value = pkg.name || '';
+            document.getElementById('pkg-days').value = pkg.days || '';
+            document.getElementById('pkg-price').value = pkg.price || '';
+            document.getElementById('pkg-features').value = (pkg.features || []).join('\n');
+            document.getElementById('pkg-color').value = pkg.badge_color || '#ff6b35';
+            document.getElementById('pkg-modal').classList.remove('hidden');
+        }
+
+        function closePackageModal() { document.getElementById('pkg-modal').classList.add('hidden'); }
+
+        async function savePackage() {
+            const id = document.getElementById('pkg-id').value;
+            const name = document.getElementById('pkg-name').value.trim();
+            const days = document.getElementById('pkg-days').value;
+            const price = document.getElementById('pkg-price').value;
+            const features = document.getElementById('pkg-features').value.split('\n').map(f => f.trim()).filter(f => f);
+            const color = document.getElementById('pkg-color').value;
+
+            if (!name || !days || !price) return alert('Fill all fields!');
+
+            const payload = { name, days: parseInt(days), price: parseFloat(price), features, badge_color: color };
+            try {
+                let res;
+                if (id) {
+                    payload.package_id = id;
+                    res = await fetch('/api/admin/package/update', {
+                        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+                    });
+                } else {
+                    res = await fetch('/api/admin/package/create', {
+                        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+                    });
+                }
+                const data = await res.json();
+                alert(data.message);
+                if (data.status === 'success') { closePackageModal(); loadAdminPackages(); }
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        async function togglePackageAdmin(packageId) {
+            const res = await fetch('/api/admin/package/toggle', {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({package_id: packageId})
+            });
+            const data = await res.json();
+            alert(data.message);
+            loadAdminPackages();
+        }
+
+        async function deletePackageAdmin(packageId) {
+            if (!confirm('Delete this package permanently?')) return;
+            const res = await fetch('/api/admin/package/delete', {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({package_id: packageId})
+            });
+            const data = await res.json();
+            alert(data.message);
+            loadAdminPackages();
+        }
+
+        // USERS
+        async function loadAdminUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                const list = document.getElementById('admin-users-list');
+                list.innerHTML = '';
+                if (!data.users || data.users.length === 0) {
+                    list.innerHTML = '<p class="text-center text-gray-500">No users</p>';
+                    return;
+                }
+                const now = Math.floor(Date.now() / 1000);
+                data.users.forEach(u => {
+                    const expires = u.premium_expires || 0;
+                    const isActive = u.is_premium && expires > now;
+                    let premiumInfo = '<span class="text-red-500">❌ Free</span>';
+                    if (isActive) {
+                        const rem = expires - now;
+                        const d = Math.floor(rem / 86400);
+                        const h = Math.floor((rem % 86400) / 3600);
+                        premiumInfo = `<span class="text-green-500">✅ ${u.package_name}</span><br><span class="text-xs text-cyan-400">⏰ ${d}d ${h}h</span>`;
+                    }
+                    list.innerHTML += `
+                        <div class="card p-3 mb-2">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <p class="font-bold">${u.username}</p>
+                                    <p class="text-xs text-gray-500">ID: ${u.user_id}</p>
+                                    <p class="text-xs text-green-500">৳${u.balance.toFixed(2)}</p>
+                                    ${u.player_uid ? `<p class="text-xs text-purple-400">🎯 Player: ${u.player_uid}</p>` : ''}
+                                </div>
+                                <div class="text-right"><p class="text-xs">${premiumInfo}</p></div>
+                            </div>
+                            <div class="flex gap-1 flex-wrap">
+                                <button onclick="adminAddBalance('${u.user_id}')" class="flex-1 py-1 bg-green-600 rounded text-xs">+ Balance</button>
+                                <button onclick="adminExtendPremium('${u.user_id}')" class="flex-1 py-1 bg-cyan-600 rounded text-xs">+ Days</button>
+                                <button onclick="adminSetPremium('${u.user_id}')" class="flex-1 py-1 bg-purple-600 rounded text-xs">Set Premium</button>
+                                <button onclick="adminForceExpire('${u.user_id}')" class="flex-1 py-1 bg-red-600 rounded text-xs">Expire</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) { alert('Failed: ' + e.message); }
+        }
+
+        async function adminAddBalance(userId) {
+            const amount = prompt('Amount to add (৳):');
+            if (!amount) return;
+            const res = await fetch('/api/admin/add_balance', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_id: userId, amount: parseFloat(amount)})
+            });
+            const data = await res.json();
+            alert(data.message);
+            loadAdminUsers();
+        }
+
+        async function adminSetPremium(userId) {
+            const days = prompt('Days:', '30');
+            if (!days) return;
+            const res = await fetch('/api/admin/set_premium', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_id: userId, days: parseInt(days)})
+            });
+            const data = await res.json();
+            alert(data.message);
+            loadAdminUsers();
+        }
+
+        async function adminExtendPremium(userId) {
+            const days = prompt('Extend by days:', '30');
+            if (!days) return;
+            const res = await fetch('/api/admin/user/extend_premium', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_id: userId, days: parseInt(days)})
+            });
+            const data = await res.json();
+            alert(data.message);
+            loadAdminUsers();
+        }
+
+        async function adminForceExpire(userId) {
+            if (!confirm('Force expire?')) return;
+            const res = await fetch('/api/admin/user/force_expire', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_id: userId})
+            });
+            const data = await res.json();
+            alert(data.message);
+            loadAdminUsers();
+        }
+
+        // BOTS
+        async function loadAdminBots() {
+            try {
+                const res = await fetch('/api/admin/all_bots');
+                const data = await res.json();
+                const list = document.getElementById('admin-bots-list');
+                list.innerHTML = '';
+                if (!data.bots || data.bots.length === 0) {
+                    list.innerHTML = '<p class="text-center text-gray-500">No active bots</p>';
+                    return;
+                }
+                data.bots.forEach(b => {
+                    const h = Math.floor(b.uptime / 3600);
+                    const m = Math.floor((b.uptime % 3600) / 60);
+                    list.innerHTML += `
+                        <div class="card p-3 mb-2">
+                            <p class="font-bold">${b.bot_name || b.username}</p>
+                            <p class="text-xs text-gray-500">Guest UID: ${b.bot_uid}</p>
+                            ${b.player_uid ? `<p class="text-xs text-purple-400">Player UID: ${b.player_uid}</p>` : ''}
+                            <p class="text-xs text-cyan-500">⏰ ${h}h ${m}m</p>
+                        </div>
+                    `;
+                });
+            } catch (e) { alert('Failed'); }
+        }
+
+        async function stopAllBots() {
+            if (!confirm('Stop all bots?')) return;
+            const res = await fetch('/api/admin/stop_all_bots', {method: 'POST'});
+            const data = await res.json();
+            alert(data.message);
+            loadAdminBots();
+        }
+
+        // INIT
+        showTab('settings');
+    </script>
+</body>
+</html>
