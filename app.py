@@ -5,9 +5,17 @@ import threading
 import time
 import random
 import atexit
+import asyncio
+import aiohttp
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from flask_socketio import SocketIO, emit
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+
+# আপনার তৈরি করা login_engine এবং byte ইমপোর্ট
+import login_engine
+from byte import Encrypt_ID
 
 from firebase_client import (
     firebase, get_user, create_user, update_user, get_user_balance,
@@ -33,6 +41,111 @@ socketio = SocketIO(
 
 user_sessions = {}
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "MOHASIN_ADMIN_2026")
+
+# ═══════════════════════════════════════════
+# FRIEND REQUEST API CONFIG
+# ═══════════════════════════════════════════
+_AES_KEY = bytes([89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56])
+_AES_IV  = bytes([54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37])
+_FRIEND_URL = "https://clientbp.ppmainecoonghj.com/RequestAddingFriend"
+_HEADERS = {
+    "X-Unity-Version": "2018.4.11f1",
+    "X-GA": "v1 1",
+    "ReleaseVersion": "OB55",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "User-Agent": "Dalvik/2.1.0 (Linux; Android 9)",
+}
+
+# ═══════════════════════════════════════════
+# FRIEND REQUEST CORE LOGIC
+# ═══════════════════════════════════════════
+async def send_friend_request(target_uid: str, token: str):
+    try:
+        encrypted_id = Encrypt_ID(target_uid)
+        payload = f"08a7c4839f1e10{encrypted_id}1801"
+
+        cipher = AES.new(_AES_KEY, AES.MODE_CBC, _AES_IV)
+        enc_payload = cipher.encrypt(pad(bytes.fromhex(payload), AES.block_size))
+
+        headers = {**_HEADERS, "Authorization": f"Bearer {token}"}
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                _FRIEND_URL,
+                headers=headers,
+                data=enc_payload,
+                ssl=False,
+                timeout=aiohttp.ClientTimeout(total=15),
+            ) as r:
+                if r.status == 200:
+                    return True, "Friend request sent successfully", 200
+                if r.status == 400:
+                    body = await r.text()
+                    return False, f"Bad request (400): {body[:180]}", 400
+                if r.status == 401:
+                    return False, "Unauthorized (401) — token invalid/expired", 401
+                if r.status == 429:
+                    return False, "Rate limited (429) — try again later", 429
+                return False, f"HTTP {r.status}", r.status
+    except asyncio.TimeoutError:
+        return False, "Request timeout to Garena", 504
+    except Exception as e:
+        return False, f"Exception: {str(e)}", 500
+
+async def _run_friend_request(uid: str, password: str, target: str, region: str = "BD"):
+    t0 = time.time()
+    try:
+        login = await login_engine.do_login(uid, password, region)
+    except Exception as e:
+        return {"success": False, "error": f"Login exception: {e}"}
+
+    if not login:
+        return {"success": False, "error": "Login failed — check UID / password"}
+
+    bot_name = login.get("account_name", "Unknown")
+    token    = login["token"]
+
+    ok, msg, code = await send_friend_request(target, token)
+
+    return {
+        "success": ok,
+        "message": msg if ok else None,
+        "error": None if ok else msg,
+        "bot_uid": login["bot_uid"],
+        "bot_name": bot_name,
+        "region": login.get("region", region),
+        "target_uid": target,
+        "status_code": code,
+        "elapsed_ms": int((time.time() - t0) * 1000)
+    }
+
+@app.route("/send_friend", methods=["GET", "POST"])
+def api_send_friend():
+    """API Endpoint for sending friend requests"""
+    if request.method == "POST" and request.is_json:
+        data = request.get_json() or {}
+        uid = str(data.get("uid", "")).strip()
+        password = str(data.get("password", "")).strip()
+        target = str(data.get("target", "")).strip()
+        region = str(data.get("region", "BD")).strip().upper()
+    else:
+        uid = request.args.get("uid", "").strip()
+        password = request.args.get("password", "").strip()
+        target = request.args.get("target", "").strip()
+        region = request.args.get("region", "BD").strip().upper()
+
+    if not uid or not password or not target:
+        return jsonify({"success": False, "error": "Missing parameters (uid, password, target)"}), 400
+
+    if not target.isdigit():
+        return jsonify({"success": False, "error": "Target must be a numeric UID"}), 400
+
+    try:
+        result = asyncio.run(_run_friend_request(uid, password, target, region))
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Server error: {e}"}), 500
+
 
 # ═══════════════════════════════════════════
 # CLEANUP & MONITORS
@@ -647,7 +760,6 @@ def api_admin_create_package():
     except Exception as e:
         return jsonify({"status": "error", "message": "Days and Price must be valid numbers!"})
 
-    # Features যদি স্ট্রিং হিসেবে আসে, তবে লিস্টে কনভার্ট করা
     if isinstance(features, str):
         features = [f.strip() for f in features.split('\n') if f.strip()]
 
@@ -754,6 +866,9 @@ def api_admin_all_bots():
             })
     return jsonify({"bots": bots})
 
+# ═══════════════════════════════════════════
+# HEALTH CHECK
+# ═══════════════════════════════════════════
 @app.route('/health')
 def health():
     return jsonify({
