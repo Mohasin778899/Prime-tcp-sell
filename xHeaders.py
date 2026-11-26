@@ -1,49 +1,305 @@
-# RAFIN TxT - obfuscated xHeaders.py
-# Note: this is reversible obfuscation, not strong encryption.
-import base64 as _b, zlib as _z
-_DATA = (
-    'c-rk-eQ(>w8UK6w6jv6Rs6?VA`6Y=8qmymP^`az>U)pYpAyDK|x|$+6lCtF*2HFBcHf+NhEN+VqMNxFKgC^U8{84m3(R~#mpJdP7'
-    '@%SQ9vKtHoB9yQl-raN0J@?$*?|#o6^E!HQ`ths#lX)E>^x~7>jsBc|I-U)ADUz&U^d-=M;_nkGC+o+mOc9S;eflWq%&4x5@`Il*'
-    'ME=7`4mf?ttUvucsqj&x0g6&u`C>|yiGF_+Su|SoaLOQsg`i+`w7C5!r9a7L6Cy9;;)mn?Ofm3bn!D0X9PiRZ6Cb9vl%9uDvlIT9'
-    'WKzOiX%js#Dj4`LVy_qEq3NO@$K(?FQ`?GXXI^I}#h(|S{T6L*)oyR>-bU5U4YYc9tA<{D@CdE^3T;*E8+XvoV24VL*Zky<sP1Bn'
-    '>cqw9?#kjkQ}B+fIu3SeacY$Y*~cE5Lz||01Y#SOVMD6!5^U-4vSaUKE2#X6qbcqFi%-5o!?S-5&%PR-{bzXg`{CJhNIxE){Q$Yl'
-    'ClxeUT~M5(Nc!pU{7=KPXYB94nB-&j&Q*LA)CvbDs`w2PehO_c$!{aaSI{q9)gV^OANY~{6DIaKtMv@UrIUjrhK!BPD?ct7(sOLr'
-    'M=t(NAA7zh(suafczvIkBIO;01@9gDp$yUXO&k_@wk6)%#8N$t5RvvtFO=)Mrb*iKp{VNNr3I1FRUgNN-SEw`wS62m?RQ<Q>cr|~'
-    'GKOpSkmK6E-R>JL9c#9ZU1c-_1r;|{*TXKa1d~o=U*$QXc{FMcEA7~J$Hbv(g_d}}+H+b?yDX~gh)iBbvn{Rfy4dm+qwn`!m_$O5'
-    'bz#%C&DsEKecukO3cHpR%wz(`DLV1gwuxJZs%wFmCyN3+(6HkZ+wznR%LAP*-r@uN4j0X3GOs?Qpp=Iq`0(tMp~`m*D83wnjxUiM'
-    ';zce%^H+Qo@7%pryVIgO&N7m^zVCRIxjCOAlvhwaqi-A-Ue_}Ay9e#IVz{cMVGU-YtD1#kNm1X2337<r9`UiKSlFN2!uMdd>`0l$'
-    '#;qFD`@dGayRpXg#uYoNh0Q{ztZAy>^^K*DuJ!ao#j#D*(x>X(CAueNGHbPZb+@t8y1UYPt5#jBZEb`4;|!e{*>?-O7V(b?Z)4Yk'
-    'rID?mY`Ivvp)4q+l2OX$xzrXmF#u5{1bK8j7v-zA<%1!Gog)XcQpkfn-Xvf$RG1qS4i66thVAwWuo|&NF-I4b-z}_HgG%Db9+XgN'
-    'RCxni9ly&PFD;4EUBIhCwF3g7j_jIh9+3UHvQkotNNy0TKX?P}zJaQi?%G60*P);c$?e_k)~}1DduwQ=PfUI8-mQBjrF64+qr9jT'
-    'i{+eX<1O3sM=jJ$pd)_UQ97Nr38U9l-F-!~doimmtog!SEbkV^PN8a&11zMf8pWhSjd}zSh>B)A?-K{gPi7B|C=PM<Rs}#WY+(Zc'
-    'zYEaxcfn^K0Ed}9Akwh`{k|pVDs0pxNuo@QclqpZK(Wy9{0X?>v*Fp-0X$P+26+A+F|7UrMQ`ey$DETv;RDVSpD}{=B<8<wIn>hx'
-    'G{hP_>=F~B9k-9U0rc_RqbNZi7eGM}9;JhQ*~lJ;2zv77&wW_i%g_q|xoj>`)2B5R9|LiWXA{VVZJk)UEb)3k8=F$HE-^svwPjQ&'
-    'C9R>)docxjQXY}qm`DRenghl2UE;_R%HEfx90Hs{14Jz3H_5e9sq)^Q;sF-<ayFmM(H2F8+}@Z%C~b^e!kkF_F0vhL$r6Kl1&A^j'
-    'B^^SGs)vm9TJ$lLLl-bvhK)eCdy3YziH7AyF6s`aCa5MDN>Z1jdR{bcK%f-Q1SF9c(N(lmWPdny5rF~U*I^QTDkj+vEU*wk!uf-g'
-    'X_YdQ0@^>iK1D$Ae0ct0hSM+ES6!GhbbjQ47UG_5Ez|jy15c~2FXv_x%!X(GW<Gh&{PRudFTO-SVlI3<n|QX4cao46E($(h9`L!9'
-    'GSR+aaq9PMvPKY<wz@_amWv@ouwXs0DVGzgIKwRh>>{`YQxBHfFW=e8(@-joxDRNQO-=a{F&g}UznzK&@+@2gr%a5(FOv!=voICZ'
-    '0_qsjF}$42t#)nO!!_C}P%T>C1>=Ayg&d0+FtX806(rGpUdqQr`hM4T$@`2lNt84g(h62xh|Z3oKPPe7h+RklyO1JsF(Mc;GcGD!'
-    'NX+8(YXb+`kz(XWDiw<bh}(RiRf(pOB#~B;C`XKoL}V>A`y#G(^9{6KES0JOMcdrS#T8QSC?%MgM5$v^B*Ad0=VJ^vkUZf-2LY`L'
-    '<JLZ+44Q_UT|AJb)henlp&Rq4Tt?+8Dlekd>u9Bh>NT{oh)Q*|coQuypar0j^QbfrJ6wj()?hPrfIiYFG%u#ca`11SHMmUw%qT$e'
-    'b0J1@_#W~vhK_VqeLkDG$a*XjeVpq(XWeF~!r+D_pQXF#X;3KODGrqh=0;i97;%%1MTC0tCefFViGITAn@QV}a!IZRRX~HO_S(9N'
-    'oC@etJb)doD?53nKjJBt+QWHd9>7$_11L4y@T<aa2Q<hD(n1Y!b4tgx`;J^<w2NmUY<d{ou`QgCr=-oLq^&u|qg-jT!44bmsJ+^K'
-    '?`j2pW#w8N2*yOWu?q|SB4I!`A#z`zAk!eXV0>0^-FERMg{y`iwS9r?I(ZvgQ)DBGnj75*lMZKNlXR(c3`2DyQQyN$<oKi*v3%KV'
-    'vk@}eQ-xG6q)rv;aG_3`5bwfdwi|SeRhsZOlbKDV49?SGisM;_NT7}_+E2Mp^gKThxHMWuHzU(QGIb}fS*xvT%>#fe-Z-X-U7`m@'
-    'ILlc`WOFCLZmvr~XvUddcn}vJ`Dk_z0-WIF$FK)9V{RS$d<-{XXSXfY-0s?kW0Y|GEDkC=M{+JM*UTokV0Mr4&8*;pf_a~01<&vt'
-    '+k&;W{NpG`9vxtp7)Q%>6;>)Y09LM0M<X}C@3kl;q_`}Xi^V(w>XeJttE19e2kPhGMneHNo1jw;wP>7x<`jO@AZPo&QMeI1L0G}w'
-    'j@=5zi{6qbrmgCpyoOgnzO@NW)O?w@6bqTh&M(vw)Q^-krINJQl;|t{cRoraPdzx|sHIEB;(>fN%aIHmH-=tNHp>V_;~^SIv4Hpd'
-    'BXJG+b&|r&EO2pt(b}-;_RHbdMDK|cK^l9;&iJk&dX7WGQhv(tRl?Cf;oVE)-75xockI=MYC#od{slPb`K~+>3uB4oiK<$j2BGEB'
-    '1PoQ@Uj}&{HhEeec41hiDOjAYpiOMVF3jQzZpIbdoUXvc2iQc@ELfV<aZR)PmQSl-szBU_vjrGle@`BWg@xEi(9<k~R+6PF8<i`!'
-    '(G>?3&=q~|N^kDU(a5p6sd|3Pv^y|O(aW@4{!uL_Py0tF9DOuXwOT|E(@AG8O_+V@YG@#Hv6}KlYD@+I7pa-QSPh#U7pPgdNKFs-'
-    '+5kr_tKXZVX6bUBVlGOmxqg{WO{X>qkfDe7nbDgXUOHY&Wq1v|r`g_XYJ1I_#aiuVaSt`O`<jM5uiiJ!qdk~YuxFqkK=-nA3q`MG'
-    'GR-<X#o}JGL`61TyH0PbSZO8GG}yEEvkVW7D(G09Kgl52yy*Mjwzpm<17fYqYAFZ#{4`~xq|8cSARDwKzU(1?n*&f(z!3>bRsdO|'
-    'Y`_`FTXiw)QC5c;5?lVX0oB_<4SOBdBosy~6pFxO!YOO`ApU9AeJdMq$x(-@ii@FX4R(+w*~{jESB~F*3Hq8Gsw6G_X_PKEO2RLq'
-    'qh;m`dg?sd%}kIj`WnL4i6|NGcz}?(P$cYW1T$gTZH^XUX$(D>j~KFf*$J(1kjTX)6PCt6gq?f;zozD;A}b?%-wFp}?K%uZT_ug0'
-    'PRTd)P)tldEy2XeaoCU6G^1CPPsPRW`SAQh_NnRlhr_eK^2@m=!Tsgg53?7t&E$CQZmhwu{UdhI&p+k;N?h4LX7}^#{&hB^@YQZj'
-    '+i&f3F$-toH!a*Ze-?4}=!cH{s~Y-Q^Iy2wDJ%R=+}y{4b^1w8=*6`2#i~O_uU&$V_rilT5J`lTmhH3q4G~uEjUg6~>{zZzEKK8P'
-    's)XLb@Gn?cZV)@u3loxOf>bSry#c$h$H`167PEpWMi#cRV7DOpNtRZiVwDkk=nxm@5jPqdkDa=YUe$R0c1twP8f=ovUM1~w8hXh>'
-    'KmXsbBq}T_rhhKOO<<lCmr!n`AiU1Gnv?ROrs$F>{2(CBjBVDdOV|*0KW+oB9p2L%UQ4$it>vIks-*|2)0++E02j#zwbFLTDE?1Q'
-    'o7w$#IrhIyK6r#`ch=C|I;w9pYO?@p{{>n`#li'
-)
-_exec_source = _z.decompress(_b.b85decode(_DATA.encode('ascii')))
-exec(compile(_exec_source, __file__, 'exec'), globals(), globals())
+import requests , os , psutil , sys , jwt , pickle , json , binascii , time , urllib3 , base64 , datetime , re ,socket , threading
+from protobuf_decoder.protobuf_decoder import Parser
+from xPARA import *
+from datetime import datetime
+from google.protobuf.timestamp_pb2 import Timestamp
+from concurrent.futures import ThreadPoolExecutor
+from threading import Thread
+from google_play_scraper import app
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) 
+
+def ToK():
+    while True:
+        try:
+            r = requests.get('https://tokens-asfufvfshnfkhvbb.francecentral-01.azurewebsites.net/ReQuesT?&type=ToKens')
+            t = r.text
+            i = t.find("ToKens : [")
+            if i != -1:
+                j = t.find("]", i)
+                L = [x.strip(" '\"") for x in t[i+11:j].split(',') if x.strip()]
+                if L:
+                    with open("token.txt", "w") as f:
+                        f.write(random.choice(L))
+        except: pass
+        time.sleep(5 * 60 * 60)
+
+Thread(target=ToK , daemon = True).start()
+
+def GeTToK():  
+    with open("token.txt") as f: return f.read().strip()
+
+
+def GeT_OB():
+    try:
+        url = "https://version.ffmax.purplevioleto.com/live/ver.php?version=1.123.1&lang=ar&device=android&channel=android&appstore=googleplay&region=ME&whitelist_version=1.3.0&whitelist_sp_version=1.0.0&device_name=Samsung%20SM-S918B&device_CPU=ARM64%20FP%20ASIMD%20AES&device_GPU=Adreno%20"
+        response = requests.get(url)
+        ob = response.json()["latest_release_version"]
+        return ob
+    except:
+        return None
+    
+def obv():
+    ob = GeT_OB()
+    if ob == None:
+        print('Error FeTCinG OB VErsiON ! ')
+        return obv()
+    else:
+        print("OB VERSION = > {}".format(ob))
+        return ob
+    
+
+def lag(JWT):
+
+    url = "https://clientbp.ggblueshark.com/RequestJoinClan"
+
+    headers = {
+        "Accept-Encoding": "gzip",
+        "Authorization": f"Bearer {JWT}",
+        "Connection": "Keep-Alive",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Host": "clientbp.ggblueshark.com",
+        "ReleaseVersion": "OB55",
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)",
+        "X-GA": "v1 1",
+        "X-Unity-Version": "2018.4.11f1"
+    }
+
+    data = bytes.fromhex("BA 1F 7A E7 D0 9D AC 6D A3 50 41 72 94 B6 E5 04")  # Replace with the actual body if needed, e.g. "clan_id=1234"
+
+    response = requests.post(url, headers=headers, data=data)
+
+    print("Status:", response.status_code)
+    print("Response:", response.text)
+
+
+async def version_config():
+    app_version = await get_playstore_version()
+    print_info(f"[VERSION_CFG] Play Store version = {app_version}")
+    api_url = (
+        "https://version.ggwhitehawk.com/live/ver.php"
+        f"?version={app_version}"
+        "&lang=hi&device=android&channel=android"
+        "&appstore=googleplay&region=BD"
+        "&whitelist_version=1.3.0&whitelist_sp_version=1.0.0"
+    )
+    try:
+        response = await client.get(api_url)
+        print_info(f"[VERSION_CFG] HTTP {response.status_code} | URL: {api_url}")
+        if response.status_code != 200:
+            print_error(f"[VERSION_CFG] Non-200 response body: {response.text[:500]}")
+            return None
+        data = response.json()
+        print_info(f"[VERSION_CFG] RAW JSON: {json.dumps(data)[:600]}")
+        server_url = data.get("server_url")
+        remote_version = data.get("remote_version")
+        latest_release_version = data.get("latest_release_version")
+        if not server_url or not remote_version or not latest_release_version:
+            print_error(f"[VERSION_CFG] Missing fields → server_url={server_url} | remote_version={remote_version} | latest={latest_release_version}")
+            return None
+        print_success(f"[VERSION_CFG] OK → release={latest_release_version} | remote={remote_version} | server={server_url}")
+        return latest_release_version, remote_version, server_url
+    except Exception as e:
+        import traceback
+        print_error(f"[VERSION_CFG] EXCEPTION: {e}")
+        traceback.print_exc()
+        return None
+
+
+def AuToUpDaTE():
+
+    
+    return "https://clientbp.ggpolarbear.com/" , "OB55" , "1.132.1"
+
+
+
+def equipe_emote(JWT):
+
+    url = "https://clientbp.ggblueshark.com/ChooseEmote"
+
+    headers = {
+        "Accept-Encoding": "gzip",
+        "Authorization": f"Bearer {JWT}",
+        "Connection": "Keep-Alive",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Expect": "100-continue",
+        "Host": "clientbp.ggblueshark.com",
+        "ReleaseVersion": "OB55",
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)",
+        "X-GA": "v1 1",
+        "X-Unity-Version": "2018.4.11f1",
+    }
+
+    data = bytes.fromhex("CA F6 83 22 2A 25 C7 BE FE B5 1F 59 54 4D B3 13")
+
+    r = requests.post(url, headers=headers, data=data)
+
+
+def Likes(id):
+    try:
+        text = requests.get(f"https://tokens-asfufvfshnfkhvbb.francecentral-01.azurewebsites.net/ReQuesT?id={id}&type=likes").text
+        get = lambda p: re.search(p, text)
+        name, lvl, exp, lb, la, lg = (get(r).group(1) if get(r) else None for r in 
+            [r"PLayer NamE\s*:\s*(.+)", r"PLayer SerVer\s*:\s*(.+)", r"Exp\s*:\s*(\d+)", 
+             r"LiKes BeFore\s*:\s*(\d+)", r"LiKes After\s*:\s*(\d+)", r"LiKes GiVen\s*:\s*(\d+)"])
+        return name , f"{lvl}" if lvl else None, int(lb) if lb else None, int(la) if la else None, int(lg) if lg else None
+    except: return None, None, None, None, None
+    
+def Requests_SPam(id):
+    Api = requests.get(f'https://tokens-asfufvfshnfkhvbb.francecentral-01.azurewebsites.net/ReQuesT?id={id}&type=spam')        
+    if Api.status_code in [200, 201] and '[SuccessFuLy] -> SenDinG Spam ReQuesTs !' in Api.text: return True
+    else: return False
+
+def GeT_Name(uid , Token):
+    data = bytes.fromhex(EnC_AEs(f"08{EnC_Uid(uid , Tp = 'Uid')}1007"))
+    url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
+    headers = {
+        'X-Unity-Version': '2018.4.11f1',
+        'ReleaseVersion': 'OB55',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-GA': 'v1 1',
+        'Authorization': f'Bearer {GeTToK()}',
+        'Content-Length': '16',
+        'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 7.1.2; ASUS_Z01QD Build/QKQ1.190825.002)',
+        'Host': 'clientbp.ggblueshark.com',
+        'Connection': 'Keep-Alive',
+        'Accept-Encoding': 'gzip'
+    }
+    response = requests.post(url , headers=headers , data=data ,verify=False)
+    if response.status_code == 200 or 201:
+        packet = binascii.hexlify(response.content).decode('utf-8')
+        RedZed_data = json.loads(DeCode_PackEt(packet))      
+        try:
+            a1 = RedZed_data["1"]["data"]["3"]["data"]
+            return a1
+        except: return ''  
+    else: return ''
+            	  	
+def GeT_PLayer_InFo(uid , Token):
+    data = bytes.fromhex(EnC_AEs(f"08{EnC_Uid(uid , Tp = 'Uid')}1007"))
+    url = "https://client.ind.freefiremobile.com/GetPlayerPersonalShow"
+    headers = {
+        'X-Unity-Version': '2018.4.11f1',
+        'ReleaseVersion': 'OB55',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-GA': 'v1 1',
+        'Authorization': f'Bearer {GeTToK()}',
+        'Content-Length': '16',
+        'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 7.1.2; ASUS_Z01QD Build/QKQ1.190825.002)',
+        'Host': 'clientbp.ggblueshark.com',
+        'Connection': 'Keep-Alive',
+        'Accept-Encoding': 'gzip'}
+    response = requests.post(url , headers=headers , data=data ,verify=False)
+    if response.status_code == 200 or 201:
+        packet = binascii.hexlify(response.content).decode('utf-8')
+        RedZed_data =  json.loads(DeCode_PackEt(packet))
+        NoCLan = False   
+        try:        
+            a1 = str(RedZed_data["1"]["data"]["1"]["data"])
+            a2 = RedZed_data["1"]["data"]["21"]["data"]
+            a3 = RedZed_data["1"]["data"]["3"]["data"]
+            player_server = RedZed_data["1"]["data"]["5"]["data"]
+            player_bio = RedZed_data["9"]["data"]["9"]["data"]
+            player_level = RedZed_data["1"]["data"]["6"]["data"]
+            account_date = datetime.fromtimestamp(RedZed_data["1"]["data"]["44"]["data"]).strftime("%I:%M %p - %d/%m/%y")
+            last_login = datetime.fromtimestamp(RedZed_data["1"]["data"]["24"]["data"]).strftime("%I:%M %p - %d/%m/%y")
+            try:
+                clan_id = RedZed_data["6"]["data"]["1"]["data"]
+                clan_name = RedZed_data["6"]["data"]["2"]["data"]
+                clan_leader = RedZed_data["6"]["data"]["3"]["data"]
+                clan_level = RedZed_data["6"]["data"]["4"]["data"]
+                clan_members_num = RedZed_data["6"]["data"]["6"]["data"]
+                clan_leader_name = RedZed_data["7"]["data"]["3"]["data"]                       
+            except:
+                NoCLan = True
+            if NoCLan:
+                a = f'''
+[b][c][90EE90] [SuccessFully] - Get PLayer s'InFo !
+
+[FFFF00][1] - ProFile InFo :
+[ffffff]	
+ Name : {a3}
+ Uid : {xMsGFixinG(a1)}
+ Likes : {xMsGFixinG(a2)}
+ LeveL : {player_level}
+ Server : {player_server}
+ Bio : {player_bio}
+ Creating : {account_date}
+ LasT LoGin : {last_login}
+ 
+[90EE90]Dev : PARAHEX Team OfficieL\n'''
+                a = a.replace('[i]','')
+                return a
+            	  	            	            
+            else:
+                a = f'''
+[b][c][90EE90] [SuccessFully] - Get PLayer s'InFo !
+
+[FFFF00][1] - ProFile InFo :
+[ffffff]	
+ Name : {a3}
+ Uid : {xMsGFixinG(a1)}
+ Likes : {xMsGFixinG(a2)}
+ LeveL : {player_level}
+ Server : {player_server}
+ Bio : {player_bio}
+ Creating : {account_date}
+ LasT LoGin : {last_login}
+
+[b][c][FFFF00][2] - Guild InFo :
+[ffffff]
+ Guild Name : {clan_name}
+ Guild Uid : {xMsGFixinG(clan_id)}
+ Guild LeveL : {clan_level}
+ Guild Members : {clan_members_num}
+ Leader s'Uid : {xMsGFixinG(clan_leader)}
+ Leader s'Name : {clan_leader_name}
+
+  [90EE90]Dev : PARAHEX Team OfficieL\n'''
+                a = a.replace('[i]','')
+                return a
+                                       
+        except Exception as e:
+           return f'\n[b][c][FFD700]FaiLEd GeTinG PLayer InFo !\n'
+    else:
+        return f'\n[b][c][FFD700]FaiLEd GeTinG PLayer InFo !\n'
+    
+def DeLet_Uid(id , Tok):
+    print(f' Done FuckinG > {id} ')
+    url = 'https://clientbp.common.ggbluefox.com/RemoveFriend'
+    headers = {
+        'X-Unity-Version': '2018.4.11f1',
+        'ReleaseVersion': 'OB55',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-GA': 'v1 1',
+        'Authorization': f'Bearer {Tok}',
+        'Content-Length': '16',
+        'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 7.1.2; ASUS_Z01QD Build/QKQ1.190825.002)',
+        'Host': 'clientbp.ggblueshark.com',
+        'Connection': 'Keep-Alive',
+        'Accept-Encoding': 'gzip'}
+    data = bytes.fromhex(EnC_AEs(f"08a7c4839f1e10{EnC_Uid(id , Tp = 'Uid')}"))
+    ResPonse = requests.post(url , headers=headers , data=data , verify=False)    
+    if ResPonse.status_code == 400 and 'BR_FRIEND_NOT_SAME_REGION' in ResPonse.text:
+        return f'[b][c]Id : {xMsGFixinG(id)} Not In Same Region !'
+    elif ResPonse.status_code == 200:
+        return f'[b][c]Good Response Done Delete Id : {xMsGFixinG(id)} !'
+    else:
+        return f'[b][c]Erorr !'
+                                                        
+def ChEck_The_Uid(id):
+    Api = requests.get("https://panel-g2ccathtf6gdcmdw.polandcentral-01.azurewebsites.net/Uids")
+    if Api.status_code not in [200, 201]: 
+        return False    
+    lines = Api.text.splitlines()    
+    for i, line in enumerate(lines):
+        if f' - Uid : {id}' in line:
+            expire, status = None, None
+            for sub_line in lines[i:]:
+                if "Expire In" in sub_line: 
+                    expire = re.search(r"Expire In\s*:\s*(.*)", sub_line).group(1).strip()
+                if "Status" in sub_line: 
+                    status = re.search(r"Status\s*:\s*(\w+)", sub_line).group(1)
+                if expire and status: return status, expire
+            return False
+    return False

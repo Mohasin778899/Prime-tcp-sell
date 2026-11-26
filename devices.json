@@ -1,0 +1,15 @@
+{
+    "4276400075": {
+        "unique_device_id": "Google|bcf8e95d-a538-4c77-80e1-8312232ff8b7",
+        "brand": "OnePlus",
+        "model": "CPH2451",
+        "gpu_renderer": "Adreno (TM) 740",
+        "system_software": "Android OS 13 / API-33",
+        "screen_width": 720,
+        "screen_height": 1600,
+        "screen_dpi": "384",
+        "memory": 4306,
+        "processor_details": "ARM64 FP ASIMD AES VMH | 2573 | 7",
+        "client_ip": "151.155.82.184"
+    }
+}
